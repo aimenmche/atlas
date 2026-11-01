@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: pip install -e ".[dev,excel]"
+
+      - name: Test
+        env:
+          PYTHONIOENCODING: utf-8
+        run: pytest -q
+
+      - name: Compile
+        run: python -m compileall -q atlas
+
+      - name: NL→SQL benchmark
+        run: python benchmarks/run.py
+
+      - name: JavaScript syntax
+        if: matrix.python-version == '3.13'
+        run: |
+          node --check atlas/static/app.js
+          node --check atlas/static/charts.js
+          node --check atlas/static/landing.js

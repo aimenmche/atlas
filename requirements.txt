@@ -1,0 +1,15 @@
+# Atlas runtime
+fastapi>=0.115
+uvicorn[standard]>=0.30
+duckdb>=1.1
+pandas>=2.2
+numpy>=1.26
+python-multipart>=0.0.9
+httpx>=0.27
+
+# Optional power-ups (Atlas degrades gracefully without them)
+# openpyxl>=3.1        # .xlsx ingestion
+# pyarrow>=15          # .parquet ingestion / faster strings
+
+# Development
+pytest>=8

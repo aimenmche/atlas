@@ -1,0 +1,1471 @@
+employee_id,age,department,job_role,monthly_income,tenure_years,overtime,satisfaction,distance_from_home,performance_rating,attrition
+EMP-0001,31,Marketing,Growth Marketer,8712,2.3,No,2,25,3,No
+EMP-0002,46,Support,Support Lead,9090,6.6,Yes,1,11,4,Yes
+EMP-0003,26,R&D,Data Scientist,12871,1.9,Yes,3,15,3,No
+EMP-0004,40,Sales,SDR,7258,14.6,No,2,7,3,Yes
+EMP-0005,38,Finance,Controller,4790,1.5,No,3,3,3,No
+EMP-0006,39,Sales,SDR,10329,9.3,Yes,2,4,4,No
+EMP-0007,28,Marketing,Content Strategist,4767,2.6,No,2,1,4,No
+EMP-0008,32,Sales,Sales Manager,5453,10.7,No,2,3,4,No
+EMP-0009,40,R&D,Data Scientist,10305,3.0,No,2,9,3,No
+EMP-0010,50,Support,Support Lead,8782,2.0,No,2,7,4,Yes
+EMP-0011,34,Support,Support Lead,5131,1.9,Yes,2,5,4,No
+EMP-0012,41,Support,Support Specialist,8303,6.1,No,3,5,3,No
+EMP-0013,27,Sales,SDR,13465,8.4,Yes,3,5,3,No
+EMP-0014,31,Support,Support Lead,7549,6.9,Yes,2,7,2,No
+EMP-0015,29,Sales,Account Executive,7799,0.4,Yes,1,12,2,Yes
+EMP-0016,35,Support,Support Lead,8915,6.6,No,1,1,2,No
+EMP-0017,31,Sales,SDR,8552,1.5,No,3,20,3,No
+EMP-0018,34,Sales,Sales Manager,12203,11.9,No,3,16,2,No
+EMP-0019,31,Sales,SDR,6731,6.5,No,2,4,4,No
+EMP-0020,50,Marketing,Content Strategist,9965,10.5,No,2,19,3,No
+EMP-0021,30,Sales,SDR,7882,4.9,No,2,7,2,Yes
+EMP-0022,44,Finance,Financial Analyst,8042,4.9,No,4,4,3,No
+EMP-0023,22,Support,Support Lead,7144,1.2,Yes,2,14,2,No
+EMP-0024,50,Sales,SDR,12952,11.1,No,3,8,3,No
+EMP-0025,51,R&D,QA Engineer,14512,5.4,No,3,8,3,No
+EMP-0026,45,R&D,Data Scientist,11635,1.3,No,1,7,4,No
+EMP-0027,40,Sales,SDR,10208,2.8,No,2,13,3,No
+EMP-0028,41,Finance,Financial Analyst,8218,2.3,No,3,14,2,No
+EMP-0029,35,Sales,SDR,8483,4.4,No,2,38,3,No
+EMP-0030,37,R&D,Data Scientist,14135,3.7,No,1,10,3,No
+EMP-0031,24,Marketing,Content Strategist,7123,8.5,Yes,1,12,3,No
+EMP-0032,44,Marketing,Content Strategist,8265,4.4,No,2,5,3,Yes
+EMP-0033,31,R&D,QA Engineer,10229,3.1,No,2,7,3,No
+EMP-0034,24,R&D,Software Engineer,8426,3.9,No,3,35,3,No
+EMP-0035,34,R&D,Software Engineer,6422,10.2,No,3,7,3,No
+EMP-0036,31,Finance,Controller,5782,7.4,Yes,3,22,3,Yes
+EMP-0037,38,Sales,SDR,10479,5.0,No,4,3,4,No
+EMP-0038,36,R&D,Software Engineer,6131,3.0,No,3,29,4,No
+EMP-0039,43,Finance,Financial Analyst,11445,8.7,No,2,13,2,No
+EMP-0040,21,Sales,Account Executive,10779,2.5,Yes,2,14,3,Yes
+EMP-0041,23,R&D,QA Engineer,5227,3.9,Yes,1,9,3,No
+EMP-0042,27,Sales,SDR,12688,9.4,No,4,13,3,Yes
+EMP-0043,42,Sales,SDR,9171,23.4,No,1,3,2,Yes
+EMP-0044,32,Sales,SDR,10909,4.9,No,2,3,4,No
+EMP-0045,36,Support,Support Lead,4396,2.1,No,1,6,3,Yes
+EMP-0046,27,R&D,Software Engineer,9883,3.5,Yes,3,5,4,No
+EMP-0047,43,Sales,SDR,9379,4.5,No,3,10,3,No
+EMP-0048,30,R&D,Software Engineer,9207,8.6,Yes,2,4,4,No
+EMP-0049,25,Support,Support Specialist,5733,5.4,No,3,6,3,No
+EMP-0050,28,R&D,QA Engineer,6567,3.5,No,3,29,3,No
+EMP-0051,42,R&D,QA Engineer,9624,5.7,No,2,8,3,No
+EMP-0052,26,Sales,Account Executive,12493,15.5,No,1,7,3,Yes
+EMP-0053,48,Marketing,Content Strategist,7950,3.5,No,3,5,4,No
+EMP-0054,38,R&D,QA Engineer,8603,4.9,No,2,13,3,No
+EMP-0055,38,Marketing,Growth Marketer,9605,1.8,No,4,15,2,No
+EMP-0056,42,Sales,SDR,8996,1.9,Yes,2,4,3,No
+EMP-0057,38,Finance,Financial Analyst,12369,6.9,No,3,7,2,No
+EMP-0058,43,R&D,QA Engineer,11840,5.5,Yes,3,4,3,No
+EMP-0059,39,R&D,QA Engineer,11097,2.6,No,3,8,3,No
+EMP-0060,34,Sales,Account Executive,12713,4.7,No,2,17,2,Yes
+EMP-0061,42,Support,Support Specialist,8176,0.5,Yes,2,2,4,Yes
+EMP-0062,33,Sales,Account Executive,7741,1.5,No,3,4,3,No
+EMP-0063,44,Sales,Sales Manager,7504,5.9,No,2,12,3,Yes
+EMP-0064,48,Marketing,Content Strategist,5134,0.9,No,2,10,3,No
+EMP-0065,23,Sales,SDR,11838,6.9,No,2,6,3,No
+EMP-0066,43,Support,Support Specialist,6806,2.5,No,2,10,4,Yes
+EMP-0067,35,R&D,QA Engineer,6660,1.2,No,1,9,3,No
+EMP-0068,46,Marketing,Content Strategist,8921,7.4,No,4,5,3,Yes
+EMP-0069,45,Marketing,Growth Marketer,8516,4.1,No,2,3,4,No
+EMP-0070,21,Sales,Sales Manager,11287,4.1,No,2,1,3,No
+EMP-0071,38,Marketing,Growth Marketer,10971,6.6,No,3,3,3,No
+EMP-0072,31,Finance,Financial Analyst,12485,8.6,Yes,3,4,3,No
+EMP-0073,42,Finance,Financial Analyst,7323,5.2,Yes,2,4,3,No
+EMP-0074,34,Support,Support Specialist,8585,5.2,No,1,21,3,Yes
+EMP-0075,39,Marketing,Content Strategist,10096,2.9,No,1,4,3,No
+EMP-0076,41,Sales,SDR,5203,1.4,Yes,2,4,3,Yes
+EMP-0077,30,Sales,SDR,5336,6.3,No,2,17,3,Yes
+EMP-0078,31,Sales,SDR,5697,0.4,No,4,6,3,No
+EMP-0079,37,Marketing,Content Strategist,7624,7.3,No,3,9,3,No
+EMP-0080,30,Marketing,Growth Marketer,7946,4.6,Yes,2,19,2,Yes
+EMP-0081,47,Support,Support Lead,5281,5.2,No,2,24,3,No
+EMP-0082,26,Sales,Account Executive,7553,3.2,No,2,10,3,No
+EMP-0083,28,Sales,Account Executive,10092,8.2,Yes,3,10,3,No
+EMP-0084,28,Sales,Account Executive,7894,0.7,No,4,6,3,No
+EMP-0085,38,Marketing,Growth Marketer,7136,1.7,No,3,12,2,No
+EMP-0086,31,Support,Support Lead,8223,6.3,No,3,4,3,No
+EMP-0087,38,R&D,Data Scientist,8988,3.3,No,3,11,2,No
+EMP-0088,49,R&D,Software Engineer,6367,1.8,No,3,18,4,No
+EMP-0089,48,R&D,Software Engineer,11721,3.7,No,1,3,3,Yes
+EMP-0090,25,Marketing,Growth Marketer,9405,8.9,No,4,4,2,No
+EMP-0091,36,Support,Support Specialist,8640,7.6,Yes,2,12,3,Yes
+EMP-0092,31,Support,Support Specialist,4207,4.5,Yes,1,8,3,Yes
+EMP-0093,35,R&D,QA Engineer,6589,2.9,No,2,7,3,No
+EMP-0094,44,Support,Support Specialist,8227,13.1,Yes,1,8,4,Yes
+EMP-0095,40,Support,Support Specialist,7262,1.0,Yes,2,7,2,No
+EMP-0096,39,Sales,SDR,8019,1.9,No,2,13,3,No
+EMP-0097,32,R&D,QA Engineer,9937,4.0,No,3,6,4,No
+EMP-0098,29,Marketing,Growth Marketer,4838,3.2,No,4,10,2,No
+EMP-0099,33,Finance,Financial Analyst,5952,3.9,Yes,1,12,3,No
+EMP-0100,36,R&D,QA Engineer,5717,5.6,No,2,6,3,Yes
+EMP-0101,36,Support,Support Lead,6707,11.9,No,2,14,3,Yes
+EMP-0102,49,R&D,Data Scientist,11162,0.2,No,3,14,3,No
+EMP-0103,32,Sales,Account Executive,12925,11.5,No,2,1,2,No
+EMP-0104,46,R&D,Software Engineer,14239,8.3,No,3,7,4,No
+EMP-0105,39,Marketing,Content Strategist,9963,6.7,No,3,3,3,No
+EMP-0106,23,Support,Support Lead,7809,4.1,No,2,5,4,No
+EMP-0107,30,Marketing,Growth Marketer,7401,7.7,No,2,18,3,Yes
+EMP-0108,33,Support,Support Lead,6055,2.0,No,1,3,3,Yes
+EMP-0109,38,Sales,SDR,6439,2.3,No,3,21,4,No
+EMP-0110,35,Marketing,Content Strategist,9324,4.6,No,1,10,3,No
+EMP-0111,39,R&D,Software Engineer,7360,2.9,Yes,3,12,4,Yes
+EMP-0112,35,Sales,Account Executive,8816,9.2,No,1,5,4,Yes
+EMP-0113,21,R&D,Software Engineer,12197,6.0,No,1,6,2,No
+EMP-0114,33,Support,Support Lead,6999,0.5,Yes,2,25,3,No
+EMP-0115,39,R&D,QA Engineer,14297,7.0,No,3,2,3,Yes
+EMP-0116,24,R&D,Software Engineer,11035,6.0,No,4,10,3,Yes
+EMP-0117,42,Sales,Account Executive,6997,1.5,No,2,3,3,No
+EMP-0118,40,Marketing,Content Strategist,10551,6.3,No,3,9,4,No
+EMP-0119,42,Sales,Sales Manager,9721,1.4,Yes,2,8,3,No
+EMP-0120,40,Sales,Account Executive,4971,2.4,No,3,14,3,No
+EMP-0121,44,R&D,Software Engineer,11783,8.2,No,1,11,2,No
+EMP-0122,33,R&D,Data Scientist,8193,1.7,No,2,6,4,No
+EMP-0123,30,Marketing,Content Strategist,8832,4.0,No,2,14,2,No
+EMP-0124,35,Support,Support Lead,7563,0.7,No,2,16,4,Yes
+EMP-0125,39,Support,Support Lead,7719,6.5,No,3,1,2,Yes
+EMP-0126,31,Marketing,Content Strategist,7009,5.3,No,2,26,4,No
+EMP-0127,45,R&D,Data Scientist,11914,6.4,No,3,7,3,No
+EMP-0128,27,Sales,Sales Manager,9567,0.7,No,2,5,3,Yes
+EMP-0129,27,Support,Support Lead,8773,8.9,Yes,3,20,3,No
+EMP-0130,39,Finance,Controller,8764,2.8,No,3,1,3,No
+EMP-0131,36,Marketing,Content Strategist,10168,8.6,No,2,16,4,No
+EMP-0132,32,Support,Support Lead,6558,8.1,No,3,7,3,No
+EMP-0133,40,Sales,Account Executive,7636,11.6,Yes,3,10,2,Yes
+EMP-0134,47,Marketing,Growth Marketer,12726,19.1,No,3,7,3,No
+EMP-0135,39,Sales,Account Executive,8937,6.2,Yes,1,10,4,Yes
+EMP-0136,43,Finance,Controller,9789,1.6,Yes,1,6,3,No
+EMP-0137,30,R&D,Software Engineer,6651,11.7,No,1,19,3,No
+EMP-0138,35,Marketing,Content Strategist,7625,3.0,No,2,3,4,Yes
+EMP-0139,50,R&D,Data Scientist,9759,2.1,No,3,4,4,No
+EMP-0140,45,Finance,Financial Analyst,7070,11.8,No,2,18,3,No
+EMP-0141,30,Marketing,Growth Marketer,6676,4.3,No,4,7,2,No
+EMP-0142,26,Support,Support Specialist,7322,2.2,Yes,1,18,3,Yes
+EMP-0143,21,Support,Support Specialist,6287,3.8,Yes,1,22,3,Yes
+EMP-0144,32,Finance,Financial Analyst,10856,2.7,No,3,3,2,No
+EMP-0145,33,R&D,Software Engineer,11947,3.4,No,1,5,3,No
+EMP-0146,39,Finance,Financial Analyst,7759,4.0,No,2,7,4,No
+EMP-0147,38,Sales,Account Executive,9462,3.9,No,2,8,4,Yes
+EMP-0148,35,Sales,Account Executive,10027,11.9,No,3,5,3,No
+EMP-0149,52,Sales,Sales Manager,12723,3.4,Yes,3,3,3,No
+EMP-0150,46,R&D,Software Engineer,9952,9.0,No,2,9,3,No
+EMP-0151,42,Support,Support Lead,5213,1.4,Yes,3,20,2,Yes
+EMP-0152,39,Support,Support Lead,3524,2.4,No,3,24,3,No
+EMP-0153,46,Sales,Account Executive,10679,4.4,No,2,5,3,No
+EMP-0154,37,Support,Support Specialist,6564,6.5,Yes,3,3,4,No
+EMP-0155,40,R&D,Software Engineer,9273,10.6,No,4,13,4,No
+EMP-0156,40,Finance,Controller,10941,3.8,No,2,14,3,No
+EMP-0157,39,R&D,QA Engineer,11574,2.0,No,3,14,3,No
+EMP-0158,32,Sales,SDR,7306,3.1,Yes,2,27,3,Yes
+EMP-0159,28,Finance,Financial Analyst,10158,2.2,No,2,13,3,No
+EMP-0160,41,Marketing,Content Strategist,10481,4.5,No,4,1,2,No
+EMP-0161,32,Finance,Controller,5713,7.2,No,4,12,4,No
+EMP-0162,39,Finance,Financial Analyst,12973,20.0,No,1,11,3,No
+EMP-0163,46,R&D,Data Scientist,7414,2.4,No,3,17,3,Yes
+EMP-0164,38,Support,Support Specialist,5128,7.7,No,1,2,3,No
+EMP-0165,23,Sales,Account Executive,8875,3.4,No,3,3,3,No
+EMP-0166,46,Marketing,Content Strategist,5197,1.8,No,3,2,3,No
+EMP-0167,39,Finance,Controller,9821,1.0,No,2,12,3,No
+EMP-0168,38,Support,Support Specialist,8574,5.9,No,2,3,4,No
+EMP-0169,41,R&D,QA Engineer,9165,5.9,No,3,14,3,No
+EMP-0170,28,Support,Support Specialist,5555,6.8,No,1,16,3,No
+EMP-0171,35,Sales,SDR,6314,4.1,No,2,6,4,No
+EMP-0172,44,Sales,Account Executive,8353,4.4,No,1,9,2,Yes
+EMP-0173,37,Support,Support Lead,7588,2.8,No,3,11,3,No
+EMP-0174,32,Sales,Account Executive,5196,7.7,Yes,1,2,3,Yes
+EMP-0175,33,Sales,SDR,7789,7.9,No,2,10,3,Yes
+EMP-0176,32,Support,Support Specialist,5616,1.1,Yes,1,11,3,Yes
+EMP-0177,41,R&D,Software Engineer,9801,4.4,No,2,7,4,No
+EMP-0178,37,Sales,Account Executive,9444,1.7,Yes,3,1,4,No
+EMP-0179,38,Sales,Sales Manager,10045,10.8,No,2,9,3,No
+EMP-0180,39,Finance,Controller,5520,7.9,No,1,12,4,No
+EMP-0181,29,Sales,Sales Manager,9057,12.3,No,2,7,3,Yes
+EMP-0182,50,Sales,Account Executive,8386,6.8,No,4,13,3,Yes
+EMP-0183,28,Sales,Sales Manager,6859,6.2,No,2,9,2,No
+EMP-0184,33,R&D,QA Engineer,11366,2.1,No,3,10,4,No
+EMP-0185,41,Support,Support Lead,5048,2.5,No,4,11,2,Yes
+EMP-0186,40,Marketing,Content Strategist,10280,0.4,Yes,2,2,3,No
+EMP-0187,48,Support,Support Specialist,8077,13.3,Yes,1,7,3,No
+EMP-0188,39,Finance,Controller,4951,6.5,No,3,15,3,No
+EMP-0189,28,Support,Support Specialist,6298,3.4,Yes,1,8,3,Yes
+EMP-0190,22,Sales,Account Executive,6196,1.4,No,4,7,3,Yes
+EMP-0191,33,R&D,QA Engineer,6182,4.9,No,2,11,4,No
+EMP-0192,24,R&D,QA Engineer,10571,3.6,No,3,1,2,Yes
+EMP-0193,31,Sales,Account Executive,10674,9.5,Yes,3,3,4,Yes
+EMP-0194,32,R&D,Software Engineer,10027,4.1,No,4,3,4,Yes
+EMP-0195,46,Sales,Account Executive,9860,3.4,No,4,9,3,Yes
+EMP-0196,36,R&D,Software Engineer,11770,2.1,No,1,4,4,No
+EMP-0197,25,Sales,SDR,5857,1.2,No,2,2,3,No
+EMP-0198,33,Sales,SDR,10951,5.8,No,4,15,3,Yes
+EMP-0199,37,R&D,QA Engineer,12354,5.3,No,1,12,4,No
+EMP-0200,39,Sales,Account Executive,11860,3.4,No,2,4,2,No
+EMP-0201,36,Sales,Account Executive,11218,6.5,No,1,12,4,No
+EMP-0202,35,Sales,Sales Manager,5534,0.7,No,1,14,3,No
+EMP-0203,30,R&D,Data Scientist,13210,7.3,No,1,8,4,No
+EMP-0204,39,Support,Support Lead,3931,1.6,No,3,7,4,Yes
+EMP-0205,34,Support,Support Specialist,4271,5.1,No,3,19,3,No
+EMP-0206,39,R&D,Data Scientist,11569,1.2,No,2,3,3,No
+EMP-0207,34,Sales,SDR,11335,2.0,No,2,6,3,Yes
+EMP-0208,28,Sales,SDR,9756,1.8,No,4,11,3,Yes
+EMP-0209,25,Support,Support Specialist,7385,19.2,No,2,29,3,No
+EMP-0210,40,R&D,QA Engineer,14762,10.2,Yes,2,8,2,No
+EMP-0211,36,Finance,Controller,7252,9.3,No,3,5,3,No
+EMP-0212,32,Sales,Account Executive,10844,2.4,No,3,6,3,No
+EMP-0213,42,Support,Support Lead,4326,2.1,No,3,11,4,No
+EMP-0214,54,R&D,QA Engineer,5725,5.5,No,3,1,3,No
+EMP-0215,37,Marketing,Growth Marketer,8400,3.5,No,2,23,4,No
+EMP-0216,60,Marketing,Content Strategist,6127,8.2,No,3,4,4,No
+EMP-0217,38,R&D,Software Engineer,12561,6.4,No,4,4,3,No
+EMP-0218,42,Sales,Sales Manager,11987,3.1,No,4,29,2,No
+EMP-0219,25,Support,Support Specialist,4328,0.3,No,3,9,3,No
+EMP-0220,22,Finance,Controller,9184,6.4,No,2,16,3,No
+EMP-0221,32,Sales,SDR,5025,3.1,Yes,2,6,3,Yes
+EMP-0222,28,R&D,Software Engineer,13397,2.7,No,3,9,4,No
+EMP-0223,31,Support,Support Lead,7112,6.3,Yes,2,11,4,No
+EMP-0224,40,Marketing,Content Strategist,9092,1.5,No,4,17,4,No
+EMP-0225,28,R&D,QA Engineer,10914,7.7,No,3,10,4,Yes
+EMP-0226,26,Marketing,Growth Marketer,9251,1.1,No,2,5,4,No
+EMP-0227,41,Sales,Account Executive,5361,5.2,No,3,27,2,Yes
+EMP-0228,45,Sales,Sales Manager,11629,3.5,Yes,3,24,3,No
+EMP-0229,27,Marketing,Content Strategist,5059,3.7,No,3,13,3,No
+EMP-0230,33,R&D,QA Engineer,12488,3.9,No,4,10,3,No
+EMP-0231,35,Finance,Controller,4578,1.7,No,3,12,1,No
+EMP-0232,46,Marketing,Content Strategist,6054,2.5,Yes,2,11,3,No
+EMP-0233,21,Marketing,Content Strategist,9533,17.2,Yes,1,12,3,No
+EMP-0234,26,Sales,Sales Manager,9045,9.5,Yes,1,7,3,Yes
+EMP-0235,30,R&D,Data Scientist,11361,4.2,No,2,14,4,No
+EMP-0236,29,R&D,Software Engineer,9607,2.8,No,2,17,4,No
+EMP-0237,29,Sales,Account Executive,12609,11.7,Yes,1,2,3,Yes
+EMP-0238,21,Support,Support Lead,7439,4.4,Yes,1,5,3,No
+EMP-0239,44,Marketing,Growth Marketer,8846,2.5,No,2,4,4,No
+EMP-0240,33,R&D,QA Engineer,11197,4.7,No,3,5,3,No
+EMP-0241,36,Marketing,Content Strategist,5805,3.9,No,3,5,2,No
+EMP-0242,37,Marketing,Growth Marketer,8015,6.7,No,1,21,3,Yes
+EMP-0243,33,R&D,QA Engineer,10934,7.0,No,2,9,3,No
+EMP-0244,45,Support,Support Specialist,3785,5.5,Yes,2,15,4,Yes
+EMP-0245,39,R&D,Software Engineer,10488,1.7,No,3,3,3,No
+EMP-0246,35,Support,Support Specialist,6590,5.9,Yes,2,13,2,No
+EMP-0247,31,Sales,SDR,12592,9.2,No,3,6,3,No
+EMP-0248,21,Support,Support Specialist,4059,3.4,No,4,10,3,No
+EMP-0249,36,Support,Support Specialist,3214,1.1,No,3,7,3,No
+EMP-0250,46,Support,Support Lead,3489,2.1,No,3,16,4,No
+EMP-0251,37,Finance,Controller,5065,1.6,No,2,1,4,Yes
+EMP-0252,26,R&D,QA Engineer,11508,3.5,No,3,21,3,No
+EMP-0253,37,Sales,Sales Manager,5397,8.8,No,2,25,2,Yes
+EMP-0254,37,Marketing,Growth Marketer,6260,10.7,No,2,6,4,No
+EMP-0255,43,Support,Support Specialist,4388,2.6,No,3,20,3,No
+EMP-0256,30,R&D,QA Engineer,14007,10.3,No,1,6,4,No
+EMP-0257,32,Sales,Account Executive,7087,2.5,No,1,8,3,No
+EMP-0258,60,Marketing,Growth Marketer,5860,2.9,No,2,7,2,No
+EMP-0259,36,Support,Support Specialist,4379,6.0,No,1,10,2,No
+EMP-0260,36,R&D,Software Engineer,13411,5.2,No,2,5,3,No
+EMP-0261,47,Support,Support Specialist,6283,5.8,No,1,4,3,Yes
+EMP-0262,38,Sales,SDR,14008,15.5,No,2,16,4,No
+EMP-0263,34,Support,Support Specialist,7264,9.4,No,3,1,3,Yes
+EMP-0264,44,Sales,SDR,5088,6.6,No,2,5,4,Yes
+EMP-0265,41,Sales,SDR,10144,7.8,No,2,2,4,Yes
+EMP-0266,36,R&D,Software Engineer,6534,6.8,Yes,3,6,3,No
+EMP-0267,30,Sales,Account Executive,5488,5.2,No,2,14,2,No
+EMP-0268,32,R&D,QA Engineer,11487,8.4,No,2,18,2,No
+EMP-0269,43,R&D,Software Engineer,8794,3.1,Yes,4,21,3,No
+EMP-0270,44,Marketing,Content Strategist,6556,4.4,Yes,2,12,3,No
+EMP-0271,23,Sales,Sales Manager,8183,1.5,No,1,23,3,Yes
+EMP-0272,31,R&D,Data Scientist,8828,7.9,No,3,9,3,No
+EMP-0273,27,Sales,SDR,13025,16.5,Yes,1,4,2,No
+EMP-0274,36,R&D,Data Scientist,10280,3.0,No,2,2,3,No
+EMP-0275,34,R&D,QA Engineer,8961,0.5,No,1,6,3,Yes
+EMP-0276,26,R&D,QA Engineer,13192,5.4,No,3,2,3,No
+EMP-0277,49,R&D,QA Engineer,9114,1.6,No,3,13,4,No
+EMP-0278,42,Finance,Controller,12278,9.4,No,3,5,3,No
+EMP-0279,40,Finance,Controller,8656,4.7,No,3,7,3,No
+EMP-0280,30,Support,Support Specialist,8468,2.3,No,1,14,3,No
+EMP-0281,50,Marketing,Content Strategist,6842,1.8,No,1,1,3,No
+EMP-0282,50,Marketing,Growth Marketer,6793,3.6,Yes,3,5,2,Yes
+EMP-0283,36,R&D,Data Scientist,12445,5.8,No,4,17,3,No
+EMP-0284,33,R&D,Data Scientist,7473,5.1,No,2,2,3,Yes
+EMP-0285,40,R&D,Data Scientist,10151,7.1,No,2,14,4,Yes
+EMP-0286,34,Marketing,Growth Marketer,7638,6.7,No,3,2,3,No
+EMP-0287,38,R&D,QA Engineer,6543,5.5,No,3,2,3,No
+EMP-0288,33,Sales,Account Executive,5526,9.6,No,2,3,4,Yes
+EMP-0289,45,R&D,Software Engineer,7268,6.7,No,4,24,3,No
+EMP-0290,38,Sales,Account Executive,7362,2.4,Yes,3,1,4,Yes
+EMP-0291,36,R&D,QA Engineer,5352,2.1,No,4,12,3,No
+EMP-0292,43,R&D,QA Engineer,11347,10.3,No,2,8,3,No
+EMP-0293,30,Finance,Financial Analyst,9513,1.3,No,2,6,4,No
+EMP-0294,37,R&D,Software Engineer,9175,8.9,No,1,15,3,No
+EMP-0295,39,Finance,Financial Analyst,6584,1.9,No,3,9,4,No
+EMP-0296,34,R&D,Data Scientist,6603,11.5,No,2,3,4,No
+EMP-0297,33,R&D,Data Scientist,12434,9.6,Yes,3,5,3,Yes
+EMP-0298,45,Support,Support Specialist,9399,15.1,Yes,1,17,3,No
+EMP-0299,23,R&D,Data Scientist,13395,2.1,No,3,3,2,Yes
+EMP-0300,46,Sales,Account Executive,6638,2.6,Yes,2,9,3,Yes
+EMP-0301,39,Support,Support Lead,4793,1.1,Yes,3,1,3,Yes
+EMP-0302,42,Sales,Account Executive,7767,4.1,No,2,4,2,No
+EMP-0303,37,Finance,Controller,11664,4.0,No,2,7,4,No
+EMP-0304,26,Sales,Sales Manager,11859,4.5,No,2,9,3,Yes
+EMP-0305,35,Marketing,Growth Marketer,5030,5.5,No,4,8,3,No
+EMP-0306,34,Finance,Financial Analyst,4857,1.5,No,2,21,3,Yes
+EMP-0307,34,Finance,Financial Analyst,9982,2.7,No,2,8,3,No
+EMP-0308,55,Sales,SDR,5779,4.2,No,2,2,3,No
+EMP-0309,45,Sales,Sales Manager,5687,14.6,Yes,1,16,3,Yes
+EMP-0310,32,Sales,Account Executive,6164,8.5,No,3,13,4,No
+EMP-0311,41,Support,Support Lead,7583,3.4,No,3,21,3,No
+EMP-0312,36,Finance,Financial Analyst,5268,2.1,No,4,9,4,No
+EMP-0313,45,R&D,Software Engineer,9542,11.6,No,2,3,3,Yes
+EMP-0314,39,Marketing,Growth Marketer,7025,8.4,No,2,6,2,No
+EMP-0315,21,Marketing,Growth Marketer,6185,10.0,Yes,2,4,3,Yes
+EMP-0316,34,Sales,Account Executive,12859,3.8,No,1,7,2,No
+EMP-0317,33,R&D,Data Scientist,6665,1.8,No,2,13,2,No
+EMP-0318,21,Marketing,Growth Marketer,8488,5.2,No,2,9,3,No
+EMP-0319,44,R&D,Software Engineer,9816,0.8,No,3,5,3,No
+EMP-0320,40,Sales,Account Executive,7267,0.5,No,3,15,3,Yes
+EMP-0321,34,Sales,Account Executive,8589,1.5,Yes,2,5,4,No
+EMP-0322,29,R&D,Software Engineer,14084,6.2,No,1,12,3,Yes
+EMP-0323,50,Finance,Controller,6812,4.0,No,2,14,3,No
+EMP-0324,34,Finance,Financial Analyst,4265,0.8,Yes,3,21,3,No
+EMP-0325,49,Finance,Financial Analyst,7453,11.2,No,1,3,3,No
+EMP-0326,34,Sales,Account Executive,9432,3.5,Yes,2,12,3,Yes
+EMP-0327,30,R&D,Data Scientist,12682,11.2,No,2,20,3,No
+EMP-0328,43,Marketing,Growth Marketer,8423,4.3,No,2,20,3,No
+EMP-0329,38,Finance,Financial Analyst,10285,1.7,No,3,5,4,No
+EMP-0330,50,R&D,QA Engineer,11937,3.1,No,4,14,2,No
+EMP-0331,24,Support,Support Specialist,5887,2.6,No,3,9,3,No
+EMP-0332,29,R&D,Data Scientist,8340,10.1,No,3,5,3,No
+EMP-0333,35,Support,Support Specialist,5957,16.8,No,3,2,3,No
+EMP-0334,26,R&D,Software Engineer,10753,5.1,No,1,17,1,No
+EMP-0335,30,Finance,Financial Analyst,5595,1.8,No,2,7,3,No
+EMP-0336,33,Support,Support Specialist,4199,3.6,No,2,5,2,Yes
+EMP-0337,30,Sales,SDR,5259,4.5,No,3,23,3,No
+EMP-0338,34,Support,Support Lead,3619,1.0,Yes,1,11,3,Yes
+EMP-0339,24,Sales,Sales Manager,5990,3.0,Yes,1,28,3,Yes
+EMP-0340,22,R&D,QA Engineer,5310,5.7,No,3,10,3,No
+EMP-0341,37,R&D,QA Engineer,7883,7.9,No,3,10,3,No
+EMP-0342,25,R&D,QA Engineer,7580,3.8,No,2,8,3,No
+EMP-0343,40,Support,Support Lead,7124,6.6,Yes,2,9,4,No
+EMP-0344,35,Support,Support Lead,6233,2.3,No,4,5,3,No
+EMP-0345,54,R&D,QA Engineer,11581,2.6,No,3,9,3,No
+EMP-0346,26,Support,Support Specialist,5347,5.6,No,4,2,2,Yes
+EMP-0347,30,Marketing,Growth Marketer,11847,17.2,No,2,3,3,No
+EMP-0348,21,Finance,Controller,12539,9.4,Yes,2,7,2,No
+EMP-0349,39,Support,Support Specialist,3868,0.4,Yes,2,13,3,Yes
+EMP-0350,43,R&D,Software Engineer,12751,6.8,Yes,2,21,4,No
+EMP-0351,28,Sales,SDR,7434,0.4,No,2,9,2,No
+EMP-0352,21,R&D,Data Scientist,13634,1.1,No,2,3,2,No
+EMP-0353,28,Support,Support Lead,9775,13.0,No,2,2,3,No
+EMP-0354,25,Sales,Sales Manager,5539,2.8,Yes,2,16,3,Yes
+EMP-0355,39,Marketing,Growth Marketer,4718,4.5,No,2,27,3,No
+EMP-0356,46,R&D,QA Engineer,13419,1.6,Yes,2,10,3,Yes
+EMP-0357,45,R&D,QA Engineer,7457,0.6,No,2,8,3,No
+EMP-0358,33,R&D,Data Scientist,9414,11.8,Yes,3,28,3,No
+EMP-0359,28,Finance,Controller,9555,7.6,No,3,19,2,No
+EMP-0360,35,Support,Support Lead,8997,6.0,No,2,4,3,No
+EMP-0361,26,Support,Support Specialist,4209,10.5,No,2,21,4,No
+EMP-0362,49,Finance,Financial Analyst,10852,3.6,No,2,10,4,No
+EMP-0363,36,Sales,Account Executive,7811,11.1,Yes,1,6,3,No
+EMP-0364,36,R&D,Data Scientist,10209,2.4,No,3,4,3,No
+EMP-0365,26,Finance,Financial Analyst,7020,5.4,No,2,8,3,No
+EMP-0366,32,Support,Support Specialist,7661,2.5,No,2,7,3,Yes
+EMP-0367,34,Support,Support Lead,6064,0.8,No,4,1,3,Yes
+EMP-0368,38,R&D,Data Scientist,5639,8.6,No,2,1,3,No
+EMP-0369,35,Sales,SDR,11688,4.5,No,3,12,3,No
+EMP-0370,21,Sales,SDR,12716,2.7,No,2,2,3,No
+EMP-0371,34,Marketing,Growth Marketer,9549,4.7,No,3,7,3,No
+EMP-0372,36,R&D,Data Scientist,11126,4.4,Yes,3,4,4,Yes
+EMP-0373,35,Sales,Account Executive,8667,5.2,No,3,10,4,No
+EMP-0374,37,Sales,Account Executive,6945,2.1,Yes,1,9,4,No
+EMP-0375,38,Support,Support Specialist,8469,4.4,Yes,2,15,3,No
+EMP-0376,29,Support,Support Specialist,7781,5.4,No,3,5,3,No
+EMP-0377,43,R&D,Software Engineer,7280,2.6,No,3,1,3,Yes
+EMP-0378,32,Finance,Financial Analyst,10508,3.0,No,2,10,4,No
+EMP-0379,36,Sales,Sales Manager,12327,14.8,No,1,15,3,No
+EMP-0380,38,R&D,Data Scientist,12590,1.4,No,2,4,4,No
+EMP-0381,34,R&D,Data Scientist,9259,3.3,No,2,11,2,No
+EMP-0382,42,Sales,Sales Manager,5345,10.4,No,2,1,3,Yes
+EMP-0383,31,Sales,Sales Manager,8641,6.2,Yes,2,11,3,Yes
+EMP-0384,27,Marketing,Content Strategist,8307,1.8,No,1,11,2,Yes
+EMP-0385,30,Marketing,Content Strategist,6292,3.0,Yes,2,9,2,Yes
+EMP-0386,33,Sales,Account Executive,6654,10.0,No,2,5,4,No
+EMP-0387,45,Finance,Financial Analyst,9280,1.4,No,2,12,3,No
+EMP-0388,31,Marketing,Growth Marketer,11057,8.6,Yes,1,5,2,Yes
+EMP-0389,30,Sales,Account Executive,13824,10.9,Yes,2,12,3,No
+EMP-0390,51,Sales,SDR,11087,4.3,No,1,7,4,No
+EMP-0391,35,Support,Support Specialist,6318,6.9,No,2,32,4,Yes
+EMP-0392,23,Support,Support Specialist,6111,5.7,No,4,8,3,No
+EMP-0393,29,Support,Support Lead,5101,0.7,No,3,10,3,No
+EMP-0394,41,Sales,Sales Manager,10594,3.4,Yes,2,38,3,No
+EMP-0395,24,Finance,Financial Analyst,12116,8.3,No,2,15,3,No
+EMP-0396,27,R&D,QA Engineer,9830,3.4,No,4,4,3,No
+EMP-0397,39,Finance,Controller,5630,7.1,No,3,12,4,No
+EMP-0398,27,Sales,Account Executive,11606,0.9,Yes,3,23,2,Yes
+EMP-0399,30,R&D,QA Engineer,8973,7.3,Yes,2,1,3,Yes
+EMP-0400,54,Support,Support Lead,3866,4.2,Yes,1,11,3,Yes
+EMP-0401,37,R&D,QA Engineer,6154,3.5,No,3,11,4,No
+EMP-0402,33,Support,Support Specialist,7418,3.9,Yes,2,39,3,No
+EMP-0403,51,R&D,Data Scientist,13060,3.3,No,3,27,3,No
+EMP-0404,22,Support,Support Lead,5251,2.3,No,3,19,3,Yes
+EMP-0405,29,Finance,Financial Analyst,9661,1.3,No,2,12,2,Yes
+EMP-0406,37,Sales,Account Executive,12525,8.6,No,3,14,3,No
+EMP-0407,25,R&D,QA Engineer,8906,7.5,No,3,20,3,Yes
+EMP-0408,31,Sales,Sales Manager,7270,8.4,Yes,2,2,3,No
+EMP-0409,47,Finance,Financial Analyst,12054,5.4,No,2,19,3,No
+EMP-0410,38,R&D,QA Engineer,5223,2.1,No,3,5,3,Yes
+EMP-0411,39,Sales,Account Executive,5939,5.4,Yes,2,13,4,Yes
+EMP-0412,33,R&D,Data Scientist,9767,3.1,No,2,13,3,No
+EMP-0413,40,Support,Support Specialist,3411,2.9,No,3,7,3,No
+EMP-0414,34,Marketing,Content Strategist,4343,9.2,Yes,3,2,4,No
+EMP-0415,30,Sales,Sales Manager,13008,7.7,Yes,2,8,3,No
+EMP-0416,27,R&D,Data Scientist,11930,6.3,No,2,2,3,No
+EMP-0417,52,Sales,Account Executive,7323,2.3,Yes,3,10,3,No
+EMP-0418,31,Sales,Account Executive,13400,12.2,No,1,17,4,No
+EMP-0419,35,R&D,Software Engineer,12568,16.2,No,1,13,2,Yes
+EMP-0420,30,Marketing,Content Strategist,8336,5.1,No,1,5,3,Yes
+EMP-0421,28,Support,Support Specialist,5946,2.7,No,2,6,4,Yes
+EMP-0422,27,R&D,QA Engineer,9518,4.2,No,2,7,3,No
+EMP-0423,40,Sales,SDR,9787,2.6,No,2,10,2,Yes
+EMP-0424,29,R&D,Data Scientist,13071,8.3,Yes,2,19,3,No
+EMP-0425,32,Finance,Financial Analyst,4824,3.8,No,3,11,3,No
+EMP-0426,31,Sales,SDR,11853,1.1,No,2,4,4,No
+EMP-0427,21,Sales,Account Executive,9534,0.2,No,2,8,3,Yes
+EMP-0428,44,Marketing,Growth Marketer,7072,3.1,No,3,15,3,No
+EMP-0429,38,R&D,QA Engineer,9101,3.1,No,4,2,3,No
+EMP-0430,46,Sales,SDR,7118,5.7,Yes,2,33,2,No
+EMP-0431,37,Sales,Sales Manager,5068,3.2,No,2,9,4,Yes
+EMP-0432,35,Sales,SDR,7779,8.6,No,3,4,3,No
+EMP-0433,24,Marketing,Content Strategist,6941,11.0,No,2,7,3,Yes
+EMP-0434,41,Sales,SDR,8215,0.6,Yes,1,4,3,Yes
+EMP-0435,31,R&D,Data Scientist,5913,8.4,No,2,11,3,No
+EMP-0436,33,Marketing,Content Strategist,10447,3.7,No,4,9,4,Yes
+EMP-0437,34,Finance,Financial Analyst,9101,0.7,No,2,2,4,No
+EMP-0438,29,Sales,SDR,10942,2.4,No,1,20,3,No
+EMP-0439,33,R&D,Software Engineer,11273,2.2,No,2,14,3,No
+EMP-0440,36,R&D,Data Scientist,11006,11.2,No,2,23,3,Yes
+EMP-0441,34,Sales,Account Executive,10577,1.6,Yes,1,6,3,Yes
+EMP-0442,45,Finance,Controller,11803,6.9,Yes,2,10,3,Yes
+EMP-0443,36,Sales,Account Executive,6254,4.6,No,2,15,3,No
+EMP-0444,21,R&D,Software Engineer,7219,3.7,No,4,7,2,No
+EMP-0445,34,Support,Support Lead,7560,9.1,No,2,14,3,Yes
+EMP-0446,34,Support,Support Lead,3704,3.5,No,2,3,2,No
+EMP-0447,36,Finance,Financial Analyst,6754,6.1,No,2,14,3,No
+EMP-0448,35,Sales,SDR,12425,4.1,No,2,6,3,Yes
+EMP-0449,50,R&D,Data Scientist,8121,2.1,No,4,5,4,No
+EMP-0450,24,Sales,Account Executive,7025,6.5,Yes,1,15,3,No
+EMP-0451,35,Support,Support Lead,5709,3.4,No,3,2,3,Yes
+EMP-0452,43,Marketing,Growth Marketer,4200,4.7,No,3,9,4,No
+EMP-0453,32,Marketing,Growth Marketer,6235,6.9,Yes,1,19,3,No
+EMP-0454,42,Sales,Account Executive,11683,4.1,No,2,6,4,No
+EMP-0455,27,R&D,Software Engineer,5622,3.5,No,3,25,3,No
+EMP-0456,39,R&D,Data Scientist,6424,5.7,No,2,4,3,No
+EMP-0457,35,R&D,Software Engineer,6096,10.1,Yes,2,1,3,Yes
+EMP-0458,38,Support,Support Lead,6665,1.3,No,3,26,2,Yes
+EMP-0459,30,Support,Support Lead,4519,2.6,Yes,3,2,4,No
+EMP-0460,37,R&D,Software Engineer,8353,0.3,Yes,1,1,3,No
+EMP-0461,21,Finance,Controller,8901,7.3,Yes,2,9,3,Yes
+EMP-0462,37,Sales,Sales Manager,9875,5.8,Yes,3,8,2,Yes
+EMP-0463,38,Sales,SDR,11592,4.6,Yes,2,14,3,Yes
+EMP-0464,42,Sales,Account Executive,5793,15.3,No,3,18,3,No
+EMP-0465,31,R&D,Software Engineer,14190,3.7,No,2,17,3,No
+EMP-0466,43,Support,Support Specialist,6817,1.2,Yes,3,17,3,Yes
+EMP-0467,51,Support,Support Specialist,7405,3.0,No,2,8,2,No
+EMP-0468,43,Marketing,Growth Marketer,5730,8.3,No,3,11,3,No
+EMP-0469,29,Sales,Sales Manager,5973,5.8,No,2,7,2,No
+EMP-0470,41,Sales,Sales Manager,12118,0.8,Yes,2,16,2,Yes
+EMP-0471,40,Sales,Account Executive,12248,7.9,No,4,13,3,Yes
+EMP-0472,38,R&D,Data Scientist,14682,13.7,Yes,1,22,3,No
+EMP-0473,50,Support,Support Lead,6484,2.8,No,2,1,2,Yes
+EMP-0474,47,Marketing,Content Strategist,4941,7.0,Yes,1,16,3,No
+EMP-0475,37,Marketing,Content Strategist,4281,4.3,No,2,14,3,No
+EMP-0476,38,Finance,Financial Analyst,6423,2.0,No,2,5,3,No
+EMP-0477,34,Support,Support Lead,3321,4.1,No,2,6,3,Yes
+EMP-0478,30,Sales,SDR,12782,5.3,No,2,13,3,Yes
+EMP-0479,32,Sales,SDR,6600,4.1,Yes,3,13,4,Yes
+EMP-0480,21,R&D,Data Scientist,14351,8.6,No,1,7,4,No
+EMP-0481,44,Sales,Sales Manager,11294,10.0,Yes,2,6,3,Yes
+EMP-0482,39,Sales,Sales Manager,8911,0.8,Yes,1,11,4,Yes
+EMP-0483,25,Marketing,Growth Marketer,6434,5.5,Yes,4,6,3,No
+EMP-0484,38,Sales,SDR,8442,5.5,No,4,3,4,No
+EMP-0485,41,Sales,SDR,10721,3.2,Yes,2,11,2,Yes
+EMP-0486,26,Sales,SDR,10552,3.8,Yes,1,6,4,No
+EMP-0487,30,Finance,Financial Analyst,6881,0.9,No,3,9,2,Yes
+EMP-0488,26,Support,Support Specialist,7367,8.0,Yes,2,24,3,No
+EMP-0489,29,Support,Support Lead,4357,3.1,No,4,9,4,No
+EMP-0490,26,R&D,QA Engineer,6423,5.2,No,4,5,3,No
+EMP-0491,46,Marketing,Growth Marketer,4113,3.7,No,2,5,3,No
+EMP-0492,36,R&D,Software Engineer,11836,1.3,No,3,2,3,No
+EMP-0493,55,Marketing,Content Strategist,5060,2.3,No,3,20,2,No
+EMP-0494,30,Sales,SDR,11620,5.4,No,2,14,2,Yes
+EMP-0495,47,Marketing,Content Strategist,4170,6.9,No,3,26,3,No
+EMP-0496,41,Support,Support Lead,5946,2.3,Yes,3,6,3,No
+EMP-0497,38,R&D,Data Scientist,12446,9.7,No,3,9,3,No
+EMP-0498,29,Support,Support Specialist,6841,4.6,No,3,18,3,No
+EMP-0499,27,R&D,Data Scientist,9472,1.5,No,1,8,3,No
+EMP-0500,32,R&D,Software Engineer,6076,6.4,No,2,4,3,No
+EMP-0501,38,R&D,Software Engineer,7145,5.7,No,3,4,3,No
+EMP-0502,45,R&D,Software Engineer,9204,4.0,No,3,13,3,No
+EMP-0503,37,Marketing,Content Strategist,4148,1.2,No,2,6,2,No
+EMP-0504,40,Marketing,Growth Marketer,9836,1.7,No,4,3,2,No
+EMP-0505,38,Sales,Sales Manager,12713,11.1,No,1,5,3,No
+EMP-0506,46,Finance,Financial Analyst,8208,11.1,Yes,2,15,3,No
+EMP-0507,39,R&D,QA Engineer,13929,3.4,No,1,10,4,Yes
+EMP-0508,24,Support,Support Lead,8252,10.4,No,3,11,3,No
+EMP-0509,35,Sales,Account Executive,9195,1.0,No,3,4,3,No
+EMP-0510,40,R&D,Data Scientist,5304,0.5,No,4,8,2,No
+EMP-0511,30,Sales,Sales Manager,8827,3.0,No,2,4,3,No
+EMP-0512,46,Support,Support Lead,8625,9.9,No,2,14,3,No
+EMP-0513,55,R&D,QA Engineer,12238,2.5,No,1,3,3,No
+EMP-0514,35,R&D,Software Engineer,13768,7.5,Yes,2,10,3,Yes
+EMP-0515,46,R&D,Software Engineer,7746,2.0,No,2,20,2,No
+EMP-0516,40,Support,Support Specialist,6709,2.5,Yes,2,13,3,Yes
+EMP-0517,46,Support,Support Specialist,6900,0.6,Yes,2,3,3,Yes
+EMP-0518,28,Marketing,Growth Marketer,10863,2.9,No,2,24,2,No
+EMP-0519,24,Support,Support Lead,6180,5.0,No,3,7,3,Yes
+EMP-0520,25,Sales,Account Executive,5018,7.1,No,1,2,3,Yes
+EMP-0521,39,Marketing,Content Strategist,9337,3.6,No,3,6,4,No
+EMP-0522,35,R&D,Data Scientist,8288,6.4,No,3,21,3,Yes
+EMP-0523,21,Sales,Sales Manager,5340,10.2,Yes,2,9,3,No
+EMP-0524,34,R&D,Data Scientist,13136,17.0,No,2,3,3,No
+EMP-0525,29,Support,Support Lead,7215,6.6,No,2,15,3,No
+EMP-0526,23,Sales,Account Executive,5639,4.7,No,3,3,3,No
+EMP-0527,37,Marketing,Growth Marketer,6366,10.7,No,1,9,3,No
+EMP-0528,44,R&D,QA Engineer,12422,3.7,No,1,3,4,No
+EMP-0529,35,R&D,QA Engineer,8307,2.2,No,3,5,2,No
+EMP-0530,27,Support,Support Specialist,5912,2.3,Yes,2,12,3,Yes
+EMP-0531,25,Marketing,Growth Marketer,8979,1.4,Yes,1,1,3,No
+EMP-0532,33,Sales,Sales Manager,10270,5.0,No,2,15,3,No
+EMP-0533,23,R&D,Software Engineer,13047,2.2,No,3,16,3,No
+EMP-0534,33,Sales,Account Executive,5291,5.8,Yes,1,17,3,Yes
+EMP-0535,27,Finance,Financial Analyst,11293,1.8,Yes,2,9,3,No
+EMP-0536,29,Support,Support Lead,7554,1.8,Yes,2,13,4,No
+EMP-0537,31,R&D,QA Engineer,8877,6.3,No,2,3,2,No
+EMP-0538,40,R&D,QA Engineer,11309,2.5,No,3,19,3,No
+EMP-0539,40,R&D,Data Scientist,7691,1.1,No,2,12,3,Yes
+EMP-0540,41,Support,Support Lead,8174,5.0,Yes,2,40,4,No
+EMP-0541,27,Support,Support Lead,4856,2.7,Yes,2,8,3,Yes
+EMP-0542,29,R&D,Data Scientist,5202,3.1,No,2,1,3,No
+EMP-0543,37,R&D,Software Engineer,7709,2.0,No,2,7,3,No
+EMP-0544,31,R&D,Data Scientist,9259,6.8,Yes,2,2,3,No
+EMP-0545,36,Sales,SDR,9391,0.4,No,3,20,4,No
+EMP-0546,32,Sales,Account Executive,9547,5.3,No,2,1,3,No
+EMP-0547,25,Support,Support Lead,5806,6.6,No,1,6,3,Yes
+EMP-0548,30,R&D,QA Engineer,9787,3.6,No,3,1,4,No
+EMP-0549,39,Finance,Controller,5738,4.7,No,2,6,3,No
+EMP-0550,38,Support,Support Lead,8115,7.7,No,3,30,3,No
+EMP-0551,34,R&D,Data Scientist,11524,9.7,No,3,18,3,No
+EMP-0552,31,Finance,Financial Analyst,10073,10.8,No,2,7,3,No
+EMP-0553,33,R&D,Data Scientist,9438,4.1,No,3,11,4,No
+EMP-0554,28,Sales,SDR,5448,11.6,No,3,8,4,Yes
+EMP-0555,21,Sales,SDR,8543,1.9,No,2,10,3,Yes
+EMP-0556,43,Sales,SDR,8506,7.8,Yes,1,26,3,No
+EMP-0557,28,Sales,Sales Manager,5845,2.8,No,1,1,3,Yes
+EMP-0558,39,Sales,Sales Manager,5820,2.1,Yes,1,6,3,No
+EMP-0559,48,R&D,Data Scientist,13898,7.9,No,2,9,4,No
+EMP-0560,24,Support,Support Lead,4653,14.0,No,3,8,3,Yes
+EMP-0561,34,Support,Support Specialist,4444,6.2,No,2,14,4,No
+EMP-0562,31,Finance,Controller,8660,6.7,No,2,25,4,Yes
+EMP-0563,33,Finance,Financial Analyst,5964,6.3,No,2,4,3,No
+EMP-0564,31,Finance,Controller,6680,2.6,No,2,2,3,Yes
+EMP-0565,32,R&D,Data Scientist,13719,4.0,No,2,14,2,No
+EMP-0566,32,Sales,Sales Manager,10693,17.0,No,2,15,3,Yes
+EMP-0567,41,Sales,SDR,13161,6.0,No,4,5,3,No
+EMP-0568,40,Marketing,Content Strategist,5033,16.1,No,2,13,3,Yes
+EMP-0569,43,R&D,QA Engineer,11857,13.1,Yes,1,9,4,No
+EMP-0570,34,Marketing,Growth Marketer,9879,8.6,No,1,8,3,No
+EMP-0571,21,Sales,Sales Manager,7778,1.9,No,2,14,3,No
+EMP-0572,32,Support,Support Lead,3488,0.4,No,2,2,3,No
+EMP-0573,53,R&D,QA Engineer,7334,9.8,No,2,6,3,No
+EMP-0574,32,Sales,Sales Manager,10449,3.4,No,3,12,3,No
+EMP-0575,32,Sales,Sales Manager,9843,4.5,Yes,2,9,3,No
+EMP-0576,28,Support,Support Specialist,6567,2.2,Yes,2,9,3,Yes
+EMP-0577,55,R&D,Software Engineer,7600,14.5,No,2,5,3,No
+EMP-0578,44,Marketing,Growth Marketer,4881,4.1,No,1,1,3,No
+EMP-0579,37,Sales,SDR,5719,6.8,Yes,4,18,4,Yes
+EMP-0580,37,R&D,Software Engineer,8957,5.3,Yes,1,12,3,Yes
+EMP-0581,41,Support,Support Specialist,4875,8.0,No,4,5,3,Yes
+EMP-0582,27,Sales,SDR,9029,4.2,Yes,1,11,4,Yes
+EMP-0583,44,R&D,QA Engineer,11922,7.5,No,1,10,3,No
+EMP-0584,24,Sales,Account Executive,10058,4.2,Yes,1,22,4,No
+EMP-0585,31,Marketing,Content Strategist,6264,3.5,No,1,6,3,No
+EMP-0586,31,R&D,Data Scientist,8737,4.0,Yes,1,5,4,No
+EMP-0587,43,Marketing,Growth Marketer,8009,10.9,Yes,2,17,3,No
+EMP-0588,32,Marketing,Content Strategist,8608,6.3,No,2,16,4,No
+EMP-0589,32,Sales,Sales Manager,11199,0.9,No,3,11,3,No
+EMP-0590,43,Marketing,Growth Marketer,10922,10.6,No,3,8,4,No
+EMP-0591,26,Sales,Account Executive,4922,4.5,No,2,1,3,No
+EMP-0592,37,Support,Support Specialist,7177,15.9,Yes,3,11,3,No
+EMP-0593,26,Support,Support Specialist,4270,16.0,Yes,2,5,3,No
+EMP-0594,43,Support,Support Lead,8724,4.1,No,2,1,3,Yes
+EMP-0595,23,R&D,Data Scientist,6722,2.2,No,3,24,3,No
+EMP-0596,32,Support,Support Specialist,8460,6.7,Yes,2,35,3,No
+EMP-0597,31,R&D,Data Scientist,11526,4.7,No,1,2,3,No
+EMP-0598,33,Support,Support Lead,6273,4.1,No,2,9,3,Yes
+EMP-0599,45,Sales,SDR,10017,7.8,No,1,3,2,No
+EMP-0600,39,R&D,Software Engineer,12341,4.4,No,3,1,4,No
+EMP-0601,41,Marketing,Growth Marketer,7996,6.0,No,3,10,3,No
+EMP-0602,35,Marketing,Content Strategist,6090,12.2,No,3,5,3,No
+EMP-0603,45,Support,Support Lead,8398,6.6,No,2,2,2,Yes
+EMP-0604,27,Sales,SDR,8116,4.3,No,4,1,3,Yes
+EMP-0605,50,R&D,Data Scientist,10834,6.3,No,3,1,3,No
+EMP-0606,38,Support,Support Lead,6091,12.8,Yes,2,6,4,Yes
+EMP-0607,24,R&D,QA Engineer,10083,10.3,No,3,26,2,No
+EMP-0608,37,R&D,Data Scientist,5898,4.7,No,4,11,3,No
+EMP-0609,37,R&D,Data Scientist,9059,7.8,No,3,9,3,No
+EMP-0610,31,Support,Support Specialist,4210,4.4,No,2,10,3,No
+EMP-0611,51,Marketing,Growth Marketer,6265,1.1,Yes,3,6,2,No
+EMP-0612,31,R&D,Software Engineer,10070,2.9,No,3,11,3,No
+EMP-0613,28,Sales,SDR,5561,6.4,Yes,1,2,4,Yes
+EMP-0614,47,Marketing,Content Strategist,8722,1.3,No,2,24,3,No
+EMP-0615,32,R&D,Software Engineer,9061,4.4,No,2,5,3,No
+EMP-0616,49,R&D,QA Engineer,11562,2.0,No,4,19,3,No
+EMP-0617,54,R&D,Software Engineer,9299,3.2,No,3,18,3,No
+EMP-0618,48,Marketing,Growth Marketer,7778,2.9,No,3,7,3,Yes
+EMP-0619,37,Support,Support Specialist,6604,0.7,Yes,2,5,4,No
+EMP-0620,23,Sales,SDR,12165,1.7,Yes,2,6,4,No
+EMP-0621,34,Sales,Account Executive,8119,8.6,No,3,6,2,No
+EMP-0622,39,Support,Support Specialist,8761,7.6,No,3,17,2,Yes
+EMP-0623,36,Finance,Controller,6728,10.4,Yes,2,5,2,No
+EMP-0624,34,Sales,Sales Manager,11774,3.5,Yes,3,3,4,Yes
+EMP-0625,37,R&D,QA Engineer,12816,1.3,No,3,1,3,No
+EMP-0626,23,Marketing,Content Strategist,7654,6.0,No,3,5,3,No
+EMP-0627,39,Marketing,Content Strategist,6839,3.8,No,3,12,1,No
+EMP-0628,39,Sales,Sales Manager,9646,1.6,No,4,6,3,No
+EMP-0629,21,R&D,Software Engineer,11260,9.8,No,2,4,3,No
+EMP-0630,35,Finance,Financial Analyst,9851,2.2,No,2,12,4,No
+EMP-0631,25,Marketing,Content Strategist,9470,4.9,No,2,7,3,No
+EMP-0632,49,R&D,Software Engineer,12888,5.8,Yes,1,14,3,No
+EMP-0633,26,Sales,Account Executive,10845,4.2,No,3,32,3,No
+EMP-0634,33,Finance,Controller,5815,10.2,No,2,6,3,No
+EMP-0635,39,Sales,Sales Manager,12110,1.3,Yes,3,13,3,Yes
+EMP-0636,34,R&D,Data Scientist,8239,5.3,No,3,12,3,No
+EMP-0637,35,R&D,Software Engineer,10382,1.7,No,3,2,2,No
+EMP-0638,32,Finance,Financial Analyst,6334,0.9,No,2,5,3,Yes
+EMP-0639,47,Marketing,Growth Marketer,9788,5.6,No,2,26,3,No
+EMP-0640,29,Marketing,Growth Marketer,6624,0.4,No,1,5,3,No
+EMP-0641,37,Sales,Account Executive,10455,9.2,No,4,8,4,Yes
+EMP-0642,26,Sales,SDR,6512,4.7,Yes,2,9,3,Yes
+EMP-0643,29,Support,Support Lead,6016,5.1,Yes,2,11,3,No
+EMP-0644,30,Sales,SDR,10374,1.8,No,2,7,2,No
+EMP-0645,46,Marketing,Content Strategist,8057,2.7,Yes,2,7,4,No
+EMP-0646,34,Marketing,Growth Marketer,5509,5.3,No,3,15,4,No
+EMP-0647,30,Support,Support Lead,6689,7.1,Yes,3,5,3,Yes
+EMP-0648,48,R&D,Data Scientist,6826,4.4,No,1,11,3,Yes
+EMP-0649,33,R&D,Software Engineer,9688,1.8,No,2,5,2,Yes
+EMP-0650,57,Sales,Sales Manager,7145,8.1,No,4,25,3,No
+EMP-0651,49,Sales,Sales Manager,5845,7.2,Yes,1,5,3,Yes
+EMP-0652,33,Support,Support Specialist,8850,8.2,Yes,2,6,4,Yes
+EMP-0653,36,Marketing,Content Strategist,5090,6.7,No,1,7,4,No
+EMP-0654,52,Sales,SDR,7962,1.7,Yes,1,22,3,No
+EMP-0655,42,R&D,Data Scientist,7392,1.6,No,3,3,4,No
+EMP-0656,37,Marketing,Content Strategist,4453,1.7,No,3,6,3,No
+EMP-0657,45,Sales,Account Executive,8873,6.1,Yes,2,6,3,No
+EMP-0658,25,R&D,QA Engineer,11489,14.6,Yes,3,13,3,No
+EMP-0659,29,Sales,SDR,5625,2.4,No,2,1,3,No
+EMP-0660,34,Sales,Account Executive,9344,2.3,Yes,2,7,2,No
+EMP-0661,44,Sales,Account Executive,7787,9.1,No,3,2,2,No
+EMP-0662,39,Support,Support Specialist,8407,1.9,No,4,7,3,Yes
+EMP-0663,44,Finance,Financial Analyst,9210,1.5,No,2,4,1,No
+EMP-0664,41,Marketing,Growth Marketer,4980,7.1,No,3,3,3,No
+EMP-0665,42,Sales,Account Executive,10559,5.0,No,2,14,2,Yes
+EMP-0666,32,R&D,Data Scientist,5379,3.1,No,2,6,3,No
+EMP-0667,34,Sales,SDR,7369,5.4,No,3,9,4,No
+EMP-0668,34,R&D,Software Engineer,10085,9.6,No,3,6,3,No
+EMP-0669,36,R&D,QA Engineer,8728,6.9,No,3,11,4,No
+EMP-0670,21,R&D,QA Engineer,9413,2.7,No,2,17,2,No
+EMP-0671,40,Marketing,Content Strategist,4774,2.8,Yes,1,11,3,No
+EMP-0672,42,Finance,Controller,9879,2.3,No,2,10,3,No
+EMP-0673,38,R&D,QA Engineer,8238,1.3,No,3,12,2,No
+EMP-0674,24,Sales,SDR,7668,6.0,Yes,2,4,3,No
+EMP-0675,40,Marketing,Growth Marketer,7677,5.0,No,2,4,2,No
+EMP-0676,32,Finance,Controller,4614,2.1,No,2,21,4,No
+EMP-0677,40,Support,Support Specialist,3859,5.2,Yes,2,10,3,Yes
+EMP-0678,41,Finance,Controller,8463,4.7,Yes,1,17,3,No
+EMP-0679,25,Support,Support Lead,6481,2.5,No,2,7,3,No
+EMP-0680,34,R&D,Data Scientist,7432,0.7,Yes,3,15,3,No
+EMP-0681,36,Sales,SDR,9062,2.3,No,1,2,4,No
+EMP-0682,31,R&D,Software Engineer,10057,6.6,Yes,1,16,2,No
+EMP-0683,32,Sales,SDR,9207,4.1,No,2,9,2,Yes
+EMP-0684,30,R&D,QA Engineer,5843,0.2,No,3,1,2,No
+EMP-0685,33,Support,Support Lead,5704,3.2,Yes,2,5,4,Yes
+EMP-0686,31,Support,Support Lead,8549,4.6,Yes,3,6,4,No
+EMP-0687,38,R&D,Software Engineer,8147,4.6,No,1,6,3,No
+EMP-0688,51,Support,Support Lead,4043,6.7,No,3,4,3,No
+EMP-0689,33,Marketing,Content Strategist,9042,1.6,No,4,10,2,Yes
+EMP-0690,33,Support,Support Specialist,6742,5.6,No,2,12,3,Yes
+EMP-0691,28,R&D,Data Scientist,5906,4.7,Yes,1,3,2,No
+EMP-0692,35,Marketing,Growth Marketer,4946,0.5,No,2,3,3,No
+EMP-0693,28,R&D,Data Scientist,12555,1.6,No,2,9,3,No
+EMP-0694,38,Sales,SDR,12496,3.2,No,1,14,3,Yes
+EMP-0695,48,Sales,Sales Manager,6447,7.4,No,4,10,3,No
+EMP-0696,33,Support,Support Lead,3675,6.4,No,3,5,4,Yes
+EMP-0697,32,Sales,Sales Manager,9949,7.7,No,1,8,3,Yes
+EMP-0698,27,Sales,SDR,9965,1.9,No,1,13,4,Yes
+EMP-0699,48,Support,Support Lead,7842,8.3,No,3,2,3,No
+EMP-0700,28,Finance,Controller,4787,3.1,No,2,18,4,Yes
+EMP-0701,50,Sales,Account Executive,12823,13.8,Yes,2,5,4,Yes
+EMP-0702,24,R&D,QA Engineer,8417,1.9,No,3,8,4,No
+EMP-0703,49,R&D,Software Engineer,8653,3.9,No,2,8,4,No
+EMP-0704,46,Sales,Sales Manager,6577,5.6,No,1,7,3,Yes
+EMP-0705,45,Sales,Account Executive,10683,4.3,No,2,9,4,No
+EMP-0706,48,Marketing,Growth Marketer,10396,4.5,No,1,1,4,Yes
+EMP-0707,22,R&D,QA Engineer,6199,7.8,Yes,4,3,3,No
+EMP-0708,42,Support,Support Lead,4965,5.0,Yes,3,1,3,No
+EMP-0709,39,R&D,Data Scientist,8350,3.6,No,4,7,3,No
+EMP-0710,51,R&D,QA Engineer,6826,4.9,No,2,11,2,No
+EMP-0711,25,Sales,Sales Manager,10955,11.5,No,2,3,4,No
+EMP-0712,47,Support,Support Lead,6996,2.3,Yes,2,3,4,Yes
+EMP-0713,41,R&D,Software Engineer,11507,7.4,No,2,20,4,No
+EMP-0714,51,Sales,SDR,5785,2.5,No,1,5,4,Yes
+EMP-0715,39,Finance,Financial Analyst,5168,4.3,No,1,21,3,No
+EMP-0716,35,Finance,Financial Analyst,11902,14.0,No,3,19,4,No
+EMP-0717,34,Sales,Account Executive,9837,4.0,No,2,13,3,No
+EMP-0718,26,Sales,Sales Manager,6480,11.4,No,2,25,3,Yes
+EMP-0719,42,Sales,SDR,9728,2.5,No,3,2,4,Yes
+EMP-0720,21,Marketing,Content Strategist,5822,5.1,No,2,8,4,No
+EMP-0721,41,Sales,Sales Manager,7462,7.6,No,2,22,3,Yes
+EMP-0722,27,Sales,Sales Manager,7332,1.8,No,1,9,3,No
+EMP-0723,31,R&D,QA Engineer,7486,4.6,No,2,8,4,No
+EMP-0724,47,Sales,Sales Manager,11520,4.7,No,2,3,3,Yes
+EMP-0725,38,Marketing,Content Strategist,9745,10.6,Yes,3,10,2,Yes
+EMP-0726,54,R&D,Software Engineer,13563,0.5,No,3,1,4,No
+EMP-0727,34,Support,Support Lead,6506,8.8,Yes,1,15,2,Yes
+EMP-0728,38,R&D,QA Engineer,12753,2.7,Yes,3,10,3,No
+EMP-0729,36,Sales,SDR,8891,5.9,Yes,1,15,4,No
+EMP-0730,32,Sales,SDR,10064,4.6,Yes,1,35,3,No
+EMP-0731,30,R&D,QA Engineer,8013,7.3,No,3,3,2,No
+EMP-0732,29,Marketing,Growth Marketer,8297,12.3,No,2,1,2,No
+EMP-0733,34,R&D,QA Engineer,6734,3.2,Yes,2,15,3,No
+EMP-0734,37,Sales,Account Executive,12490,2.7,No,3,8,3,No
+EMP-0735,45,Finance,Financial Analyst,7288,13.5,No,2,17,3,No
+EMP-0736,47,Sales,Sales Manager,8155,6.9,No,2,3,4,No
+EMP-0737,47,Finance,Financial Analyst,10050,2.3,No,2,11,2,No
+EMP-0738,32,Sales,Account Executive,10329,6.1,No,2,3,4,Yes
+EMP-0739,28,R&D,Data Scientist,8090,6.2,No,3,3,3,No
+EMP-0740,48,Marketing,Growth Marketer,5469,5.2,Yes,2,3,3,Yes
+EMP-0741,37,Sales,SDR,12723,6.1,No,2,11,3,Yes
+EMP-0742,45,R&D,QA Engineer,8724,0.7,Yes,2,5,2,Yes
+EMP-0743,32,Sales,SDR,5427,7.9,Yes,3,7,2,Yes
+EMP-0744,46,Sales,SDR,11746,7.7,No,2,11,2,No
+EMP-0745,30,Support,Support Specialist,7480,3.4,Yes,2,11,2,No
+EMP-0746,33,Marketing,Content Strategist,11492,18.4,No,3,7,3,No
+EMP-0747,34,Finance,Controller,4781,6.6,No,3,21,3,Yes
+EMP-0748,37,Marketing,Growth Marketer,9939,6.0,No,3,6,4,No
+EMP-0749,41,R&D,QA Engineer,12185,2.1,No,2,11,3,No
+EMP-0750,25,R&D,QA Engineer,8027,8.2,No,2,14,4,No
+EMP-0751,34,Support,Support Lead,7662,6.7,Yes,2,14,3,No
+EMP-0752,40,Marketing,Content Strategist,8463,6.3,No,4,4,2,Yes
+EMP-0753,36,Sales,Account Executive,5584,2.2,Yes,1,6,4,Yes
+EMP-0754,31,Marketing,Growth Marketer,11007,7.1,Yes,1,39,3,No
+EMP-0755,27,Marketing,Content Strategist,4962,1.9,No,4,2,3,No
+EMP-0756,45,Marketing,Content Strategist,10594,3.4,No,2,11,2,No
+EMP-0757,35,R&D,Data Scientist,6508,2.5,No,3,15,3,No
+EMP-0758,33,Sales,Account Executive,9921,10.1,No,2,23,2,No
+EMP-0759,31,Support,Support Specialist,4712,1.7,No,2,9,2,No
+EMP-0760,27,Marketing,Growth Marketer,4166,1.9,No,1,30,3,No
+EMP-0761,36,Finance,Financial Analyst,12113,5.1,Yes,2,5,3,No
+EMP-0762,32,R&D,Data Scientist,11680,7.5,No,1,35,3,No
+EMP-0763,41,Marketing,Content Strategist,9058,14.8,No,4,18,2,No
+EMP-0764,21,Marketing,Growth Marketer,5211,0.9,No,2,9,4,No
+EMP-0765,34,R&D,QA Engineer,6697,6.0,No,1,12,2,Yes
+EMP-0766,36,Sales,Account Executive,7937,3.6,Yes,4,26,2,Yes
+EMP-0767,27,Marketing,Growth Marketer,7573,3.3,No,3,11,3,No
+EMP-0768,24,R&D,Software Engineer,12953,1.7,No,3,3,3,Yes
+EMP-0769,28,R&D,Data Scientist,5701,5.4,No,3,13,3,No
+EMP-0770,21,Sales,Account Executive,10841,5.4,No,1,16,3,Yes
+EMP-0771,36,Sales,Sales Manager,8992,9.5,No,1,5,3,Yes
+EMP-0772,37,R&D,Data Scientist,11154,1.6,No,2,6,2,No
+EMP-0773,37,Sales,SDR,9097,5.0,No,3,2,3,Yes
+EMP-0774,23,Finance,Controller,5028,2.2,No,2,4,4,No
+EMP-0775,40,Support,Support Specialist,3657,5.5,Yes,2,8,3,Yes
+EMP-0776,45,R&D,Software Engineer,11285,1.7,No,1,3,2,No
+EMP-0777,39,R&D,QA Engineer,10544,6.7,No,3,3,3,Yes
+EMP-0778,36,Finance,Financial Analyst,4912,0.8,No,2,16,3,No
+EMP-0779,41,Sales,Sales Manager,7018,5.0,No,3,11,3,Yes
+EMP-0780,30,R&D,Data Scientist,9802,7.5,No,2,6,3,No
+EMP-0781,40,Support,Support Specialist,6519,5.1,No,1,10,3,Yes
+EMP-0782,33,Sales,SDR,8801,2.1,Yes,1,10,3,Yes
+EMP-0783,29,Marketing,Growth Marketer,8482,4.5,No,3,8,3,No
+EMP-0784,23,R&D,QA Engineer,6911,3.6,No,2,14,3,No
+EMP-0785,36,R&D,Data Scientist,8327,4.4,No,1,4,3,No
+EMP-0786,41,R&D,QA Engineer,5651,4.7,No,2,3,3,No
+EMP-0787,23,R&D,Software Engineer,11868,2.0,No,3,2,3,No
+EMP-0788,38,Sales,SDR,7096,0.9,No,4,26,2,No
+EMP-0789,30,Sales,Account Executive,9596,7.7,No,2,1,2,No
+EMP-0790,32,Sales,Sales Manager,7628,2.4,No,2,12,2,Yes
+EMP-0791,40,Sales,Sales Manager,10535,2.3,No,2,13,2,Yes
+EMP-0792,36,Sales,SDR,10649,4.5,Yes,2,7,3,No
+EMP-0793,29,R&D,QA Engineer,6514,3.2,No,2,22,3,Yes
+EMP-0794,27,Finance,Financial Analyst,5021,11.0,No,3,35,4,No
+EMP-0795,25,R&D,Data Scientist,12670,3.3,No,1,4,4,Yes
+EMP-0796,28,Finance,Controller,8546,1.6,No,3,4,3,No
+EMP-0797,36,Sales,SDR,7279,2.9,Yes,1,12,3,No
+EMP-0798,39,R&D,Data Scientist,8813,10.8,No,3,23,3,No
+EMP-0799,26,Finance,Financial Analyst,9380,11.1,No,2,2,3,No
+EMP-0800,30,Support,Support Lead,5566,4.9,No,2,5,3,No
+EMP-0801,44,Sales,Sales Manager,12357,4.0,No,3,3,3,No
+EMP-0802,41,Marketing,Growth Marketer,6076,6.9,No,2,1,3,No
+EMP-0803,21,Support,Support Lead,6328,3.1,No,3,9,4,No
+EMP-0804,32,Support,Support Lead,3977,1.3,No,2,1,4,No
+EMP-0805,50,Sales,SDR,12385,1.3,No,2,2,3,Yes
+EMP-0806,34,Marketing,Content Strategist,8455,4.7,No,1,8,4,No
+EMP-0807,35,Support,Support Specialist,8028,0.2,No,1,2,3,No
+EMP-0808,37,R&D,Software Engineer,5228,0.9,No,2,12,4,No
+EMP-0809,47,Support,Support Lead,3849,4.9,Yes,1,8,4,Yes
+EMP-0810,46,Sales,SDR,11635,2.0,No,2,7,3,No
+EMP-0811,39,R&D,Software Engineer,11126,5.5,No,3,4,4,No
+EMP-0812,48,R&D,QA Engineer,11735,19.4,No,3,2,3,No
+EMP-0813,50,Support,Support Specialist,4572,10.4,Yes,2,8,3,Yes
+EMP-0814,21,Sales,Account Executive,11987,6.0,No,1,3,3,No
+EMP-0815,36,Support,Support Lead,7747,0.3,Yes,1,6,3,Yes
+EMP-0816,34,Finance,Financial Analyst,4847,1.5,Yes,1,7,3,No
+EMP-0817,47,Sales,SDR,9425,6.1,Yes,3,5,3,Yes
+EMP-0818,27,Support,Support Specialist,3764,4.1,Yes,3,10,3,Yes
+EMP-0819,30,Marketing,Content Strategist,5475,6.7,No,3,13,3,No
+EMP-0820,34,Support,Support Specialist,5318,5.1,No,4,10,3,No
+EMP-0821,33,R&D,Software Engineer,6333,3.5,No,3,3,4,Yes
+EMP-0822,32,R&D,QA Engineer,10064,2.4,No,3,5,3,No
+EMP-0823,26,Sales,Sales Manager,9629,12.1,Yes,1,24,4,No
+EMP-0824,46,Marketing,Growth Marketer,9684,0.6,No,3,18,3,No
+EMP-0825,29,Sales,Account Executive,7176,2.5,No,2,6,3,Yes
+EMP-0826,37,R&D,Data Scientist,10876,4.5,No,3,21,3,Yes
+EMP-0827,45,Marketing,Growth Marketer,6811,3.1,No,2,21,4,Yes
+EMP-0828,37,R&D,Data Scientist,8881,10.4,No,2,7,3,No
+EMP-0829,38,Marketing,Content Strategist,10163,7.2,No,3,7,2,Yes
+EMP-0830,46,Sales,SDR,6245,6.4,Yes,2,6,4,No
+EMP-0831,47,R&D,Software Engineer,6369,8.5,Yes,3,5,3,No
+EMP-0832,38,Support,Support Specialist,9622,12.0,Yes,1,5,3,Yes
+EMP-0833,41,R&D,Software Engineer,12687,6.5,No,4,11,3,No
+EMP-0834,50,R&D,QA Engineer,11700,2.1,No,3,14,4,No
+EMP-0835,29,Marketing,Growth Marketer,7766,1.1,No,3,16,4,No
+EMP-0836,37,Support,Support Lead,7009,3.4,No,2,11,2,No
+EMP-0837,52,Sales,SDR,4984,7.6,No,3,8,3,No
+EMP-0838,34,R&D,Software Engineer,9769,3.5,No,3,14,3,No
+EMP-0839,39,Sales,SDR,6807,9.4,No,2,18,3,Yes
+EMP-0840,22,Sales,SDR,7735,14.0,No,2,3,3,No
+EMP-0841,25,R&D,Data Scientist,9673,6.9,No,2,32,2,Yes
+EMP-0842,32,R&D,Software Engineer,6841,13.1,Yes,2,8,3,No
+EMP-0843,33,Finance,Financial Analyst,6426,2.9,No,2,6,3,Yes
+EMP-0844,37,R&D,Software Engineer,7966,3.8,No,3,2,3,No
+EMP-0845,28,Finance,Controller,5676,1.3,No,2,23,4,No
+EMP-0846,35,Sales,Account Executive,10167,5.8,Yes,2,1,3,Yes
+EMP-0847,38,R&D,Data Scientist,11417,8.6,No,3,1,3,No
+EMP-0848,44,Sales,SDR,12689,15.5,No,2,4,3,No
+EMP-0849,38,Finance,Financial Analyst,7264,5.4,No,1,5,2,No
+EMP-0850,48,Sales,Account Executive,9209,6.1,No,4,10,3,Yes
+EMP-0851,39,Support,Support Specialist,7143,3.1,Yes,2,17,3,Yes
+EMP-0852,41,Finance,Controller,4355,2.4,No,2,5,4,Yes
+EMP-0853,29,Support,Support Specialist,8849,5.0,Yes,2,7,3,No
+EMP-0854,41,Support,Support Lead,9078,14.3,No,2,10,3,No
+EMP-0855,21,Finance,Financial Analyst,7720,8.8,No,3,2,3,No
+EMP-0856,21,Finance,Controller,5158,1.2,Yes,2,9,2,No
+EMP-0857,27,R&D,Software Engineer,7782,6.6,No,3,4,3,No
+EMP-0858,39,Sales,Sales Manager,9499,7.8,No,2,19,2,No
+EMP-0859,24,Sales,SDR,8376,5.6,No,1,12,2,No
+EMP-0860,38,Sales,SDR,11861,1.2,No,2,7,3,Yes
+EMP-0861,26,R&D,QA Engineer,6603,7.4,No,3,8,3,Yes
+EMP-0862,30,Sales,SDR,9191,1.2,Yes,1,8,3,No
+EMP-0863,45,Support,Support Specialist,5258,2.4,No,3,18,4,No
+EMP-0864,50,Marketing,Growth Marketer,4113,2.1,No,2,12,4,No
+EMP-0865,30,Support,Support Specialist,7976,4.1,No,3,6,3,No
+EMP-0866,38,Support,Support Lead,8508,8.2,No,2,4,4,No
+EMP-0867,53,R&D,Software Engineer,12526,6.0,No,3,10,4,No
+EMP-0868,41,R&D,QA Engineer,13613,6.8,No,2,1,3,No
+EMP-0869,37,Sales,SDR,7215,1.3,No,2,12,3,No
+EMP-0870,31,Sales,Account Executive,8310,6.2,Yes,1,6,3,Yes
+EMP-0871,39,R&D,Software Engineer,9186,3.6,No,2,6,3,No
+EMP-0872,35,R&D,Data Scientist,8913,6.8,No,3,11,3,No
+EMP-0873,36,Support,Support Specialist,3455,6.0,No,4,14,2,No
+EMP-0874,32,Support,Support Lead,6591,7.0,Yes,1,12,2,Yes
+EMP-0875,24,R&D,Data Scientist,9487,4.2,No,3,6,3,No
+EMP-0876,37,Support,Support Lead,8131,9.1,No,2,10,3,No
+EMP-0877,39,Marketing,Growth Marketer,8152,3.7,No,4,20,4,No
+EMP-0878,60,Support,Support Lead,3470,0.2,Yes,3,5,3,Yes
+EMP-0879,33,Sales,Account Executive,11255,5.9,No,4,12,2,No
+EMP-0880,21,Sales,SDR,5598,6.4,Yes,2,14,2,Yes
+EMP-0881,52,R&D,QA Engineer,10792,7.6,No,2,1,2,Yes
+EMP-0882,39,R&D,Data Scientist,5210,3.4,No,2,15,4,No
+EMP-0883,29,Support,Support Specialist,7351,13.6,Yes,1,30,3,No
+EMP-0884,31,R&D,QA Engineer,6156,1.4,No,3,11,2,No
+EMP-0885,39,Sales,Account Executive,10382,7.0,No,2,7,3,No
+EMP-0886,41,Marketing,Growth Marketer,4750,7.0,Yes,1,13,3,Yes
+EMP-0887,23,R&D,Software Engineer,12969,3.7,No,2,4,4,Yes
+EMP-0888,42,Sales,Account Executive,9215,6.3,No,2,1,4,No
+EMP-0889,34,R&D,QA Engineer,14678,7.9,No,4,14,3,No
+EMP-0890,43,Sales,Account Executive,5750,7.5,Yes,3,5,4,No
+EMP-0891,34,R&D,Data Scientist,6990,2.1,No,4,13,2,No
+EMP-0892,45,Sales,SDR,5003,2.7,Yes,1,2,2,Yes
+EMP-0893,22,R&D,Software Engineer,5225,4.3,No,2,22,4,No
+EMP-0894,36,Support,Support Specialist,3699,3.7,No,1,6,3,Yes
+EMP-0895,49,Sales,Sales Manager,10681,2.6,No,2,9,3,No
+EMP-0896,30,Sales,SDR,11309,4.4,No,3,9,3,Yes
+EMP-0897,27,Sales,Account Executive,7859,3.6,Yes,2,26,3,Yes
+EMP-0898,23,R&D,QA Engineer,13533,8.5,No,2,1,4,No
+EMP-0899,28,R&D,Software Engineer,9583,4.4,Yes,1,18,3,No
+EMP-0900,22,R&D,Data Scientist,11511,9.2,No,2,23,3,No
+EMP-0901,29,Sales,Sales Manager,8017,5.7,No,2,11,3,Yes
+EMP-0902,38,Support,Support Specialist,5951,7.7,No,2,13,3,No
+EMP-0903,52,Sales,Sales Manager,12255,4.9,No,3,7,3,No
+EMP-0904,27,R&D,Data Scientist,8561,1.1,Yes,2,2,2,No
+EMP-0905,44,Finance,Financial Analyst,8853,2.9,No,3,11,3,No
+EMP-0906,49,Marketing,Growth Marketer,5948,5.1,No,3,10,3,No
+EMP-0907,31,Sales,Account Executive,11334,1.3,No,4,1,3,Yes
+EMP-0908,29,Sales,SDR,7005,5.7,No,3,6,4,No
+EMP-0909,30,Sales,Sales Manager,11818,4.9,No,2,6,2,Yes
+EMP-0910,21,R&D,Data Scientist,7341,7.3,No,2,3,3,No
+EMP-0911,45,R&D,Data Scientist,5745,0.6,No,1,7,3,No
+EMP-0912,49,R&D,Data Scientist,10880,3.5,No,2,6,3,No
+EMP-0913,47,Support,Support Specialist,8702,5.3,No,3,13,3,No
+EMP-0914,27,Marketing,Content Strategist,8858,5.8,Yes,2,10,3,Yes
+EMP-0915,47,Marketing,Growth Marketer,10361,0.4,No,2,21,4,No
+EMP-0916,42,Sales,SDR,5961,2.8,Yes,3,6,4,No
+EMP-0917,47,R&D,QA Engineer,7607,2.2,No,3,10,3,Yes
+EMP-0918,21,Sales,Account Executive,10629,12.8,Yes,3,27,3,No
+EMP-0919,36,Sales,Sales Manager,7974,8.2,No,3,11,3,No
+EMP-0920,44,Marketing,Content Strategist,5644,15.2,No,3,2,3,No
+EMP-0921,21,Marketing,Growth Marketer,8494,2.9,No,3,1,4,No
+EMP-0922,44,Support,Support Lead,6860,8.9,No,2,11,2,Yes
+EMP-0923,21,Sales,Account Executive,7247,3.5,Yes,2,12,3,No
+EMP-0924,48,Sales,Account Executive,6689,2.1,No,3,19,3,No
+EMP-0925,35,Support,Support Specialist,5006,11.6,No,1,4,3,Yes
+EMP-0926,36,Support,Support Specialist,7735,0.9,No,2,10,3,Yes
+EMP-0927,34,R&D,Data Scientist,10122,4.9,No,4,8,3,No
+EMP-0928,42,Support,Support Specialist,5381,7.2,No,2,6,3,Yes
+EMP-0929,32,Marketing,Growth Marketer,6091,5.3,No,1,6,4,No
+EMP-0930,32,R&D,Software Engineer,14998,8.8,No,2,14,4,Yes
+EMP-0931,40,Sales,Sales Manager,9574,7.5,No,3,3,3,No
+EMP-0932,41,R&D,Data Scientist,6846,11.8,Yes,2,3,3,Yes
+EMP-0933,21,Sales,Sales Manager,12061,2.6,No,2,12,3,No
+EMP-0934,38,R&D,Software Engineer,8389,1.8,No,4,7,3,Yes
+EMP-0935,35,R&D,Software Engineer,5306,0.5,No,1,3,2,No
+EMP-0936,30,Marketing,Growth Marketer,9494,6.4,No,3,7,3,No
+EMP-0937,33,R&D,QA Engineer,13266,1.8,No,2,3,4,No
+EMP-0938,46,R&D,QA Engineer,9823,5.9,Yes,2,12,4,Yes
+EMP-0939,42,Sales,Sales Manager,11410,5.7,Yes,2,8,3,No
+EMP-0940,36,R&D,Data Scientist,13733,2.9,No,3,6,3,No
+EMP-0941,51,Sales,Sales Manager,11213,6.1,No,2,18,2,No
+EMP-0942,43,R&D,QA Engineer,9895,3.4,No,3,14,2,Yes
+EMP-0943,21,Sales,Sales Manager,6422,9.3,No,2,13,3,No
+EMP-0944,21,Sales,Sales Manager,8798,5.1,Yes,1,19,3,No
+EMP-0945,35,R&D,Data Scientist,9666,4.4,No,1,8,3,No
+EMP-0946,38,Marketing,Content Strategist,4417,4.4,No,2,6,3,No
+EMP-0947,31,Sales,SDR,9747,11.1,No,1,7,4,No
+EMP-0948,28,Sales,SDR,6206,8.4,No,3,14,3,Yes
+EMP-0949,37,Sales,SDR,10146,17.2,No,2,1,3,No
+EMP-0950,30,R&D,Software Engineer,14411,6.0,Yes,2,13,3,No
+EMP-0951,32,R&D,QA Engineer,11940,2.9,No,3,17,3,No
+EMP-0952,26,Finance,Controller,6990,15.8,Yes,3,8,4,Yes
+EMP-0953,33,Marketing,Growth Marketer,7004,2.1,Yes,2,6,3,Yes
+EMP-0954,43,Sales,SDR,8492,3.8,Yes,1,16,3,No
+EMP-0955,31,Sales,Account Executive,8384,3.0,No,3,39,3,Yes
+EMP-0956,28,Finance,Financial Analyst,8203,9.5,No,1,7,3,No
+EMP-0957,29,Sales,Sales Manager,11797,9.7,No,3,19,3,No
+EMP-0958,26,Support,Support Lead,6981,5.9,No,4,9,3,No
+EMP-0959,28,Sales,SDR,11587,0.5,Yes,1,5,3,Yes
+EMP-0960,48,R&D,QA Engineer,7447,9.4,No,2,3,2,No
+EMP-0961,21,Marketing,Growth Marketer,10576,1.4,No,3,7,3,No
+EMP-0962,36,Sales,Sales Manager,11870,4.1,Yes,2,15,3,Yes
+EMP-0963,33,Support,Support Specialist,5536,5.1,No,2,13,3,No
+EMP-0964,21,R&D,QA Engineer,11824,3.5,No,2,13,3,No
+EMP-0965,43,R&D,QA Engineer,12326,4.4,No,3,7,3,No
+EMP-0966,23,Support,Support Specialist,7996,4.5,No,3,8,3,Yes
+EMP-0967,33,R&D,Software Engineer,5969,5.8,No,2,7,3,No
+EMP-0968,27,Sales,SDR,12040,3.6,No,2,3,3,No
+EMP-0969,46,Marketing,Content Strategist,8139,3.6,No,3,19,4,No
+EMP-0970,29,Sales,SDR,12477,4.6,No,3,2,3,No
+EMP-0971,33,Support,Support Lead,3916,2.3,No,2,6,3,No
+EMP-0972,45,Finance,Controller,9052,5.4,No,2,27,3,No
+EMP-0973,38,Finance,Financial Analyst,7112,2.6,No,3,15,3,No
+EMP-0974,32,Support,Support Specialist,3519,2.8,Yes,2,11,4,No
+EMP-0975,27,Sales,Account Executive,6645,7.6,No,2,13,3,No
+EMP-0976,31,Support,Support Specialist,6347,6.8,No,3,6,3,No
+EMP-0977,50,Support,Support Specialist,6595,10.7,Yes,3,8,3,No
+EMP-0978,31,Sales,Account Executive,7294,2.5,Yes,2,12,3,Yes
+EMP-0979,21,R&D,QA Engineer,6197,6.4,No,1,19,2,No
+EMP-0980,37,R&D,QA Engineer,6486,8.3,No,1,12,4,No
+EMP-0981,48,Marketing,Content Strategist,9927,5.3,Yes,1,32,3,Yes
+EMP-0982,32,Support,Support Lead,3422,3.9,Yes,1,5,3,Yes
+EMP-0983,31,Marketing,Content Strategist,4065,0.9,Yes,1,19,3,No
+EMP-0984,24,Sales,Sales Manager,6847,2.5,Yes,1,1,3,No
+EMP-0985,37,Marketing,Content Strategist,4044,2.2,No,3,3,4,No
+EMP-0986,39,Sales,SDR,4801,4.6,Yes,1,30,3,No
+EMP-0987,41,Support,Support Specialist,4102,3.6,No,3,13,3,No
+EMP-0988,32,Support,Support Lead,4458,6.9,No,3,7,2,Yes
+EMP-0989,33,Sales,Account Executive,9682,11.5,No,2,10,3,Yes
+EMP-0990,39,Sales,SDR,11065,4.8,Yes,2,3,4,Yes
+EMP-0991,35,R&D,Data Scientist,11839,6.9,No,2,27,4,Yes
+EMP-0992,27,Support,Support Specialist,7481,6.9,No,3,14,4,No
+EMP-0993,31,Finance,Controller,9660,2.5,No,2,22,1,Yes
+EMP-0994,46,Sales,Sales Manager,10239,1.5,Yes,2,8,3,No
+EMP-0995,41,Sales,SDR,6074,1.8,No,3,7,3,No
+EMP-0996,38,R&D,Data Scientist,5408,4.8,No,2,11,4,No
+EMP-0997,32,Sales,Sales Manager,9104,1.5,Yes,1,9,4,Yes
+EMP-0998,54,R&D,QA Engineer,13039,5.5,No,3,9,3,No
+EMP-0999,32,Marketing,Content Strategist,6934,3.7,Yes,3,24,3,No
+EMP-1000,34,Marketing,Growth Marketer,10159,7.1,No,3,8,2,No
+EMP-1001,34,Marketing,Growth Marketer,9807,13.1,No,2,8,3,Yes
+EMP-1002,39,R&D,Data Scientist,11226,1.4,Yes,1,7,2,Yes
+EMP-1003,35,R&D,QA Engineer,14326,10.8,Yes,2,2,3,Yes
+EMP-1004,38,Sales,Account Executive,5813,2.6,Yes,2,7,3,No
+EMP-1005,36,Sales,SDR,12780,5.8,No,1,14,3,Yes
+EMP-1006,40,Marketing,Content Strategist,9978,5.9,Yes,4,21,4,Yes
+EMP-1007,23,Marketing,Growth Marketer,7189,2.4,No,4,21,3,Yes
+EMP-1008,27,Marketing,Content Strategist,10482,0.6,No,1,5,3,No
+EMP-1009,43,Sales,Account Executive,10058,5.4,Yes,3,22,3,Yes
+EMP-1010,40,Support,Support Specialist,4591,3.7,Yes,3,2,4,No
+EMP-1011,37,Support,Support Lead,7962,12.4,Yes,2,13,3,No
+EMP-1012,41,Marketing,Content Strategist,7143,11.9,No,4,3,3,Yes
+EMP-1013,33,R&D,Software Engineer,7477,3.7,No,2,3,4,No
+EMP-1014,34,Marketing,Content Strategist,8366,3.1,No,3,17,4,Yes
+EMP-1015,44,R&D,Data Scientist,12110,0.2,No,2,21,2,No
+EMP-1016,38,Support,Support Specialist,5387,8.6,No,1,4,3,No
+EMP-1017,34,R&D,QA Engineer,13365,8.4,No,1,26,3,No
+EMP-1018,47,Sales,SDR,11301,10.0,Yes,2,2,3,No
+EMP-1019,46,Support,Support Specialist,5176,0.4,Yes,1,14,3,No
+EMP-1020,25,Support,Support Lead,5773,3.5,Yes,2,4,2,No
+EMP-1021,41,Sales,Sales Manager,12812,6.8,Yes,1,26,4,Yes
+EMP-1022,24,Sales,Account Executive,12075,5.4,Yes,1,14,3,Yes
+EMP-1023,46,Marketing,Content Strategist,4260,3.7,Yes,2,13,3,Yes
+EMP-1024,21,R&D,Data Scientist,8306,4.9,No,3,5,3,Yes
+EMP-1025,34,R&D,QA Engineer,6850,1.2,Yes,2,4,4,No
+EMP-1026,36,Sales,SDR,10415,5.7,No,2,8,3,No
+EMP-1027,37,R&D,Data Scientist,6685,5.8,No,2,4,3,No
+EMP-1028,33,R&D,QA Engineer,9828,3.0,No,3,11,2,No
+EMP-1029,40,R&D,Software Engineer,11358,8.5,Yes,2,5,3,Yes
+EMP-1030,37,R&D,QA Engineer,7274,0.2,No,2,2,2,No
+EMP-1031,23,Finance,Controller,9268,4.2,No,2,17,2,No
+EMP-1032,21,R&D,Software Engineer,14682,6.9,No,2,12,4,No
+EMP-1033,47,R&D,QA Engineer,10159,8.1,No,2,3,3,No
+EMP-1034,44,R&D,Software Engineer,13761,4.6,No,2,1,3,Yes
+EMP-1035,33,Support,Support Lead,8076,3.9,Yes,2,7,3,Yes
+EMP-1036,31,Sales,SDR,9276,2.8,No,4,1,4,No
+EMP-1037,33,Marketing,Growth Marketer,4814,1.9,No,3,8,3,No
+EMP-1038,26,Sales,SDR,10087,1.9,No,3,14,3,No
+EMP-1039,43,Sales,SDR,11167,0.7,No,2,3,3,Yes
+EMP-1040,33,Finance,Financial Analyst,7780,0.8,No,2,11,2,No
+EMP-1041,52,R&D,QA Engineer,7287,12.6,No,2,5,4,No
+EMP-1042,49,Sales,SDR,6661,2.7,No,2,17,3,No
+EMP-1043,27,R&D,Data Scientist,5954,5.4,No,3,4,3,No
+EMP-1044,35,R&D,Data Scientist,13312,1.4,Yes,3,8,3,No
+EMP-1045,32,Sales,SDR,15032,19.8,No,2,4,3,Yes
+EMP-1046,39,R&D,Data Scientist,10736,4.9,No,4,15,3,No
+EMP-1047,44,Sales,SDR,10844,4.5,No,2,10,3,Yes
+EMP-1048,44,Finance,Controller,12890,10.1,No,2,4,3,No
+EMP-1049,33,Marketing,Growth Marketer,8964,1.5,No,4,5,3,Yes
+EMP-1050,51,Support,Support Specialist,5524,1.4,No,3,8,3,No
+EMP-1051,46,Finance,Financial Analyst,9564,0.5,No,2,9,4,No
+EMP-1052,34,Finance,Controller,5283,2.5,Yes,2,15,3,Yes
+EMP-1053,47,Support,Support Lead,5454,3.2,No,4,20,3,No
+EMP-1054,43,Sales,SDR,9191,7.7,Yes,3,3,3,No
+EMP-1055,34,Marketing,Growth Marketer,5069,4.0,Yes,2,10,2,No
+EMP-1056,28,R&D,QA Engineer,11426,7.7,No,2,15,3,No
+EMP-1057,43,Sales,Account Executive,12775,6.0,Yes,2,11,3,No
+EMP-1058,25,R&D,Software Engineer,12289,2.6,No,3,6,3,No
+EMP-1059,41,Support,Support Specialist,5810,5.6,No,4,10,3,No
+EMP-1060,27,Finance,Financial Analyst,6962,4.3,No,2,1,3,Yes
+EMP-1061,35,Marketing,Content Strategist,6607,1.8,No,3,3,3,No
+EMP-1062,30,Finance,Financial Analyst,8772,4.5,No,2,8,3,No
+EMP-1063,35,R&D,Software Engineer,10925,5.5,No,3,15,3,No
+EMP-1064,38,Sales,SDR,11307,4.5,No,3,10,4,No
+EMP-1065,33,R&D,Software Engineer,7945,0.3,No,3,28,3,No
+EMP-1066,38,Finance,Financial Analyst,10603,9.0,No,1,5,3,No
+EMP-1067,43,Finance,Financial Analyst,9930,5.4,No,2,6,3,No
+EMP-1068,39,Support,Support Lead,6433,2.6,No,3,14,4,No
+EMP-1069,47,R&D,QA Engineer,12032,9.4,No,1,18,2,Yes
+EMP-1070,32,R&D,Software Engineer,9427,9.8,No,3,22,3,Yes
+EMP-1071,34,R&D,Software Engineer,13218,5.0,No,3,11,3,No
+EMP-1072,35,R&D,Data Scientist,11125,7.7,No,2,31,3,No
+EMP-1073,29,Support,Support Specialist,8638,8.0,No,2,25,3,No
+EMP-1074,42,Support,Support Specialist,9274,12.0,No,2,9,3,Yes
+EMP-1075,33,R&D,QA Engineer,10352,2.7,No,3,12,3,No
+EMP-1076,35,Marketing,Growth Marketer,6956,9.9,No,3,10,3,No
+EMP-1077,36,R&D,Data Scientist,9407,8.3,Yes,2,19,4,No
+EMP-1078,43,Finance,Financial Analyst,9228,4.1,No,1,16,3,No
+EMP-1079,40,Sales,Sales Manager,7446,1.9,Yes,2,11,3,No
+EMP-1080,24,Sales,Account Executive,12972,9.8,No,4,8,2,No
+EMP-1081,44,Marketing,Content Strategist,7514,4.0,No,3,34,3,No
+EMP-1082,38,Sales,SDR,8653,4.5,No,2,14,3,No
+EMP-1083,33,R&D,Software Engineer,12559,9.2,No,3,11,2,No
+EMP-1084,31,R&D,QA Engineer,6960,1.8,Yes,1,7,3,No
+EMP-1085,33,Sales,Account Executive,11454,11.1,No,1,2,3,No
+EMP-1086,42,Sales,SDR,12109,8.6,No,2,8,3,Yes
+EMP-1087,30,R&D,QA Engineer,7229,1.3,Yes,3,15,3,No
+EMP-1088,30,Support,Support Lead,3820,1.5,No,3,7,3,No
+EMP-1089,30,Support,Support Specialist,7622,4.6,No,1,16,4,Yes
+EMP-1090,41,Finance,Financial Analyst,7365,6.2,No,3,18,4,No
+EMP-1091,47,Marketing,Content Strategist,6434,5.4,No,2,9,3,No
+EMP-1092,42,Sales,Account Executive,7912,2.6,No,1,23,4,No
+EMP-1093,46,Finance,Financial Analyst,6611,4.0,No,2,4,3,Yes
+EMP-1094,38,Sales,Account Executive,12135,1.1,No,1,6,2,No
+EMP-1095,41,Marketing,Content Strategist,10087,5.1,No,3,5,2,Yes
+EMP-1096,42,R&D,Software Engineer,5410,4.5,Yes,2,6,3,No
+EMP-1097,33,Sales,SDR,15380,23.3,Yes,2,14,3,Yes
+EMP-1098,28,R&D,Software Engineer,7484,1.9,No,2,22,3,No
+EMP-1099,40,Marketing,Content Strategist,8148,8.4,No,3,7,4,No
+EMP-1100,32,R&D,Data Scientist,11063,8.3,No,3,9,3,No
+EMP-1101,21,Sales,Account Executive,5829,1.0,No,3,15,3,Yes
+EMP-1102,30,Sales,Account Executive,6160,4.0,No,4,13,3,No
+EMP-1103,38,Sales,Account Executive,5197,2.4,No,2,2,4,Yes
+EMP-1104,25,Support,Support Specialist,8643,8.2,No,2,1,2,No
+EMP-1105,47,Support,Support Specialist,8571,2.7,Yes,2,3,4,No
+EMP-1106,41,Marketing,Growth Marketer,6251,8.0,No,2,3,3,No
+EMP-1107,35,Sales,Sales Manager,9324,2.7,Yes,3,1,3,No
+EMP-1108,37,Support,Support Lead,5649,10.9,No,2,19,3,Yes
+EMP-1109,37,R&D,Software Engineer,11170,6.3,No,4,4,3,No
+EMP-1110,40,Support,Support Lead,8570,3.2,No,2,10,4,No
+EMP-1111,37,Sales,SDR,12522,6.0,Yes,1,1,3,No
+EMP-1112,21,R&D,Software Engineer,12905,4.8,No,2,4,2,No
+EMP-1113,41,R&D,Software Engineer,11914,5.8,No,2,21,4,No
+EMP-1114,48,Sales,SDR,5524,5.9,No,4,6,3,Yes
+EMP-1115,36,Support,Support Lead,3528,2.7,Yes,2,18,3,No
+EMP-1116,40,Marketing,Growth Marketer,11203,16.9,Yes,1,4,3,No
+EMP-1117,30,Support,Support Lead,7481,6.3,No,3,1,2,No
+EMP-1118,40,Sales,Sales Manager,9963,4.9,Yes,1,10,4,No
+EMP-1119,35,Marketing,Growth Marketer,5845,1.2,No,3,7,3,No
+EMP-1120,41,Support,Support Lead,7736,2.2,No,4,10,3,No
+EMP-1121,37,Support,Support Lead,7881,3.1,No,2,3,3,No
+EMP-1122,45,Marketing,Content Strategist,7253,7.2,No,2,3,3,No
+EMP-1123,50,Sales,SDR,9874,7.0,No,2,15,4,No
+EMP-1124,33,R&D,Software Engineer,6253,9.6,No,3,14,3,No
+EMP-1125,31,Sales,Sales Manager,11748,11.6,No,1,2,2,No
+EMP-1126,33,R&D,QA Engineer,12556,2.9,No,2,8,3,No
+EMP-1127,40,Support,Support Lead,6369,5.2,No,2,15,3,Yes
+EMP-1128,30,Finance,Financial Analyst,5445,6.4,Yes,1,18,4,No
+EMP-1129,23,Finance,Financial Analyst,5283,3.3,Yes,1,8,3,No
+EMP-1130,40,Sales,SDR,8047,4.8,No,2,11,1,Yes
+EMP-1131,37,R&D,Data Scientist,6309,4.4,No,3,7,3,Yes
+EMP-1132,40,R&D,Data Scientist,14463,14.0,No,2,14,3,No
+EMP-1133,50,Support,Support Specialist,6349,7.9,Yes,2,1,4,No
+EMP-1134,31,Support,Support Lead,7576,5.5,No,3,5,3,No
+EMP-1135,32,Marketing,Growth Marketer,10702,4.6,No,2,6,3,No
+EMP-1136,32,Sales,Account Executive,4917,4.9,Yes,2,1,3,No
+EMP-1137,36,Support,Support Specialist,5155,4.3,No,3,8,3,No
+EMP-1138,47,Finance,Financial Analyst,5105,5.9,No,3,8,3,No
+EMP-1139,31,R&D,Software Engineer,9634,3.2,No,3,14,3,Yes
+EMP-1140,43,R&D,Data Scientist,6128,4.7,No,3,7,3,No
+EMP-1141,41,Sales,Sales Manager,12924,4.2,No,3,6,4,No
+EMP-1142,30,R&D,Data Scientist,10702,8.0,Yes,2,17,3,Yes
+EMP-1143,34,R&D,Software Engineer,12133,3.1,Yes,2,20,3,No
+EMP-1144,40,Sales,Account Executive,6835,10.4,No,2,14,3,No
+EMP-1145,35,Support,Support Lead,5676,4.1,No,2,16,3,Yes
+EMP-1146,29,Marketing,Growth Marketer,4301,3.6,No,2,9,3,No
+EMP-1147,27,Support,Support Specialist,5483,4.5,Yes,1,7,3,Yes
+EMP-1148,50,Support,Support Lead,6569,1.6,No,4,9,3,No
+EMP-1149,35,Sales,Sales Manager,9802,5.4,No,4,12,3,No
+EMP-1150,36,Support,Support Lead,3507,0.8,No,3,16,3,No
+EMP-1151,44,R&D,Data Scientist,5491,5.6,Yes,2,3,3,Yes
+EMP-1152,30,Sales,Account Executive,10561,2.1,No,2,2,3,No
+EMP-1153,21,Support,Support Lead,5237,8.3,No,2,14,3,Yes
+EMP-1154,41,R&D,QA Engineer,8210,0.6,No,2,12,3,Yes
+EMP-1155,28,Support,Support Specialist,4298,5.8,Yes,1,4,4,Yes
+EMP-1156,32,Finance,Financial Analyst,9346,2.1,No,3,9,3,No
+EMP-1157,35,R&D,QA Engineer,6245,1.4,No,3,12,3,No
+EMP-1158,45,Finance,Financial Analyst,6373,5.6,Yes,1,8,2,Yes
+EMP-1159,27,Sales,Sales Manager,11478,7.6,Yes,2,16,3,Yes
+EMP-1160,26,R&D,QA Engineer,8368,2.6,No,1,1,3,No
+EMP-1161,35,Marketing,Content Strategist,9643,2.0,Yes,1,23,3,Yes
+EMP-1162,44,R&D,Software Engineer,9417,9.2,No,2,16,3,No
+EMP-1163,28,R&D,Software Engineer,10657,7.0,No,2,7,4,No
+EMP-1164,45,Sales,Sales Manager,9711,5.3,No,2,6,3,No
+EMP-1165,26,R&D,Software Engineer,14484,7.1,No,4,20,2,No
+EMP-1166,57,R&D,QA Engineer,9123,3.1,No,2,5,3,No
+EMP-1167,38,Support,Support Lead,9150,10.8,Yes,1,13,3,No
+EMP-1168,27,R&D,Data Scientist,11907,4.4,No,1,13,3,No
+EMP-1169,34,Marketing,Growth Marketer,5442,6.7,No,4,3,3,Yes
+EMP-1170,44,Sales,SDR,7581,1.2,No,2,6,3,Yes
+EMP-1171,21,R&D,Data Scientist,12217,5.7,No,4,9,3,No
+EMP-1172,27,Sales,Account Executive,11999,0.8,No,2,5,2,Yes
+EMP-1173,41,R&D,Data Scientist,9802,9.6,No,2,10,3,No
+EMP-1174,43,Support,Support Specialist,7458,5.0,No,2,2,3,Yes
+EMP-1175,37,Support,Support Lead,9138,11.5,No,1,8,3,No
+EMP-1176,33,Sales,SDR,8999,0.8,Yes,2,17,3,Yes
+EMP-1177,41,Sales,SDR,6749,2.9,No,3,21,4,No
+EMP-1178,38,Sales,SDR,9728,3.1,No,2,4,3,No
+EMP-1179,27,R&D,Software Engineer,12660,11.5,No,3,5,3,No
+EMP-1180,35,R&D,Software Engineer,11305,2.2,No,2,13,2,No
+EMP-1181,49,Marketing,Content Strategist,4030,3.2,Yes,3,3,3,No
+EMP-1182,26,Support,Support Specialist,3392,3.0,No,2,9,4,No
+EMP-1183,37,Support,Support Specialist,6644,6.0,No,3,10,3,No
+EMP-1184,44,Sales,Sales Manager,5897,4.4,No,4,5,2,Yes
+EMP-1185,35,Marketing,Content Strategist,6878,2.5,No,3,14,1,No
+EMP-1186,36,Sales,Account Executive,12196,4.2,No,3,6,3,No
+EMP-1187,34,Sales,SDR,10414,7.1,No,3,5,4,No
+EMP-1188,31,Sales,SDR,7898,6.0,No,4,18,3,No
+EMP-1189,44,Sales,Sales Manager,8467,2.1,Yes,1,8,2,No
+EMP-1190,35,Sales,Sales Manager,11666,1.4,No,2,1,3,Yes
+EMP-1191,44,R&D,Data Scientist,7416,5.6,No,3,5,3,No
+EMP-1192,22,Sales,Sales Manager,6868,4.3,No,1,6,3,No
+EMP-1193,50,Sales,Account Executive,12529,5.6,No,2,10,3,No
+EMP-1194,38,R&D,Software Engineer,5454,3.1,No,3,7,3,No
+EMP-1195,39,Sales,Sales Manager,4902,4.1,Yes,1,18,2,Yes
+EMP-1196,37,R&D,QA Engineer,8392,4.5,No,3,9,4,No
+EMP-1197,44,Support,Support Specialist,4313,14.0,No,2,17,3,No
+EMP-1198,40,Sales,Sales Manager,7123,19.8,No,2,8,3,No
+EMP-1199,34,Sales,Sales Manager,7285,10.1,Yes,2,19,4,Yes
+EMP-1200,26,Marketing,Content Strategist,5938,3.7,No,3,15,3,No
+EMP-1201,34,R&D,QA Engineer,11440,5.9,No,2,11,2,No
+EMP-1202,28,Support,Support Specialist,3633,4.7,No,3,6,3,No
+EMP-1203,36,Sales,SDR,8679,3.7,No,3,12,4,Yes
+EMP-1204,26,Sales,Account Executive,6562,5.9,Yes,2,9,4,No
+EMP-1205,44,Finance,Controller,9075,3.5,Yes,2,2,3,Yes
+EMP-1206,37,Support,Support Lead,4501,4.0,No,3,3,2,No
+EMP-1207,41,Sales,SDR,9512,1.2,No,2,2,4,No
+EMP-1208,32,Marketing,Content Strategist,10609,4.6,No,2,38,3,No
+EMP-1209,42,R&D,QA Engineer,6653,5.9,Yes,2,13,2,Yes
+EMP-1210,43,Sales,Account Executive,11603,5.7,Yes,3,7,3,No
+EMP-1211,28,Marketing,Growth Marketer,4439,7.9,Yes,1,19,4,Yes
+EMP-1212,34,R&D,Data Scientist,10270,9.2,Yes,4,5,3,No
+EMP-1213,26,Marketing,Growth Marketer,6548,15.7,No,3,6,3,No
+EMP-1214,37,Support,Support Lead,3433,1.9,No,1,7,3,No
+EMP-1215,21,Support,Support Lead,8609,7.8,No,3,4,3,No
+EMP-1216,26,Finance,Financial Analyst,7018,16.7,No,2,24,4,No
+EMP-1217,43,Sales,Sales Manager,11381,0.8,No,2,11,3,No
+EMP-1218,28,Sales,SDR,12891,8.8,No,3,3,4,No
+EMP-1219,31,R&D,Data Scientist,7327,0.5,No,2,7,4,No
+EMP-1220,32,Sales,Account Executive,12811,5.2,Yes,1,13,3,Yes
+EMP-1221,27,Marketing,Content Strategist,9331,0.7,No,3,3,2,No
+EMP-1222,43,Finance,Financial Analyst,11501,7.9,Yes,2,1,4,No
+EMP-1223,29,R&D,Software Engineer,13596,3.7,No,4,1,3,No
+EMP-1224,32,Marketing,Content Strategist,5036,6.5,No,3,5,4,No
+EMP-1225,37,Support,Support Lead,4311,2.2,Yes,1,7,4,No
+EMP-1226,39,Marketing,Content Strategist,8418,4.1,No,3,8,3,No
+EMP-1227,40,Finance,Controller,10712,3.1,No,3,10,3,No
+EMP-1228,28,R&D,Software Engineer,12375,13.4,Yes,2,10,3,No
+EMP-1229,51,Sales,SDR,8737,5.6,No,4,10,4,No
+EMP-1230,40,Support,Support Lead,4871,13.7,Yes,2,9,3,Yes
+EMP-1231,45,Support,Support Lead,4207,0.8,Yes,3,8,3,Yes
+EMP-1232,34,R&D,Data Scientist,9418,4.4,No,2,2,3,No
+EMP-1233,23,Marketing,Growth Marketer,6885,4.6,No,2,15,3,No
+EMP-1234,27,Sales,SDR,4925,2.9,No,3,14,2,No
+EMP-1235,26,Support,Support Specialist,7875,2.9,Yes,2,13,4,Yes
+EMP-1236,37,Finance,Financial Analyst,4313,2.2,No,2,16,3,Yes
+EMP-1237,33,Marketing,Growth Marketer,6168,0.4,No,3,1,3,No
+EMP-1238,32,R&D,Software Engineer,5990,1.5,No,3,4,3,No
+EMP-1239,37,Marketing,Content Strategist,4691,9.6,No,2,3,3,No
+EMP-1240,37,R&D,QA Engineer,8136,3.3,No,3,9,4,No
+EMP-1241,50,R&D,Data Scientist,8332,1.0,No,2,5,3,No
+EMP-1242,50,Support,Support Lead,6944,4.4,No,2,2,3,No
+EMP-1243,46,R&D,QA Engineer,7853,6.8,No,2,3,3,No
+EMP-1244,38,R&D,Software Engineer,5226,0.6,Yes,2,4,3,Yes
+EMP-1245,30,Sales,Sales Manager,12263,2.6,No,2,1,2,Yes
+EMP-1246,41,Support,Support Specialist,6453,1.6,Yes,2,15,3,Yes
+EMP-1247,37,Sales,SDR,6690,1.8,Yes,2,20,3,Yes
+EMP-1248,29,Marketing,Growth Marketer,8799,0.6,No,2,11,3,Yes
+EMP-1249,39,Finance,Controller,6040,3.4,No,2,8,3,No
+EMP-1250,45,Finance,Controller,12549,7.3,No,2,3,3,No
+EMP-1251,34,R&D,Data Scientist,12605,8.3,No,2,5,3,No
+EMP-1252,34,Sales,Account Executive,11569,4.9,No,4,3,4,No
+EMP-1253,37,R&D,Data Scientist,11119,14.2,No,3,14,4,No
+EMP-1254,29,Sales,Account Executive,6360,5.1,Yes,2,5,4,No
+EMP-1255,27,R&D,Data Scientist,12542,3.6,No,3,10,3,No
+EMP-1256,41,Support,Support Specialist,3845,5.5,No,3,20,3,Yes
+EMP-1257,27,Sales,Account Executive,6911,6.6,No,2,10,4,Yes
+EMP-1258,46,Support,Support Lead,4956,3.1,Yes,4,5,2,Yes
+EMP-1259,27,Marketing,Growth Marketer,11089,4.6,No,3,7,4,No
+EMP-1260,41,Sales,Account Executive,11274,4.3,Yes,1,11,3,Yes
+EMP-1261,29,Marketing,Content Strategist,7129,0.7,No,3,5,2,No
+EMP-1262,22,R&D,Software Engineer,10778,7.0,No,4,15,3,No
+EMP-1263,32,Support,Support Lead,9099,5.2,No,2,10,4,No
+EMP-1264,39,Sales,Sales Manager,11838,7.5,Yes,3,7,3,No
+EMP-1265,30,Finance,Financial Analyst,5121,1.5,No,2,6,3,No
+EMP-1266,40,Marketing,Growth Marketer,5978,5.2,No,3,6,3,No
+EMP-1267,34,Sales,Sales Manager,6797,3.8,No,4,5,3,No
+EMP-1268,31,Marketing,Content Strategist,10467,5.2,No,3,10,3,Yes
+EMP-1269,45,Support,Support Lead,7553,3.2,No,4,24,3,No
+EMP-1270,27,Finance,Controller,6523,4.5,No,2,2,3,No
+EMP-1271,42,Support,Support Lead,8943,4.1,No,2,9,3,Yes
+EMP-1272,42,R&D,Software Engineer,11817,13.3,Yes,2,8,2,Yes
+EMP-1273,34,Finance,Financial Analyst,7944,9.7,No,2,4,2,No
+EMP-1274,26,Sales,SDR,7949,5.6,Yes,1,8,3,No
+EMP-1275,36,Support,Support Specialist,6700,1.7,No,2,26,2,No
+EMP-1276,31,Support,Support Specialist,4093,2.4,Yes,2,3,3,No
+EMP-1277,33,Sales,Sales Manager,11876,2.2,Yes,2,18,2,Yes
+EMP-1278,24,Marketing,Growth Marketer,8194,3.1,No,1,2,4,No
+EMP-1279,47,R&D,QA Engineer,11656,4.8,No,2,10,3,No
+EMP-1280,50,Support,Support Lead,7379,4.1,No,2,9,3,No
+EMP-1281,40,Sales,Sales Manager,10187,8.6,Yes,2,6,3,Yes
+EMP-1282,39,Marketing,Growth Marketer,8735,3.3,No,2,1,3,No
+EMP-1283,32,Sales,Sales Manager,9024,1.1,Yes,3,11,2,No
+EMP-1284,39,Sales,Sales Manager,9804,4.5,Yes,1,2,3,Yes
+EMP-1285,39,R&D,Data Scientist,10522,3.7,No,1,7,2,No
+EMP-1286,53,Sales,SDR,12415,10.5,Yes,2,4,3,No
+EMP-1287,37,Marketing,Growth Marketer,6362,3.9,No,2,5,3,Yes
+EMP-1288,44,R&D,Software Engineer,6034,1.4,No,2,14,3,Yes
+EMP-1289,21,Support,Support Lead,8883,10.3,No,1,10,2,No
+EMP-1290,44,R&D,Software Engineer,10860,9.3,No,3,14,3,No
+EMP-1291,48,Sales,Account Executive,9220,2.4,Yes,2,13,3,Yes
+EMP-1292,24,Marketing,Growth Marketer,5971,6.5,No,4,3,3,Yes
+EMP-1293,44,R&D,Software Engineer,7176,0.2,No,3,8,3,No
+EMP-1294,31,R&D,Data Scientist,6614,1.0,No,3,7,3,No
+EMP-1295,45,Support,Support Specialist,8600,0.4,No,3,3,3,No
+EMP-1296,32,R&D,Data Scientist,11061,2.9,No,2,6,3,No
+EMP-1297,39,Sales,Sales Manager,6506,2.1,No,1,10,4,Yes
+EMP-1298,39,Sales,Sales Manager,14079,14.7,No,2,6,3,No
+EMP-1299,51,R&D,Data Scientist,6052,0.6,No,2,3,3,No
+EMP-1300,21,Sales,SDR,10208,2.4,Yes,1,9,2,No
+EMP-1301,47,Sales,Sales Manager,8807,5.8,No,3,3,2,No
+EMP-1302,21,Sales,Sales Manager,6938,6.3,Yes,2,7,3,Yes
+EMP-1303,42,R&D,Software Engineer,13802,5.7,Yes,2,18,3,No
+EMP-1304,46,Support,Support Specialist,5322,3.3,Yes,2,18,4,No
+EMP-1305,41,Sales,SDR,11914,3.0,No,2,4,3,Yes
+EMP-1306,33,Sales,Sales Manager,6243,5.8,Yes,3,4,3,No
+EMP-1307,27,Support,Support Lead,6353,2.4,Yes,2,12,4,Yes
+EMP-1308,50,Sales,Sales Manager,6279,0.9,Yes,1,13,2,No
+EMP-1309,27,Support,Support Specialist,7968,5.5,No,3,8,4,No
+EMP-1310,37,Sales,Account Executive,8920,3.8,Yes,2,6,3,No
+EMP-1311,40,Sales,Sales Manager,13350,8.4,No,2,19,3,No
+EMP-1312,31,Sales,SDR,7786,16.3,No,2,26,2,Yes
+EMP-1313,37,Sales,SDR,7160,6.4,No,1,1,3,No
+EMP-1314,35,Sales,SDR,8097,5.7,No,3,17,3,No
+EMP-1315,38,Marketing,Growth Marketer,6352,1.9,No,2,8,3,No
+EMP-1316,25,Sales,Sales Manager,9583,3.5,No,4,7,2,Yes
+EMP-1317,34,Sales,SDR,5466,1.7,Yes,1,17,3,No
+EMP-1318,27,Support,Support Lead,5619,1.1,No,2,12,3,No
+EMP-1319,29,Finance,Financial Analyst,8329,10.2,No,3,26,2,No
+EMP-1320,38,R&D,QA Engineer,6284,3.5,No,3,7,3,No
+EMP-1321,36,Sales,Account Executive,6399,7.6,No,3,6,3,Yes
+EMP-1322,39,Finance,Controller,8204,0.4,No,2,12,4,No
+EMP-1323,49,Support,Support Specialist,7775,5.8,No,3,16,4,No
+EMP-1324,36,R&D,Data Scientist,6367,5.0,No,3,11,4,No
+EMP-1325,39,Sales,SDR,7231,4.9,Yes,3,1,4,Yes
+EMP-1326,35,Sales,Account Executive,8181,1.4,No,2,11,4,No
+EMP-1327,42,Support,Support Specialist,7626,4.3,No,3,28,3,No
+EMP-1328,39,Sales,Sales Manager,6132,1.3,No,1,13,3,Yes
+EMP-1329,21,Sales,Sales Manager,7855,6.4,No,3,4,4,No
+EMP-1330,37,Sales,Account Executive,5681,3.9,Yes,3,12,4,Yes
+EMP-1331,28,Support,Support Lead,3803,7.3,No,1,23,3,No
+EMP-1332,34,Sales,Account Executive,9207,1.7,No,3,13,3,No
+EMP-1333,36,Support,Support Lead,5609,2.0,No,3,13,3,Yes
+EMP-1334,46,Support,Support Lead,7758,4.6,Yes,2,7,4,No
+EMP-1335,34,R&D,Software Engineer,8771,3.9,No,3,24,3,No
+EMP-1336,42,Sales,SDR,5006,3.7,No,2,28,3,No
+EMP-1337,42,Support,Support Specialist,6639,11.5,Yes,2,8,3,No
+EMP-1338,25,Support,Support Lead,7784,6.7,Yes,1,3,3,Yes
+EMP-1339,51,R&D,QA Engineer,7111,0.8,No,3,10,3,No
+EMP-1340,42,Finance,Controller,5690,4.8,No,1,6,3,No
+EMP-1341,29,Marketing,Content Strategist,7990,1.1,Yes,2,11,3,No
+EMP-1342,35,Support,Support Lead,6808,1.5,Yes,1,7,3,Yes
+EMP-1343,35,Support,Support Lead,6794,3.7,No,2,13,3,No
+EMP-1344,43,Finance,Controller,5797,2.6,No,3,7,3,No
+EMP-1345,32,R&D,QA Engineer,12022,6.6,No,3,10,2,No
+EMP-1346,30,Support,Support Lead,4200,2.3,No,2,3,3,No
+EMP-1347,47,Sales,Sales Manager,10627,2.1,Yes,2,3,4,No
+EMP-1348,48,Support,Support Lead,4309,5.1,Yes,1,8,3,Yes
+EMP-1349,35,R&D,QA Engineer,8865,8.9,Yes,2,6,3,Yes
+EMP-1350,36,Marketing,Content Strategist,8997,6.0,No,2,6,3,No
+EMP-1351,35,Support,Support Specialist,3868,2.2,No,2,10,3,Yes
+EMP-1352,27,Sales,SDR,12200,2.3,Yes,3,20,4,Yes
+EMP-1353,44,Support,Support Specialist,4065,7.7,No,1,19,3,No
+EMP-1354,32,R&D,Data Scientist,13476,2.6,No,2,4,3,No
+EMP-1355,43,Finance,Controller,6806,1.0,No,1,21,3,No
+EMP-1356,37,Sales,Sales Manager,11622,3.2,No,3,4,3,Yes
+EMP-1357,43,R&D,QA Engineer,12513,12.3,No,2,6,3,No
+EMP-1358,22,Marketing,Growth Marketer,7006,5.4,No,2,1,3,No
+EMP-1359,37,Finance,Controller,10664,6.3,Yes,3,21,4,No
+EMP-1360,37,R&D,Data Scientist,10634,1.9,Yes,2,18,3,No
+EMP-1361,35,Marketing,Content Strategist,4894,1.1,No,4,11,3,No
+EMP-1362,31,Marketing,Content Strategist,5670,4.0,Yes,2,5,3,Yes
+EMP-1363,34,Finance,Financial Analyst,8840,6.1,No,3,30,2,No
+EMP-1364,41,Sales,SDR,8642,3.9,No,2,2,3,Yes
+EMP-1365,35,R&D,Data Scientist,6406,4.5,No,2,5,3,No
+EMP-1366,54,Sales,Account Executive,10690,0.2,No,2,9,3,No
+EMP-1367,37,Finance,Controller,5170,3.5,Yes,1,20,3,Yes
+EMP-1368,42,R&D,Data Scientist,9462,2.7,No,1,8,3,No
+EMP-1369,35,R&D,Software Engineer,7135,7.1,No,2,8,3,No
+EMP-1370,28,Support,Support Specialist,6243,6.8,No,2,11,3,No
+EMP-1371,35,Sales,SDR,10177,2.9,No,2,10,4,No
+EMP-1372,34,Finance,Financial Analyst,8440,3.0,No,3,11,3,Yes
+EMP-1373,25,Marketing,Growth Marketer,9224,4.7,Yes,2,12,3,No
+EMP-1374,29,Sales,Sales Manager,8243,9.8,No,2,32,3,Yes
+EMP-1375,31,R&D,QA Engineer,13029,2.4,No,3,4,3,No
+EMP-1376,31,R&D,Software Engineer,6149,4.3,No,2,2,3,Yes
+EMP-1377,21,R&D,Software Engineer,8693,5.1,No,2,7,3,No
+EMP-1378,43,Support,Support Lead,3701,8.2,No,2,28,4,Yes
+EMP-1379,33,Marketing,Growth Marketer,7307,10.9,No,3,26,3,No
+EMP-1380,45,Sales,Sales Manager,8423,5.6,No,1,7,2,No
+EMP-1381,38,Sales,Account Executive,5073,1.8,No,3,10,4,No
+EMP-1382,25,Sales,SDR,8239,2.7,No,4,19,3,Yes
+EMP-1383,32,Finance,Financial Analyst,6545,5.3,No,2,5,3,No
+EMP-1384,24,Sales,Sales Manager,8298,5.3,No,2,7,2,No
+EMP-1385,30,R&D,Data Scientist,6028,4.4,No,2,1,2,No
+EMP-1386,32,Sales,Sales Manager,8185,9.4,No,2,15,3,No
+EMP-1387,21,Support,Support Lead,6043,0.6,Yes,1,15,3,Yes
+EMP-1388,33,R&D,Data Scientist,10360,6.9,No,2,7,3,No
+EMP-1389,44,Sales,Sales Manager,8586,9.1,Yes,3,13,3,Yes
+EMP-1390,47,Finance,Financial Analyst,4435,2.4,No,4,14,3,Yes
+EMP-1391,31,Sales,Sales Manager,9051,6.4,No,2,7,4,No
+EMP-1392,29,Sales,Account Executive,11669,5.6,Yes,2,3,3,Yes
+EMP-1393,30,R&D,Software Engineer,6220,6.2,No,2,8,3,No
+EMP-1394,30,Sales,Sales Manager,10954,1.4,No,3,11,2,No
+EMP-1395,34,Support,Support Lead,5819,3.1,No,1,18,3,No
+EMP-1396,47,Sales,Sales Manager,11822,2.3,No,3,7,3,No
+EMP-1397,36,Finance,Controller,7006,4.8,Yes,2,6,3,Yes
+EMP-1398,30,Marketing,Content Strategist,8455,1.3,No,1,4,4,Yes
+EMP-1399,42,R&D,Data Scientist,10404,0.4,No,4,3,2,No
+EMP-1400,25,R&D,Data Scientist,10377,0.5,No,2,6,3,No
+EMP-1401,45,Marketing,Content Strategist,8273,3.1,No,2,19,3,No
+EMP-1402,26,R&D,Data Scientist,7425,4.9,No,2,9,4,Yes
+EMP-1403,35,Sales,Account Executive,6950,4.1,No,3,19,3,No
+EMP-1404,51,Finance,Controller,5891,13.5,No,3,21,3,No
+EMP-1405,48,R&D,Software Engineer,9207,4.1,No,2,5,4,No
+EMP-1406,29,R&D,QA Engineer,10686,6.5,No,3,5,4,No
+EMP-1407,34,Marketing,Content Strategist,6019,2.1,No,3,17,3,No
+EMP-1408,23,Sales,Sales Manager,4977,4.4,Yes,2,6,3,No
+EMP-1409,32,Sales,Account Executive,13217,6.7,No,2,3,4,No
+EMP-1410,28,Sales,SDR,10080,2.0,No,2,14,3,Yes
+EMP-1411,44,Marketing,Growth Marketer,7923,8.2,No,3,25,4,Yes
+EMP-1412,21,Finance,Controller,8256,5.0,No,3,2,3,No
+EMP-1413,39,R&D,QA Engineer,14340,10.0,Yes,2,22,3,No
+EMP-1414,48,R&D,QA Engineer,8803,1.6,No,3,8,3,No
+EMP-1415,31,Sales,SDR,12219,2.7,No,3,9,3,No
+EMP-1416,33,Support,Support Lead,5228,1.6,No,2,2,3,No
+EMP-1417,41,R&D,QA Engineer,9707,1.7,No,3,10,4,No
+EMP-1418,21,R&D,Software Engineer,9748,5.2,No,1,20,2,No
+EMP-1419,32,Sales,Account Executive,5246,2.0,No,2,13,3,No
+EMP-1420,38,R&D,Software Engineer,10697,2.1,No,2,2,2,No
+EMP-1421,36,R&D,Software Engineer,9424,9.4,No,2,9,3,No
+EMP-1422,21,R&D,Data Scientist,9884,12.0,No,2,23,4,No
+EMP-1423,47,Support,Support Specialist,5743,13.0,Yes,2,16,4,Yes
+EMP-1424,48,Sales,Sales Manager,5708,9.4,No,2,9,3,No
+EMP-1425,38,Marketing,Growth Marketer,6758,4.0,Yes,2,10,3,Yes
+EMP-1426,31,Support,Support Specialist,7503,2.3,No,1,23,3,No
+EMP-1427,35,R&D,Data Scientist,10338,3.9,No,3,21,3,No
+EMP-1428,43,R&D,QA Engineer,10213,13.0,Yes,2,20,4,No
+EMP-1429,38,R&D,Software Engineer,9809,2.7,No,3,12,4,No
+EMP-1430,40,Sales,Account Executive,4967,2.9,No,2,7,3,Yes
+EMP-1431,52,R&D,Software Engineer,7461,11.1,No,3,4,2,No
+EMP-1432,35,Marketing,Content Strategist,8402,4.0,No,4,9,3,No
+EMP-1433,34,Finance,Financial Analyst,10417,8.6,No,3,6,4,No
+EMP-1434,28,Sales,SDR,12512,7.1,No,3,7,2,Yes
+EMP-1435,41,Marketing,Growth Marketer,10586,7.6,No,4,9,3,No
+EMP-1436,41,R&D,QA Engineer,10843,2.3,No,3,5,4,No
+EMP-1437,54,Finance,Financial Analyst,7366,0.5,No,2,5,3,No
+EMP-1438,43,R&D,Data Scientist,6937,2.1,No,2,7,3,Yes
+EMP-1439,31,Support,Support Specialist,4626,1.1,No,2,5,3,No
+EMP-1440,33,Support,Support Specialist,8601,2.1,No,2,3,3,No
+EMP-1441,34,Sales,Account Executive,10214,3.1,No,3,2,3,No
+EMP-1442,33,Support,Support Lead,6817,3.8,No,3,12,4,Yes
+EMP-1443,40,R&D,Software Engineer,5933,1.3,No,2,10,3,No
+EMP-1444,36,R&D,Data Scientist,13545,4.3,No,3,2,4,No
+EMP-1445,34,Marketing,Growth Marketer,8968,5.7,No,1,17,2,No
+EMP-1446,29,Support,Support Specialist,8447,2.3,No,1,3,4,No
+EMP-1447,43,Marketing,Growth Marketer,7972,9.9,No,1,20,3,No
+EMP-1448,41,R&D,Data Scientist,12449,4.9,No,2,11,3,Yes
+EMP-1449,24,R&D,Software Engineer,13094,1.9,No,3,5,4,No
+EMP-1450,42,Sales,Sales Manager,5323,2.7,Yes,2,23,4,Yes
+EMP-1451,58,R&D,Data Scientist,13224,4.9,No,1,6,3,No
+EMP-1452,33,Marketing,Content Strategist,6388,4.2,No,3,17,2,No
+EMP-1453,36,R&D,Data Scientist,8407,3.0,No,2,5,3,No
+EMP-1454,49,R&D,Data Scientist,10006,1.8,No,3,2,4,Yes
+EMP-1455,31,R&D,QA Engineer,9212,2.1,No,2,10,3,No
+EMP-1456,51,Support,Support Specialist,4983,0.4,Yes,3,6,3,Yes
+EMP-1457,33,R&D,Data Scientist,14297,4.1,No,2,13,3,No
+EMP-1458,38,R&D,QA Engineer,10140,8.7,No,1,24,3,Yes
+EMP-1459,38,Sales,Sales Manager,4839,2.4,No,2,16,4,No
+EMP-1460,45,Support,Support Specialist,4937,1.1,No,3,4,3,No
+EMP-1461,43,Sales,SDR,9267,3.8,Yes,2,11,3,Yes
+EMP-1462,36,R&D,Data Scientist,5771,4.3,No,4,8,3,No
+EMP-1463,31,R&D,QA Engineer,6701,1.1,Yes,4,30,4,No
+EMP-1464,36,Support,Support Lead,3478,0.8,No,2,6,3,No
+EMP-1465,41,Sales,SDR,5577,8.7,Yes,2,2,3,No
+EMP-1466,36,Marketing,Growth Marketer,5821,9.3,No,1,10,2,Yes
+EMP-1467,35,Sales,SDR,10059,6.9,Yes,1,5,3,No
+EMP-1468,38,Support,Support Specialist,4054,14.1,Yes,1,20,4,Yes
+EMP-1469,26,R&D,Data Scientist,12357,2.2,Yes,1,4,3,No
+EMP-1470,33,R&D,Data Scientist,5897,3.8,Yes,2,22,3,No

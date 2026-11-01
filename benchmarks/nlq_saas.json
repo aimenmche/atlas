@@ -1,0 +1,125 @@
+[
+  {
+    "question": "Which region has the highest revenue?",
+    "intent": "group_by",
+    "chart": "bar",
+    "sql_contains": ["sum(\"revenue\")", "group by label"]
+  },
+  {
+    "question": "Show revenue by plan",
+    "intent": "group_by",
+    "chart": "bar",
+    "sql_contains": ["sum(\"revenue\")", "\"plan\""]
+  },
+  {
+    "question": "What is the average revenue by segment?",
+    "intent": "group_by",
+    "chart": "bar",
+    "sql_contains": ["avg(\"revenue\")", "\"segment\""]
+  },
+  {
+    "question": "What is the total revenue?",
+    "intent": "scalar",
+    "chart": "kpi",
+    "sql_contains": ["sum(\"revenue\")"]
+  },
+  {
+    "question": "What is the highest revenue?",
+    "intent": "scalar",
+    "chart": "kpi",
+    "sql_contains": ["max(\"revenue\")"]
+  },
+  {
+    "question": "What's the median revenue?",
+    "intent": "scalar",
+    "chart": "kpi",
+    "sql_contains": ["median(\"revenue\")"]
+  },
+  {
+    "question": "How many rows are in the dataset?",
+    "intent": "count",
+    "chart": "kpi",
+    "sql_contains": ["count(*)"]
+  },
+  {
+    "question": "What is the row count by region?",
+    "intent": "count_by",
+    "chart": "bar",
+    "sql_contains": ["count(*)", "group by label"]
+  },
+  {
+    "question": "How has revenue changed over time?",
+    "intent": "trend",
+    "chart": "line",
+    "grain": "month",
+    "sql_contains": ["date_trunc('month'", "sum(\"revenue\")"]
+  },
+  {
+    "question": "Which month had the highest revenue?",
+    "intent": "time_rank",
+    "chart": "bar",
+    "grain": "month",
+    "sql_contains": ["date_trunc('month'", "order by value desc"]
+  },
+  {
+    "question": "Compare revenue and seats",
+    "intent": "comparison",
+    "chart": "scatter",
+    "sql_contains": ["\"revenue\"", "\"seats\""]
+  },
+  {
+    "question": "Top 5 regions by revenue",
+    "intent": "group_by",
+    "chart": "bar",
+    "sql_contains": ["sum(\"revenue\")", "limit 5"]
+  },
+  {
+    "question": "What is the correlation between revenue and seats?",
+    "intent": "correlation",
+    "chart": "scatter",
+    "sql_contains": ["\"revenue\"", "\"seats\""]
+  },
+  {
+    "question": "Show revenue distribution",
+    "intent": "distribution",
+    "chart": "histogram",
+    "sql_contains": ["\"revenue\""]
+  },
+  {
+    "question": "Which region has the lowest churn rate?",
+    "intent": "group_by",
+    "chart": "bar",
+    "sql_contains": ["avg(\"churn_rate\")", "\"region\""]
+  },
+  {
+    "question": "Show support tickets over time",
+    "intent": "trend",
+    "chart": "line",
+    "grain": "month",
+    "sql_contains": ["date_trunc('month'", "sum(\"support_tickets\")"]
+  },
+  {
+    "question": "How many customers are there?",
+    "intent": "scalar",
+    "chart": "kpi",
+    "sql_contains": ["count(*)", "\"customers\""]
+  },
+  {
+    "question": "Show NPS by segment",
+    "intent": "group_by",
+    "chart": "bar",
+    "sql_contains": ["avg(\"nps\")", "\"segment\""]
+  },
+  {
+    "question": "Show revenue by plan and segment",
+    "refused": true
+  },
+  {
+    "question": "Show revenue by industry",
+    "refused": true
+  },
+  {
+    "question": "forecast revenue next 6 months",
+    "refused": true
+  }
+]

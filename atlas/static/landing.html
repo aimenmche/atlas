@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05080a">
+  <meta name="description" content="Atlas is a local-first AI data analyst. Ask a messy spreadsheet a question and get a profiled dataset, read-only SQL, a grounded answer, a forecast and a report you can defend.">
+  <meta property="og:title" content="Atlas — your data has a shape">
+  <meta property="og:description" content="A local-first data analyst that shows its working. No API key. No invented numbers. No data leaving your machine.">
+  <meta property="og:type" content="website">
+  <title>Atlas — your data has a shape</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/static/fonts/instrument-serif-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/static/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/static/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/landing.css">
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+  <div class="scroll-progress" aria-hidden="true"><span id="scrollBar"></span></div>
+
+  <header class="nav" id="nav">
+    <a class="brand" href="/" aria-label="Atlas home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="14.5" stroke="currentColor" stroke-opacity=".35"/>
+          <ellipse cx="18" cy="18" rx="14.5" ry="5.6" stroke="currentColor" stroke-opacity=".22" transform="rotate(-28 18 18)"/>
+          <path d="M10.5 25.5 18 8l7.5 17.5M13.2 20.5h9.6" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="18" cy="18" r="1.7" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="brand-word">ATLAS</span>
+      <span class="brand-tag">DATA INTELLIGENCE</span>
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#premise">Premise</a>
+      <a href="#method">Method</a>
+      <a href="#instruments">Instruments</a>
+      <a href="#demo">Live demo</a>
+      <a href="#manifesto">Promise</a>
+    </nav>
+    <a class="nav-cta" href="/app">Open Atlas
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+    </a>
+  </header>
+
+  <main id="main">
+    <!-- ---------------------------------------------------------------- -->
+    <!-- Hero                                                             -->
+    <!-- ---------------------------------------------------------------- -->
+    <section class="hero" id="top">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="live-dot"></span>Local-first data intelligence</p>
+          <h1 class="hero-title">
+            <span class="line"><span>Your data</span></span>
+            <span class="line"><span>has a <em>shape.</em></span></span>
+            <span class="line line-low"><span>See it.</span></span>
+          </h1>
+          <p class="hero-lede">Atlas turns a messy spreadsheet into a profiled dataset, ranked insights, forecasts, and answers you can defend. All on your machine.</p>
+          <div class="hero-actions">
+            <a class="btn-aurora" href="/app">Open Atlas
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+            </a>
+            <a class="btn-quiet" href="#demo"><span class="play-mark" aria-hidden="true"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8V4z"/></svg></span>Try the live engine</a>
+          </div>
+          <ul class="hero-meta" aria-label="Properties">
+            <li>No API key</li>
+            <li>Read-only SQL</li>
+            <li>Zero telemetry</li>
+          </ul>
+        </div>
+
+        <div class="hero-visual">
+          <div class="orb-wrap">
+            <div class="fig-label"><span>FIG. 01</span><span>STRUCTURE / SIGNAL</span></div>
+            <div class="orb" id="orb">
+              <div class="orb-halo" aria-hidden="true"></div>
+              <div class="orb-ring ring-a" aria-hidden="true"></div>
+              <div class="orb-ring ring-b" aria-hidden="true"></div>
+              <canvas id="dataOrb" role="img" aria-label="An animated data constellation morphing between a bar chart, a trend line and segment clusters."></canvas>
+              <div class="orb-crosshair" aria-hidden="true"><span></span><span></span></div>
+            </div>
+            <div class="orb-caption">
+              <span class="orb-title" id="orbTitle">Revenue by plan</span>
+              <span class="orb-meta" id="orbMeta">Click the instrument to morph</span>
+            </div>
+            <div class="float-card float-a" aria-hidden="true">
+              <span class="float-kicker">Enterprise</span>
+              <span class="float-value">60.1<small>%</small></span>
+              <span class="float-foot">of total revenue</span>
+              <span class="float-spark"><i style="--h:42%"></i><i style="--h:27%"></i><i style="--h:18%"></i><i style="--h:9%"></i></span>
+            </div>
+            <div class="float-card float-b" aria-hidden="true">
+              <span class="float-kicker">Query policy</span>
+              <span class="float-code">SELECT <span>·</span> read-only <span>·</span> 1 statement</span>
+              <span class="float-ok"><i></i>Guard passed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-foot">
+        <a class="scroll-cue" href="#premise"><span></span>Scroll to interrogate</a>
+        <div class="hero-marquee" aria-hidden="true">
+          <div class="marquee-track">
+            <span>Which plan earns the most? <i>✳</i> Where is churn concentrated? <i>✳</i> What changed last quarter? <i>✳</i> How has revenue moved? <i>✳</i> What is driving growth? <i>✳</i> Which segment is underperforming? <i>✳</i></span>
+            <span>Which plan earns the most? <i>✳</i> Where is churn concentrated? <i>✳</i> What changed last quarter? <i>✳</i> How has revenue moved? <i>✳</i> What is driving growth? <i>✳</i> Which segment is underperforming? <i>✳</i></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------------- -->
+    <!-- Numbers                                                          -->
+    <!-- ---------------------------------------------------------------- -->
+    <section class="numbers" aria-label="Atlas at a glance">
+      <div class="number reveal"><span class="num-value">6</span><span class="num-label">analysis surfaces</span></div>
+      <div class="number reveal" style="--d:.06s"><span class="num-value">5</span><span class="num-label">file formats</span></div>
+      <div class="number reveal" style="--d:.12s"><span class="num-value">1</span><span class="num-label">local DuckDB file</span></div>
+      <div class="number reveal" style="--d:.18s"><span class="num-value">0</span><span class="num-label">bytes of telemetry</span></div>
+    </section>
+
+    <!-- ---------------------------------------------------------------- -->
+    <!-- Premise                                                          -->
+    <!-- ---------------------------------------------------------------- -->
+    <section class="premise" id="premise">
+      <div class="section-rule"><span class="section-index">01</span><span class="section-name">The premise</span></div>
+      <div class="premise-grid">
+        <h2 class="reveal">A chat box<br>is <em>not</em><br>an analyst.</h2>
+        <div class="premise-copy reveal" style="--d:.1s">
+          <p class="dropcap">Most AI analytics stops at a plausible sentence. It guesses the column, hides the query, and hopes the number is close enough.</p>
+          <p>Atlas starts with the row. It profiles before it answers, validates every query against a read-only policy, and refuses to put a number in a sentence unless that number came back from the database.</p>
+          <a class="text-link" href="#method">See how an answer is made <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="premise-watermark" aria-hidden="true">?</div>
+    </section>
+
+    <!-- ---------------------------------------------------------------- -->
+    <!-- Method                                                           -->
+    <!-- ---------------------------------------------------------------- -->
+    <section class="method" id="method">
+      <div class="section-rule"><span class="section-index">02</span><span class="section-name">The method</span></div>
+      <div class="method-head">
+        <h2 class="reveal">Every answer has<br><em>a paper trail.</em></h2>
+        <p class="reveal" style="--d:.08s">A deterministic engine builds the plan. A guard checks it. DuckDB runs it read-only. The narrator writes only from the rows that came back.</p>
+      </div>
+
+      <div class="method-grid">
+        <aside class="method-aside reveal" style="--d:.14s">
+          <div class="guard-card">
+            <div class="guard-top"><span class="live-dot"></span>SQL policy · live</div>
+            <pre class="guard-code"><span class="code-key">SELECT</span> plan,
+       <span class="code-fn">SUM</span>(revenue) <span class="code-key">AS</span> value
+<span class="code-key">FROM</span> ds_saasrevenue
+<span class="code-key">GROUP BY</span> plan
+<span class="code-key">ORDER BY</span> value <span class="code-key">DESC</span>;</pre>
+            <div class="guard-pass"><span class="guard-check">✓</span><span>one statement · read-only · 4 rows</span></div>
+            <div class="guard-blocked"><span class="guard-blocked-label">blocked</span><span>DROP</span><span>ATTACH</span><span>COPY</span><span>read_csv</span><span>PRAGMA</span></div>
+          </div>
+          <p class="aside-note">External access is disabled at the DuckDB level, not just hidden behind a regex. Uploads are capped, rows are capped, and long queries are interrupted.</p>
+        </aside>
+
+        <ol class="steps">
+          <li class="step reveal">
+            <span class="step-no">01</span>
+            <div><h3>Read</h3><p>Resolve the intent, the columns, the filters and the grain. If the question is ambiguous, say so.</p></div>
+            <span class="step-glyph" aria-hidden="true">⌁</span>
+          </li>
+          <li class="step reveal" style="--d:.05s">
+            <span class="step-no">02</span>
+            <div><h3>Plan</h3><p>Build one explicit <code>SELECT</code> with a known shape. No free-form model guess, no hidden second query.</p></div>
+            <span class="step-glyph" aria-hidden="true">⌗</span>
+          </li>
+          <li class="step reveal" style="--d:.1s">
+            <span class="step-no">03</span>
+            <div><h3>Guard</h3><p>Reject writes, DDL, file access and multiple statements. Mask literals so a string cannot trip the scanner.</p></div>
+            <span class="step-glyph" aria-hidden="true">⊘</span>
+          </li>
+          <li class="step reveal" style="--d:.15s">
+            <span class="step-no">04</span>
+            <div><h3>Run</h3><p>Execute read-only with a row limit and a watchdog. Return the columns, the rows, the SQL and the time.</p></div>
+            <span class="step-glyph" aria-hidden="true">▷</span>
+          </li>
+          <li class="step reveal" style="--d:.2s">
+            <span class="step-no">05</span>
+            <div><h3>Ground</h3><p>Write the narrative from the returned values. An optional model can polish the prose, but any number it invents is rejected.</p></div>
+            <span class="step-glyph" aria-hidden="true">≈</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------------- -->
+    <!-- Instruments                                                      -->
+    <!-- ---------------------------------------------------------------- -->
+    <section class="instruments" id="instruments">
+      <div class="section-rule"><span class="section-index">03</span><span class="section-name">The instruments</span></div>
+      <div class="instruments-head">
+        <h2 class="reveal">Six ways in.<br><em>One source of truth.</em></h2>
+        <p class="reveal" style="--d:.08s">Everything below runs on the same dataset, the same profile and the same read-only engine. No separate demo mode.</p>
+      </div>
+
+      <div class="bento">
+        <article class="bento-card preview-card reveal">
+          <div class="bento-top"><span>01 / Overview</span><span class="bento-tag">profiled live</span></div>
+          <div class="preview-frame">
+            <div class="preview-bar"><i></i><i></i><i></i><span>atlas / saas-revenue</span></div>
+            <img src="/static/landing-preview.png" alt="Atlas overview screen showing KPI cards, ranked insights and a schema table." loading="lazy">
+            <div class="preview-glow" aria-hidden="true"></div>
+          </div>
+          <div class="bento-copy"><h3>The whole dataset,<br>read in one screen.</h3><p>Quality grade, time coverage, KPI cards, ranked signals and every column — before you ask a single question.</p></div>
+        </article>
+
+        <article class="bento-card ask-card reveal" style="--d:.06s">
+          <div class="bento-top"><span>02 / Ask Atlas</span><span class="bento-tag">deterministic</span></div>
+          <div class="mini-chat" aria-hidden="true">
+            <div class="mini-bubble">Which plan earns the most?</div>
+            <div class="mini-answer">
+              <span class="mini-kicker"><i></i>answer · high confidence</span>
+              <p>Enterprise leads with <strong>$280.0M</strong>, or <strong>60.1%</strong> of the $466.0M total.</p>
+              <div class="mini-bars"><i style="--h:100%"></i><i style="--h:45%"></i><i style="--h:16%"></i><i style="--h:6%"></i></div>
+            </div>
+            <div class="mini-trace"><span>read <b>2ms</b></span><span>plan <b>4ms</b></span><span>run <b>8ms</b></span><span>ground <b>1ms</b></span></div>
+          </div>
+          <div class="bento-copy"><h3>Plain language in.<br>Evidence out.</h3><p>SQL, chart, caveats, confidence and the exact rows behind the sentence.</p></div>
+        </article>
+
+        <article class="bento-card quality-card reveal">
+          <div class="bento-top"><span>03 / Quality</span><span class="bento-tag">92.4 · A</span></div>
+          <div class="mini-quality" aria-hidden="true">
+            <div class="mini-ring"><span>92.4</span><small>grade A</small></div>
+            <div class="mini-dims"><span><i style="--w:98%"></i>completeness</span><span><i style="--w:96%"></i>uniqueness</span><span><i style="--w:89%"></i>consistency</span><span><i style="--w:86%"></i>validity</span></div>
+          </div>
+          <div class="bento-copy"><h3>Quality before<br>conclusions.</h3><p>PII, duplicates, drift, outliers and missingness surfaced before they distort an answer.</p></div>
+        </article>
+
+        <article class="bento-card forecast-card reveal" style="--d:.06s">
+          <div class="bento-top"><span>04 / Forecast</span><span class="bento-tag">holdout scored</span></div>
+          <svg class="mini-forecast" viewBox="0 0 320 150" role="img" aria-label="Illustrative forecast line with a confidence band.">
+            <defs>
+              <linearGradient id="fcFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9dffd8" stop-opacity=".18"/><stop offset="1" stop-color="#9dffd8" stop-opacity="0"/></linearGradient>
+            </defs>
+            <g stroke="rgba(255,255,255,.06)"><path d="M0 35h320M0 75h320M0 115h320"/></g>
+            <path d="M8 112 C 36 106, 52 98, 74 102 S 112 80, 136 84 S 174 58, 198 64 S 236 40, 262 48 L 262 150 L 8 150 Z" fill="url(#fcFill)"/>
+            <path d="M8 112 C 36 106, 52 98, 74 102 S 112 80, 136 84 S 174 58, 198 64 S 236 40, 262 48" fill="none" stroke="#9dffd8" stroke-width="1.6"/>
+            <path d="M262 48 C 278 40, 294 34, 312 28" fill="none" stroke="#ffb86b" stroke-width="1.4" stroke-dasharray="4 4"/>
+            <circle cx="262" cy="48" r="3" fill="#05080a" stroke="#9dffd8" stroke-width="1.5"/>
+            <circle cx="312" cy="28" r="3" fill="#ffb86b"/>
+            <text x="8" y="142" fill="#65737c" font-size="8" font-family="monospace">ACTUAL</text>
+            <text x="282" y="142" fill="#ffb86b" font-size="8" font-family="monospace">NEXT</text>
+          </svg>
+          <div class="bento-copy"><h3>Plan the next<br>period honestly.</h3><p>Holt-Winters, seasonal naive and linear trend compete on a holdout window.</p></div>
+        </article>
+
+        <article class="bento-card explore-card reveal" style="--d:.12s">
+          <div class="bento-top"><span>05 / Explore</span><span class="bento-tag">read-only</span></div>
+          <pre class="mini-sql" aria-hidden="true"><span class="code-key">SELECT</span> region,
+       <span class="code-fn">SUM</span>(revenue) <span class="code-key">AS</span> revenue
+<span class="code-key">FROM</span> <span class="code-str">{table}</span>
+<span class="code-key">GROUP BY</span> region
+<span class="code-key">ORDER BY</span> revenue <span class="code-key">DESC</span>;</pre>
+          <div class="mini-guard"><i></i>validated · capped · time-limited</div>
+          <div class="bento-copy"><h3>Open the hood,<br>safely.</h3><p>A DuckDB console with a hard row cap, a watchdog and no filesystem access.</p></div>
+        </article>
+
+        <article class="bento-card report-card reveal">
+          <div class="bento-top"><span>06 / Report</span><span class="bento-tag">self-contained</span></div>
+          <div class="report-stack" aria-hidden="true">
+            <div class="report-page page-back"></div>
+            <div class="report-page page-mid"></div>
+            <div class="report-page page-front"><span class="rp-mark">A</span><span class="rp-title">ATLAS<br>REPORT</span><span class="rp-line"></span><span class="rp-line short"></span><span class="rp-foot">HTML · 81 KB · NO SCRIPTS</span></div>
+          </div>
+          <div class="bento-copy"><h3>One file you can<br>actually hand over.</h3><p>Inline SVG charts, no CDN, no scripts. Opens offline and prints cleanly to PDF.</p></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------------- -->
+    <!-- Live demo                                                        -->
+    <!-- ---------------------------------------------------------------- -->
+    <section class="demo" id="demo">
+      <div class="section-rule"><span class="section-index">04</span><span class="section-name">The proof</span></div>
+      <div class="demo-head">
+        <h2 class="reveal">This is not<br><em>a mockup.</em></h2>
+        <p class="reveal" style="--d:.08s">Ask the same deterministic engine that ships with Atlas. Every question below runs locally against the seeded SaaS dataset, in your browser, right now.</p>
+      </div>
+
+      <div class="terminal reveal" style="--d:.14s">
+        <div class="terminal-bar">
+          <span class="terminal-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="terminal-path">atlas / ask / saas-revenue</span>
+          <span class="terminal-live"><span class="live-dot"></span>live local engine</span>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-left">
+            <p class="terminal-label">Your question</p>
+            <form class="ask-form" id="demoForm">
+              <span class="ask-prompt" aria-hidden="true">›</span>
+              <input id="demoInput" type="text" maxlength="240" autocomplete="off" spellcheck="false" placeholder="Ask about revenue, plans or regions…" aria-label="Ask the local Atlas engine a question">
+              <button type="submit" id="demoSend" aria-label="Run question">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+              </button>
+            </form>
+            <div class="demo-chips" id="demoChips" aria-label="Suggested questions">
+              <button type="button" data-question="Which plan has the highest revenue?">Revenue by plan</button>
+              <button type="button" data-question="How has revenue changed over time?">Revenue over time</button>
+              <button type="button" data-question="Which region has the highest revenue?">Revenue by region</button>
+              <button type="button" data-question="Which month had the highest revenue?">Best month</button>
+            </div>
+            <p class="terminal-hint">Deterministic parser · no API key · the SQL is visible</p>
+            <div class="demo-trace" id="demoTrace" aria-live="polite">
+              <div class="trace-empty"><span class="trace-orbit" aria-hidden="true"></span>Pick a prompt to see the engine think.</div>
+            </div>
+          </div>
+          <div class="terminal-answer" id="demoAnswer" aria-live="polite">
+            <div class="answer-placeholder">
+              <div class="placeholder-orbit" aria-hidden="true"><i></i><i></i><i></i></div>
+              <p class="placeholder-kicker">Waiting for a question</p>
+              <p class="placeholder-copy">The answer will appear here with its chart, confidence and the SQL that produced it.</p>
+            </div>
+          </div>
+        </div>
+        <div class="terminal-foot"><span>Runs against the real local API.</span><span>No data leaves this process.</span></div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------------- -->
+    <!-- Manifesto                                                        -->
+    <!-- ---------------------------------------------------------------- -->
+    <section class="manifesto" id="manifesto">
+      <div class="section-rule"><span class="section-index">05</span><span class="section-name">The promise</span></div>
+      <div class="manifesto-lines">
+        <p class="reveal">No black boxes.</p>
+        <p class="reveal" style="--d:.08s">No invented numbers.</p>
+        <p class="reveal" style="--d:.16s">No data leaving.</p>
+      </div>
+      <div class="seal" aria-hidden="true">
+        <svg viewBox="0 0 180 180">
+          <defs><path id="sealPath" d="M90,90 m-64,0 a64,64 0 1,1 128,0 a64,64 0 1,1 -128,0"/></defs>
+          <text><textPath href="#sealPath">LOCAL-FIRST · READ-ONLY · GROUNDED · VERIFIABLE · </textPath></text>
+          <circle cx="90" cy="90" r="48" fill="none" stroke="currentColor" stroke-opacity=".18"/>
+          <path d="M74 108 90 66l16 42M79 96h22" fill="none" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="90" cy="90" r="2" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="promise-grid">
+        <article class="promise reveal"><span class="promise-no">01</span><h3>Read-only by construction</h3><p>DuckDB opens with external access disabled. The guard rejects writes, DDL, file functions and multiple statements. A watchdog interrupts anything slow.</p></article>
+        <article class="promise reveal" style="--d:.06s"><span class="promise-no">02</span><h3>Grounded by construction</h3><p>The narrator emits a facts dictionary. Optional model prose is rejected if it introduces a number that is not in those facts. The answer is checked, not trusted.</p></article>
+        <article class="promise reveal" style="--d:.12s"><span class="promise-no">03</span><h3>Local by default</h3><p>One process, one DuckDB file, zero telemetry. Connect a model only if you choose to, and only as a narrow planner or prose polisher — never as the source of truth.</p></article>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------------- -->
+    <!-- CTA                                                              -->
+    <!-- ---------------------------------------------------------------- -->
+    <section class="cta" id="start">
+      <div class="cta-mark" aria-hidden="true">A</div>
+      <div class="section-rule"><span class="section-index">06</span><span class="section-name">Start</span></div>
+      <div class="cta-inner">
+        <h2 class="reveal">Your data is<br>already talking.<br><em>Start listening.</em></h2>
+        <div class="cta-actions reveal" style="--d:.1s">
+          <a class="btn-aurora" href="/app">Open Atlas
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+          </a>
+          <button class="command-chip" type="button" data-copy="atlas" title="Copy command">
+            <span class="cmd-prompt">$</span><span>atlas</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 011-1h10"/></svg>
+          </button>
+        </div>
+        <p class="cta-note reveal" style="--d:.16s">Runs locally on 127.0.0.1:8050 · no signup · Python 3.11+</p>
+      </div>
+
+      <footer class="footer">
+        <div class="footer-brand">
+          <span class="brand-mark small" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="14.5" stroke="currentColor" stroke-opacity=".35"/><path d="M10.5 25.5 18 8l7.5 17.5M13.2 20.5h9.6" stroke="currentColor" stroke-width="1.4"/><circle cx="18" cy="18" r="1.7" fill="currentColor"/></svg></span>
+          <span><strong>ATLAS</strong><small>Data intelligence</small></span>
+        </div>
+        <nav class="footer-links" aria-label="Footer">
+          <a href="#premise">Premise</a><a href="#method">Method</a><a href="#instruments">Instruments</a><a href="#demo">Live demo</a><a href="#top">Back to top</a>
+        </nav>
+        <p class="footer-note">Built by Aimen · MIT · No cookies, no trackers, no telemetry.</p>
+      </footer>
+    </section>
+  </main>
+
+  <script src="/static/charts.js" defer></script>
+  <script src="/static/landing.js" defer></script>
+</body>
+</html>
