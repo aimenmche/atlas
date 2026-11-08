@@ -12,6 +12,7 @@ from typing import Iterable
 import numpy as np
 import pandas as pd
 
+from .anomaly import detect_anomalies
 from .util import jsonable
 
 
@@ -22,6 +23,9 @@ def forecast(
     horizon: int = 12,
     freq: str | None = None,
     agg: str = "sum",
+    calendar: bool = True,
+    exclude_dates: list[str] | None = None,
+    include_anomalies: bool = True,
 ) -> dict:
     horizon = max(1, min(int(horizon), 60))
     if agg not in {"sum", "mean"}:
@@ -30,6 +34,13 @@ def forecast(
         "d": pd.to_datetime(df[date_col], errors="coerce"),
         "v": pd.to_numeric(df[value_col], errors="coerce"),
     }).dropna()
+    excluded: list[str] = []
+    if exclude_dates:
+        wanted = {_date_key(value) for value in exclude_dates if _date_key(value)}
+        if wanted:
+            mask = ~frame["d"].dt.strftime("%Y-%m-%d").isin(wanted)
+            excluded = sorted(wanted)
+            frame = frame[mask]
     if len(frame) < 8:
         raise ValueError("Need at least 8 observations to forecast.")
 
@@ -48,6 +59,7 @@ def forecast(
     series = series[series.index.notna()]
     if len(series) < 8:
         raise ValueError("Not enough regular periods to forecast.")
+    calendar_effects = _calendar_effects(series) if calendar else {}
     if len(series) > 1200:
         series = series.iloc[-1200:]
 
@@ -57,8 +69,9 @@ def forecast(
     split = max(5, int(n * 0.8))
     train, test = y[:split], y[split:]
 
-    best = {"mae": float("inf"), "params": None, "model": None, "sigma": None}
+    candidates: list[dict] = []
     if period > 1 and len(train) >= period + 3:
+        hw = {"mae": float("inf"), "params": None, "model": None, "sigma": None}
         for alpha in (0.1, 0.3, 0.5, 0.7, 0.9):
             for beta in (0.05, 0.2, 0.5, 0.8):
                 for gamma in (0.1, 0.4, 0.8):
@@ -67,31 +80,51 @@ def forecast(
                         continue
                     pred = _hw_forecast(fitted, period, len(test))
                     mae = float(np.mean(np.abs(pred - test)))
-                    if mae < best["mae"]:
-                        best = {
+                    if mae < hw["mae"]:
+                        hw = {
                             "mae": mae,
                             "params": (alpha, beta, gamma),
                             "model": f"Holt-Winters additive (season {period})",
                             "sigma": sigma,
                         }
+        if hw["model"]:
+            candidates.append({
+                **hw,
+                "key": "holt-winters",
+                "mape": _mape(test, _predict_test(train, hw["model"], period, hw, len(test))),
+            })
+
     # Seasonal-naive baseline
     if period > 1 and len(train) > period:
-        naive = []
-        for h in range(len(test)):
-            naive.append(train[len(train) - period + (h % period)])
-        mae = float(np.mean(np.abs(np.array(naive) - test)))
-        if mae < best["mae"]:
-            best = {"mae": mae, "params": None, "model": "Seasonal naive", "sigma": None}
-    # Linear fallback
-    if best["params"] is None and best["model"] is None:
-        x = np.arange(len(train), dtype=float)
-        slope, intercept = np.polyfit(x, train, 1)
-        pred = slope * np.arange(len(train), len(train) + len(test)) + intercept
-        mae = float(np.mean(np.abs(pred - test)))
-        best = {"mae": mae, "params": None, "model": "Linear trend", "sigma": float(np.std(train - (slope * x + intercept)))}
+        naive = np.array([train[len(train) - period + (h % period)] for h in range(len(test))])
+        candidates.append({
+            "model": "Seasonal naive",
+            "key": "seasonal-naive",
+            "mae": float(np.mean(np.abs(naive - test))),
+            "mape": _mape(test, naive),
+            "params": None,
+            "sigma": float(np.std(np.diff(train))) or None,
+        })
 
-    model = best["model"] or "Linear trend"
-    sigma = best["sigma"]
+    # Linear trend is always a candidate, not merely a fallback.
+    x_train = np.arange(len(train), dtype=float)
+    slope, intercept = np.polyfit(x_train, train, 1)
+    linear_pred = slope * np.arange(len(train), len(train) + len(test)) + intercept
+    candidates.append({
+        "model": "Linear trend",
+        "key": "linear",
+        "mae": float(np.mean(np.abs(linear_pred - test))),
+        "mape": _mape(test, linear_pred),
+        "params": None,
+        "sigma": float(np.std(train - (slope * x_train + intercept))) or None,
+    })
+
+    if not candidates:
+        raise ValueError("Not enough regular periods to select a model.")
+    selected = min(candidates, key=lambda item: item["mae"])
+    best = selected
+    model = best["model"]
+    sigma = best["sigma"] or float(np.std(train)) or 1.0
     future_dates = _future_index(series.index[-1], rule, horizon)
 
     if model.startswith("Holt-Winters"):
@@ -110,10 +143,13 @@ def forecast(
         preds = list(slope * np.arange(n, n + horizon) + intercept)
         sigma = sigma or float(np.std(y - (slope * x + intercept))) or 1.0
 
+    backtest, interval = _backtest(y, split, period, model, best, float(sigma))
+    interval_scale = interval["scale"] if interval else 1.0
+
     non_negative = bool(np.all(y >= 0))
     forecast_rows = []
     for h, (date, value) in enumerate(zip(future_dates, preds), start=1):
-        half = 1.96 * float(sigma) * math.sqrt(h)
+        half = 1.96 * float(sigma) * math.sqrt(h) * interval_scale
         lo, hi = value - half, value + half
         if non_negative:
             lo = max(0.0, lo)
@@ -130,6 +166,21 @@ def forecast(
     r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
     mape = _mape(test, _predict_test(train, model, period, best, len(test)))
 
+    comparison = []
+    for candidate in sorted(candidates, key=lambda item: item["mae"]):
+        comparison.append({
+            "model": candidate["model"],
+            "key": candidate["key"],
+            "mae": round(float(candidate["mae"]), 2),
+            "mape": round(float(candidate["mape"]), 2) if candidate.get("mape") is not None else None,
+            "selected": candidate is selected,
+            "rationale": (
+                "Lowest holdout MAE"
+                if candidate is selected
+                else "Higher holdout error than the selected model"
+            ),
+        })
+
     last = float(y[-1])
     next_value = float(preds[0]) if len(preds) else last
     change = (next_value - last) / abs(last) if last else None
@@ -137,6 +188,26 @@ def forecast(
         {"date": d.strftime("%Y-%m-%d"), "value": round(float(v), 2)}
         for d, v in series.items()
     ]
+
+    detected: list[dict] = []
+    if include_anomalies:
+        try:
+            scan = detect_anomalies(frame, date_col, value_col, agg=agg, threshold=3.0)
+            detected = scan.get("anomalies") or []
+        except (ValueError, KeyError):
+            detected = []
+
+    warnings = []
+    if n < 24:
+        warnings.append("Short series: intervals are wide and seasonality may be unreliable.")
+    if interval and interval_scale > 1.25:
+        warnings.append(
+            "Backtest intervals were narrower than reality; prediction intervals were widened "
+            f"by {interval_scale:.2f}×."
+        )
+    if excluded:
+        warnings.append(f"Excluded {len(excluded)} requested date(s) from the model fit.")
+
     return {
         "column": value_col,
         "date_column": date_col,
@@ -146,6 +217,12 @@ def forecast(
         "seasonality": period,
         "history": history[-400:],
         "forecast": forecast_rows,
+        "candidates": comparison,
+        "backtest": backtest,
+        "interval": interval,
+        "calendar": calendar_effects,
+        "excluded_dates": excluded,
+        "anomalies": detected,
         "metrics": {
             "mae": round(float(best["mae"]), 2),
             "mape": round(mape, 2) if mape is not None else None,
@@ -159,11 +236,117 @@ def forecast(
             "direction": "up" if change and change > 0.01 else "down" if change and change < -0.01 else "flat",
             "average_forecast": round(float(np.mean(preds)), 2),
         },
-        "warnings": (
-            ["Short series: intervals are wide and seasonality may be unreliable."]
-            if n < 24 else []
-        ),
+        "warnings": warnings,
     }
+
+
+def _backtest(
+    y: np.ndarray,
+    split: int,
+    period: int,
+    model: str,
+    best: dict,
+    sigma: float,
+) -> tuple[list[dict], dict | None]:
+    """Rolling-origin backtest used to calibrate the prediction intervals."""
+    n = len(y)
+    test_len = n - split
+    if test_len < 2 or sigma <= 0:
+        return [], None
+    step = max(1, test_len // 3)
+    folds: list[dict] = []
+    normalised: list[float] = []
+    for fold in range(3):
+        end = split + fold * step
+        if end >= n:
+            break
+        actual = y[end:min(n, end + step)]
+        if len(actual) < 1:
+            continue
+        predicted = _predict_test(y[:end], model, period, best, len(actual))
+        if len(predicted) != len(actual):
+            continue
+        errors = actual - predicted
+        steps = np.arange(1, len(actual) + 1, dtype=float)
+        norm = np.abs(errors) / (sigma * np.sqrt(steps))
+        if not np.all(np.isfinite(norm)):
+            continue
+        normalised.extend(float(value) for value in norm)
+        folds.append({
+            "fold": fold + 1,
+            "train_points": int(end),
+            "test_points": int(len(actual)),
+            "mae": round(float(np.mean(np.abs(errors))), 2),
+            "mape": round(float(_mape(actual, predicted) or 0.0), 2),
+            "coverage": round(float(np.mean(norm <= 1.96)), 3),
+        })
+    if not normalised:
+        return folds, None
+    coverage = float(np.mean(np.asarray(normalised) <= 1.96))
+    quantile = float(np.quantile(normalised, 0.95))
+    scale = float(np.clip(quantile / 1.96, 0.75, 2.5))
+    return folds, {
+        "nominal": 95,
+        "empirical_coverage": round(coverage, 3),
+        "scale": round(scale, 2),
+        "points": len(normalised),
+        "method": "rolling-origin backtest",
+    }
+
+
+def _calendar_effects(series: pd.Series) -> dict:
+    """Describe weekday, month and fixed-holiday effects in the history."""
+    if len(series) < 14:
+        return {"note": "Not enough history to estimate calendar effects."}
+    overall = float(series.mean())
+    median = float(series.median())
+    if overall == 0:
+        return {"note": "The series averages zero; calendar effects are undefined."}
+    by_weekday = series.groupby(series.index.day_name()).mean()
+    by_month = series.groupby(series.index.month).mean()
+    weekday = {
+        str(name): round(float(value / overall - 1.0) * 100, 1)
+        for name, value in by_weekday.items()
+    }
+    month = {
+        str(int(name)): round(float(value / overall - 1.0) * 100, 1)
+        for name, value in by_month.items()
+    }
+    fixed = {
+        "01-01": "New Year's Day",
+        "07-04": "Independence Day",
+        "12-24": "Christmas Eve",
+        "12-25": "Christmas Day",
+        "12-31": "New Year's Eve",
+    }
+    holidays = []
+    for date, value in series.items():
+        key = date.strftime("%m-%d")
+        if key not in fixed or median == 0:
+            continue
+        holidays.append({
+            "date": date.strftime("%Y-%m-%d"),
+            "name": fixed[key],
+            "value": round(float(value), 2),
+            "lift": round(float(value / median - 1.0) * 100, 1),
+        })
+    holidays.sort(key=lambda item: abs(item["lift"]), reverse=True)
+    return {
+        "weekday_effect_pct": weekday,
+        "month_effect_pct": month,
+        "holidays": holidays[:8],
+        "note": "Descriptive effects versus the series mean; the model does not add holiday regressors.",
+    }
+
+
+def _date_key(value: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    try:
+        return pd.Timestamp(text).strftime("%Y-%m-%d")
+    except (ValueError, TypeError):
+        return ""
 
 
 def _frequency(dates: pd.Series, freq: str | None) -> tuple[str, str]:

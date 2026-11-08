@@ -383,6 +383,16 @@
     }
     const histPts = hist.map((p, i) => `${xAt(i).toFixed(1)},${yAt(p.value).toFixed(1)}`);
     out += `<path d="M${histPts.join(" L")}" fill="none" stroke="${C.accent}" stroke-width="2.2" stroke-linejoin="round"/>`;
+    if (opts.anomalies && opts.anomalies.length) {
+      const byDate = new Map(hist.map((point, index) => [String(point.date), index]));
+      opts.anomalies.forEach((flag) => {
+        let index = byDate.get(String(flag.date));
+        if (index === undefined && Number.isInteger(Number(flag.index))) index = Number(flag.index);
+        if (!Number.isInteger(index) || index < 0 || index >= hist.length) return;
+        const [x, y] = [xAt(index), yAt(hist[index].value)];
+        out += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="none" stroke="${C.rose}" stroke-width="1.6"><title>${esc(flag.date)}: ${fmt(flag.value, opts.format)}${flag.z !== undefined ? ` · z ${Number(flag.z).toFixed(1)}` : ""}</title></circle>`;
+      });
+    }
     const labels = all.map((p) => p.date);
     tickIndices(n, 7).forEach((i) => {
       const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";

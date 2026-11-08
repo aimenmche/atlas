@@ -21,7 +21,11 @@ FORBIDDEN_FUNCTIONS = {
     "read_text", "read_blob", "parquet_scan", "csv_scan", "json_scan", "glob",
     "httpfs", "sqlite_scan", "postgres_scan", "mysql_scan", "duckdb_extensions",
     "getvariable", "current_setting", "shell", "system",
+    "duckdb_settings", "duckdb_functions", "duckdb_tables", "duckdb_columns",
+    "duckdb_views", "duckdb_indexes", "duckdb_databases", "duckdb_schemas",
+    "duckdb_types", "duckdb_secrets",
 }
+FORBIDDEN_SCHEMAS = ("information_schema", "pg_catalog")
 SELECT_START = re.compile(r"^\s*(select|with)\b", re.I)
 
 
@@ -49,6 +53,9 @@ def validate_sql(sql: str) -> str:
     for fn in FORBIDDEN_FUNCTIONS:
         if re.search(rf"\b{fn}\s*\(", lowered):
             raise SqlRejected(f"The function '{fn}' is disabled.")
+    for schema in FORBIDDEN_SCHEMAS:
+        if re.search(rf"\b{schema}\b", lowered):
+            raise SqlRejected(f"The schema '{schema}' is not available to analyst queries.")
     return cleaned
 
 

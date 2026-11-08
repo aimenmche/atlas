@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/dzdzdzdzdzdz213/atlas/security/policy
+    about: Report vulnerabilities privately using the policy in SECURITY.md.
+  - name: Read the docs
+    url: https://github.com/dzdzdzdzdzdz213/atlas/blob/main/docs/architecture.md
+    about: Architecture, storage, security boundaries, and extension points.
+  - name: API reference
+    url: https://github.com/dzdzdzdzdzdz213/atlas/blob/main/docs/api.md
+    about: Endpoints, payloads, authentication, and report options.

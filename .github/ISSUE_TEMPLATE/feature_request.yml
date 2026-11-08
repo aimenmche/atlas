@@ -1,0 +1,70 @@
+name: Feature request
+description: Propose a capability, refinement, or experiment.
+title: "[feature] "
+labels: ["enhancement", "type: feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Atlas stays local-first and dependency-free at runtime. Proposals that
+        need a hosted service, a CDN, or a background daemon need a clear
+        offline story.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the analyst's job, not the implementation.
+      placeholder: I cannot tell which columns are the official revenue definitions when two teams upload similar files.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behaviour
+      placeholder: A per-dataset glossary that survives reloads and appears in the report.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Existing workarounds, simpler options, or reasons to do nothing.
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Landing page
+        - Workspace UI
+        - Ingestion
+        - Ask / NL to SQL
+        - Analytics
+        - Forecasting
+        - Reports
+        - Security
+        - Packaging / CI / release
+        - Documentation
+    validations:
+      required: true
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Estimated effort
+      options:
+        - Small (a day or less)
+        - Medium (a few days)
+        - Large (a week or more)
+        - Not sure
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: This can work fully offline with no external runtime dependency.
+          required: true
+        - label: I searched existing issues first.
+          required: true

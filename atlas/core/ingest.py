@@ -23,37 +23,102 @@ MAX_ROWS = 300_000
 DATE_HINTS = {"date", "day", "week", "month", "quarter", "year", "timestamp", "time", "period"}
 ID_HINTS = {"id", "key", "code", "sku", "uuid", "guid", "ref"}
 
+SUPPORTED_EXTENSIONS = {
+    "csv": "csv",
+    "tsv": "tsv",
+    "tab": "tsv",
+    "txt": "csv",
+    "json": "json",
+    "xlsx": "excel",
+    "xlsm": "excel",
+    "xls": "excel",
+    "parquet": "parquet",
+    "pq": "parquet",
+}
+
+OLE_SIGNATURE = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
+ZIP_SIGNATURE = b"PK\x03\x04"
+PARQUET_SIGNATURE = b"PAR1"
+BINARY_SIGNATURES = (
+    b"\x7fELF",
+    b"\x89PNG\r\n\x1a\n",
+    b"%PDF",
+    b"GIF87a",
+    b"GIF89a",
+    b"\xff\xd8\xff",
+    b"\x1f\x8b",
+    b"7z\xbc\xaf\x27\x1c",
+    b"Rar!\x1a\x07",
+    b"\xca\xfe\xba\xbe",
+)
+
+
 
 class IngestError(ValueError):
     """Raised when a file cannot be interpreted as tabular data."""
 
 
-def read_upload(filename: str, data: bytes) -> tuple[pd.DataFrame, dict]:
+def read_upload(
+    filename: str,
+    data: bytes,
+    *,
+    sheet: str | None = None,
+    header_row: int | None = None,
+    json_path: str | None = None,
+) -> tuple[pd.DataFrame, dict]:
     if not data:
         raise IngestError("The file is empty.")
     name = (filename or "upload").strip()
     ext = name.rsplit(".", 1)[-1].lower() if "." in name else "csv"
     notes: list[str] = []
     meta: dict[str, Any] = {"filename": name, "format": ext, "bytes": len(data)}
+    _validate_signature(ext, data)
 
     if ext in {"xlsx", "xlsm", "xls"}:
-        df = _read_excel(data, ext)
-        meta["format"] = "excel"
+        sheets = list_excel_sheets(data)
+        meta["sheets"] = sheets
+        chosen = sheet or (sheets[0]["name"] if sheets else None)
+        df = _read_excel(data, ext, sheet=chosen)
+        meta.update({"format": "excel", "sheet": chosen})
+        if len(sheets) > 1:
+            notes.append(
+                f"Workbook has {len(sheets)} sheets; analysed '{chosen}'. "
+                "Choose another sheet in the upload dialog."
+            )
     elif ext == "json":
-        df = _read_json(data)
+        df = _read_json(data, json_path=json_path)
         meta["format"] = "json"
+        if json_path:
+            meta["json_path"] = json_path
     elif ext in {"parquet", "pq"}:
         df = _read_parquet(data)
         meta["format"] = "parquet"
     elif ext in {"tsv", "tab"}:
-        df, encoding = _read_csv(data, delimiter="\t")
-        meta.update({"format": "tsv", "encoding": encoding})
+        df, encoding, used_header = _read_csv(data, delimiter="\t", header_row=header_row)
+        meta.update({
+            "format": "tsv", "encoding": encoding, "header_row": used_header,
+            "available_sheets": [], "nested": False,
+        })
     else:
-        df, encoding, delimiter = _read_csv(data)
-        meta.update({"format": "csv", "encoding": encoding, "delimiter": delimiter})
+        df, encoding, delimiter, used_header = _read_csv(data, header_row=header_row)
+        meta.update({
+            "format": "csv",
+            "encoding": encoding,
+            "delimiter": delimiter,
+            "header_row": used_header,
+            "available_sheets": [],
+            "nested": False,
+        })
 
     if df.empty and len(df.columns) == 0:
         raise IngestError("No tabular data found in the file.")
+
+    meta.setdefault("available_sheets", meta.get("sheets", []))
+    meta.setdefault("nested", any("." in str(c) for c in df.columns))
+    if meta["nested"]:
+        notes.append("Nested JSON keys were flattened with dotted column names.")
+    if meta.get("header_row") not in (None, 0):
+        notes.append(f"Detected the header on row {int(meta['header_row']) + 1}.")
 
     meta["raw_rows"] = int(len(df))
     df, clean_notes = clean_frame(df)
@@ -68,11 +133,132 @@ def read_upload(filename: str, data: bytes) -> tuple[pd.DataFrame, dict]:
     return df, meta
 
 
+def inspect_upload(filename: str, data: bytes) -> dict:
+    """Describe a file before ingestion so the UI can offer choices.
+
+    Never parses the whole file into the store and never writes anything.
+    """
+    if not data:
+        raise IngestError("The file is empty.")
+    name = (filename or "upload").strip()
+    ext = name.rsplit(".", 1)[-1].lower() if "." in name else "csv"
+    _validate_signature(ext, data)
+    result: dict[str, Any] = {
+        "filename": name,
+        "format": SUPPORTED_EXTENSIONS.get(ext),
+        "extension": ext,
+        "bytes": len(data),
+        "sheets": [],
+        "header_row": None,
+        "headers": [],
+        "preview": [],
+        "json_paths": [],
+    }
+    if ext in {"xlsx", "xlsm", "xls"}:
+        result["sheets"] = list_excel_sheets(data)
+        chosen = result["sheets"][0]["name"] if result["sheets"] else None
+        if chosen:
+            frame = _read_excel(data, ext, sheet=chosen)
+            result["headers"] = [str(c) for c in frame.columns[:40]]
+            result["preview"] = _preview_rows(frame, 6)
+        return result
+    if ext == "json":
+        text, _ = _decode(data)
+        try:
+            payload = json.loads(text)
+        except json.JSONDecodeError as exc:
+            raise IngestError(f"Invalid JSON: {exc.msg} at line {exc.lineno}.") from exc
+        result["json_paths"] = list_json_paths(payload)
+        frame = _read_json(data)
+        result["headers"] = [str(c) for c in frame.columns[:40]]
+        result["preview"] = _preview_rows(frame, 6)
+        result["detected_header_row"] = 0
+        return result
+    if ext in {"parquet", "pq"}:
+        frame = _read_parquet(data)
+        result["headers"] = [str(c) for c in frame.columns[:40]]
+        result["preview"] = _preview_rows(frame, 6)
+        return result
+
+    text, encoding = _decode(data)
+    delimiter = "\t" if ext in {"tsv", "tab"} else _sniff(text)
+    rows = _raw_rows(text, delimiter)
+    detected = detect_header_row(rows)
+    result.update({
+        "delimiter": delimiter,
+        "encoding": encoding,
+        "detected_header_row": detected,
+        "header_row": detected,
+        "headers": [str(c) for c in rows[detected]] if rows else [],
+        "preview": _preview_text(rows, detected, 6),
+    })
+    return result
+
+
+def _preview_rows(frame: pd.DataFrame, count: int) -> list[list[Any]]:
+    return [
+        [None if pd.isna(v) else str(v)[:80] for v in row]
+        for row in frame.head(count).itertuples(index=False, name=None)
+    ]
+
+
+def _preview_text(rows: list[list[str]], header_row: int, count: int) -> list[list[str]]:
+    return [[str(cell)[:80] for cell in row] for row in rows[header_row + 1:header_row + 1 + count]]
+
+
+
 # --------------------------------------------------------------------------- #
 # Readers
 # --------------------------------------------------------------------------- #
+def _validate_signature(ext: str, data: bytes) -> None:
+    """Reject renamed binaries and unsupported formats before parsing.
+
+    Extension checks are not enough on their own: a browser will happily upload
+    ``report.csv`` whose first bytes are an executable. The check is deliberately
+    signature-based and never echoes file contents back to the client.
+    """
+    kind = SUPPORTED_EXTENSIONS.get(ext)
+    if kind is None:
+        supported = ", ".join(sorted({f".{key}" for key in SUPPORTED_EXTENSIONS}))
+        raise IngestError(f"Unsupported file type '.{ext}'. Use one of: {supported}.")
+
+    head = data[:8192]
+    utf16 = head.startswith((b"\xff\xfe", b"\xfe\xff"))
+
+    if kind == "excel":
+        if ext == "xls":
+            if not head.startswith(OLE_SIGNATURE):
+                raise IngestError("That file is not a valid Excel workbook.")
+        elif not head.startswith(ZIP_SIGNATURE):
+            raise IngestError("That file is not a valid Excel workbook (.xlsx).")
+        return
+
+    if kind == "parquet":
+        if not head.startswith(PARQUET_SIGNATURE):
+            raise IngestError("That file is not a valid Parquet file.")
+        return
+
+    if kind == "json":
+        if not utf16 and (b"\x00" in head or head[:2] == b"MZ" or head.startswith(BINARY_SIGNATURES)):
+            raise IngestError("That file is not a text JSON file.")
+        text, _ = _decode(head)
+        if not text.lstrip("\ufeff \t\r\n").startswith(("{", "[")):
+            raise IngestError("JSON must start with an array or an object.")
+        return
+
+    # Delimited text: allow UTF-16 BOM files, reject binary markers.
+    if not utf16:
+        if b"\x00" in head or head[:2] == b"MZ" or head.startswith(BINARY_SIGNATURES):
+            raise IngestError("That file is not a text-delimited file.")
+        if head.startswith(ZIP_SIGNATURE) or head.startswith(PARQUET_SIGNATURE):
+            raise IngestError("That file is a binary format renamed as text.")
+
+
 def _decode(data: bytes) -> tuple[str, str]:
-    for enc in ("utf-8-sig", "utf-8", "cp1252", "latin-1"):
+    encodings = ("utf-8-sig", "utf-8", "cp1252", "latin-1")
+    if data.startswith((b"\xff\xfe", b"\xfe\xff")):
+        encodings = ("utf-16",) + encodings
+    for enc in encodings:
         try:
             return data.decode(enc), enc
         except UnicodeDecodeError:
@@ -91,11 +277,20 @@ def _sniff(text: str) -> str:
         return best if counts[best] > 0 else ","
 
 
-def _read_csv(data: bytes, delimiter: str | None = None) -> tuple[pd.DataFrame, str, str]:
+def _read_csv(
+    data: bytes,
+    delimiter: str | None = None,
+    header_row: int | None = None,
+) -> tuple[pd.DataFrame, str, str, int]:
     text, encoding = _decode(data)
     if not text.strip():
         raise IngestError("The file contains no text.")
     delim = delimiter or _sniff(text)
+    rows = _raw_rows(text, delim)
+    detected = detect_header_row(rows) if header_row is None else int(header_row)
+    if detected < -1:
+        detected = 0
+    header = None if detected == -1 else detected
     try:
         df = pd.read_csv(
             io.StringIO(text),
@@ -103,13 +298,14 @@ def _read_csv(data: bytes, delimiter: str | None = None) -> tuple[pd.DataFrame, 
             engine="c",
             skip_blank_lines=True,
             low_memory=False,
+            header=header,
             nrows=MAX_ROWS + 1,
         )
     except (pd.errors.ParserError, ValueError):
         try:
             df = pd.read_csv(
                 io.StringIO(text), sep=None, engine="python", skip_blank_lines=True,
-                nrows=MAX_ROWS + 1,
+                header=header, nrows=MAX_ROWS + 1,
             )
             delim = "auto"
         except Exception as exc:  # pragma: no cover - defensive
@@ -118,21 +314,86 @@ def _read_csv(data: bytes, delimiter: str | None = None) -> tuple[pd.DataFrame, 
         for candidate in (",", ";", "\t", "|"):
             if candidate != delim and text.count(candidate) > text.count("\n"):
                 try:
-                    alt = pd.read_csv(io.StringIO(text), sep=candidate, nrows=MAX_ROWS + 1)
+                    alt = pd.read_csv(io.StringIO(text), sep=candidate, header=header, nrows=MAX_ROWS + 1)
                     if alt.shape[1] > df.shape[1]:
                         df, delim = alt, candidate
                         break
                 except Exception:
                     continue
-    return df, encoding, delim
+    if header is None:
+        df.columns = [f"column_{i + 1}" for i in range(df.shape[1])]
+    return df, encoding, delim, detected
 
 
-def _read_json(data: bytes) -> pd.DataFrame:
+def _raw_rows(text: str, delimiter: str, limit: int = 14) -> list[list[str]]:
+    try:
+        reader = csv.reader(io.StringIO(text), delimiter=delimiter)
+        rows: list[list[str]] = []
+        for index, row in enumerate(reader):
+            if index >= limit:
+                break
+            if any(str(cell).strip() for cell in row):
+                rows.append([str(cell).strip() for cell in row])
+        return rows
+    except csv.Error:
+        return []
+
+
+def detect_header_row(rows: list[list[str]]) -> int:
+    """Pick the most likely header row from the first few rows.
+
+    Spreadsheets exported from reporting tools often put a title in row 1 and
+    the real header in row 2. The heuristic prefers a row of non-numeric,
+    mostly-unique labels followed by rows that contain numbers. It never
+    silently drops data: the chosen row is reported in the upload notes and the
+    user can override it.
+    """
+    if not rows:
+        return 0
+    best_index, best_score = 0, -1.0
+    for index, row in enumerate(rows[:4]):
+        cells = [c for c in row if c is not None and str(c).strip()]
+        if len(cells) < 2:
+            continue
+        width = len(row)
+        if width and len(cells) / width < 0.5:
+            continue
+        unique = len({c.lower() for c in cells}) / max(1, len(cells))
+        text_ratio = sum(1 for c in cells if not _looks_numeric(c)) / len(cells)
+        following = rows[index + 1:index + 4]
+        numeric_ratio = 0.0
+        if following:
+            flat = [c for r in following for c in r if str(c).strip()]
+            numeric_ratio = sum(1 for c in flat if _looks_numeric(c)) / max(1, len(flat))
+        score = unique * 1.2 + text_ratio * 1.6 + numeric_ratio * 1.4
+        # A row that is itself mostly numeric is almost certainly data.
+        if text_ratio < 0.5:
+            score -= 3.0
+        if score > best_score:
+            best_index, best_score = index, score
+    return best_index
+
+
+def _looks_numeric(value: str) -> bool:
+    text = str(value).strip().replace(",", "").replace("$", "").replace("%", "")
+    if text.startswith("(") and text.endswith(")"):
+        text = text[1:-1]
+    if not text:
+        return False
+    try:
+        float(text)
+        return True
+    except ValueError:
+        return False
+
+
+def _read_json(data: bytes, json_path: str | None = None) -> pd.DataFrame:
     text, _ = _decode(data)
     try:
         payload = json.loads(text)
     except json.JSONDecodeError as exc:
         raise IngestError(f"Invalid JSON: {exc.msg} at line {exc.lineno}.") from exc
+    payload = _walk_json(payload, json_path)
     if isinstance(payload, dict):
         for key in ("data", "rows", "records", "results", "items"):
             if isinstance(payload.get(key), list):
@@ -143,14 +404,86 @@ def _read_json(data: bytes) -> pd.DataFrame:
     if not isinstance(payload, list) or not payload:
         raise IngestError("JSON must be an array of records or an object of arrays.")
     if all(isinstance(item, dict) for item in payload):
-        return pd.json_normalize(payload)
+        return _flatten_records(payload)
     if all(isinstance(item, list) for item in payload):
         width = max(len(r) for r in payload)
         return pd.DataFrame(payload, columns=[f"column_{i + 1}" for i in range(width)])
     return pd.DataFrame({"value": payload})
 
 
-def _read_excel(data: bytes, ext: str) -> pd.DataFrame:
+def _walk_json(payload: Any, path: str | None) -> Any:
+    if not path:
+        return payload
+    current = payload
+    for part in str(path).split("."):
+        if isinstance(current, dict) and part in current:
+            current = current[part]
+        elif isinstance(current, list) and part.isdigit() and int(part) < len(current):
+            current = current[int(part)]
+        else:
+            raise IngestError(f"JSON path '{path}' was not found in the file.")
+    return current
+
+
+def _flatten_records(records: list[dict]) -> pd.DataFrame:
+    frame = pd.json_normalize(records, sep=".")
+    # DuckDB cannot store dict/list cells. Serialize only the columns that need it.
+    for column in frame.columns:
+        if frame[column].map(lambda v: isinstance(v, (dict, list))).any():
+            frame[column] = frame[column].map(
+                lambda v: json.dumps(v, ensure_ascii=False, default=str) if isinstance(v, (dict, list)) else v
+            )
+    return frame
+
+
+def list_json_paths(payload: Any, prefix: str = "", depth: int = 0) -> list[dict]:
+    """Enumerate record-array paths so the UI can offer a JSON picker."""
+    out: list[dict] = []
+    if depth > 4:
+        return out
+    if isinstance(payload, list) and payload and all(isinstance(item, dict) for item in payload):
+        keys = sorted({key for item in payload[:20] for key in item.keys()})
+        out.append({"path": prefix or "$", "kind": "records", "count": len(payload), "keys": keys[:20]})
+        return out
+    if isinstance(payload, dict):
+        for key, value in payload.items():
+            child = f"{prefix}.{key}" if prefix else key
+            if isinstance(value, list) and value and all(isinstance(item, dict) for item in value):
+                keys = sorted({k for item in value[:20] for k in item.keys()})
+                out.append({"path": child, "kind": "records", "count": len(value), "keys": keys[:20]})
+            elif isinstance(value, dict):
+                out.extend(list_json_paths(value, child, depth + 1))
+            elif isinstance(value, list) and value and any(isinstance(item, (dict, list)) for item in value):
+                out.append({"path": child, "kind": "array", "count": len(value), "keys": []})
+    return out
+
+
+def list_excel_sheets(data: bytes) -> list[dict]:
+    try:
+        import openpyxl
+    except ImportError as exc:
+        raise IngestError(
+            "Excel support needs openpyxl. Install it with: pip install openpyxl"
+        ) from exc
+    try:
+        workbook = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+    except Exception as exc:
+        raise IngestError(f"Could not read the workbook: {exc}") from exc
+    try:
+        sheets = []
+        for name in workbook.sheetnames:
+            sheet = workbook[name]
+            sheets.append({
+                "name": name,
+                "rows": int(sheet.max_row or 0),
+                "cols": int(sheet.max_column or 0),
+            })
+        return sheets
+    finally:
+        workbook.close()
+
+
+def _read_excel(data: bytes, ext: str, sheet: str | None = None) -> pd.DataFrame:
     try:
         import openpyxl  # noqa: F401
     except ImportError as exc:
@@ -158,7 +491,8 @@ def _read_excel(data: bytes, ext: str) -> pd.DataFrame:
             "Excel support needs openpyxl. Install it with: pip install openpyxl"
         ) from exc
     try:
-        return pd.read_excel(io.BytesIO(data))
+        kwargs = {"sheet_name": sheet} if sheet else {}
+        return pd.read_excel(io.BytesIO(data), **kwargs)
     except Exception as exc:
         raise IngestError(f"Could not read the workbook: {exc}") from exc
 

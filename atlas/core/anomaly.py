@@ -14,13 +14,29 @@ def detect_anomalies(
     value_col: str,
     agg: str = "sum",
     threshold: float = 3.5,
+    exclude_dates: list[str] | None = None,
 ) -> dict:
     frame = pd.DataFrame({
         "d": pd.to_datetime(df[date_col], errors="coerce"),
         "v": pd.to_numeric(df[value_col], errors="coerce"),
     }).dropna()
+    excluded: list[str] = []
+    if exclude_dates:
+        wanted = set()
+        for value in exclude_dates:
+            text = str(value or "").strip()
+            if not text:
+                continue
+            try:
+                wanted.add(pd.Timestamp(text).strftime("%Y-%m-%d"))
+            except (ValueError, TypeError):
+                continue
+        if wanted:
+            excluded = sorted(wanted)
+            frame = frame[~frame["d"].dt.strftime("%Y-%m-%d").isin(wanted)]
     if len(frame) < 8:
         raise ValueError("Need at least 8 observations to detect anomalies.")
+    threshold = max(1.0, min(float(threshold), 8.0))
     if agg not in {"sum", "mean"}:
         agg = "sum"
     daily = frame.groupby(frame["d"].dt.floor("D"))["v"].agg(agg).sort_index()
@@ -67,6 +83,7 @@ def detect_anomalies(
         "count": count,
         "baseline": round(baseline, 2),
         "threshold": threshold,
+        "excluded_dates": excluded,
         "summary": _summary(anomalies, baseline),
     }
 

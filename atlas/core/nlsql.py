@@ -165,9 +165,17 @@ def parse_question(question: str, profile: dict, table: str) -> dict | None:
         return None
     grain = _grain(q)
     values = _value_filters(q, dims)
+    exclusions = _exclusion_filters(q, dims)
+    # A value can only be included or excluded, never both.
+    for name, excluded in exclusions.items():
+        drop = {v.strip().lower() for v in excluded}
+        values[name] = [v for v in values.get(name, []) if v.strip().lower() not in drop]
+        if not values[name]:
+            values.pop(name, None)
     if share and dim:
         # A share needs the full denominator, so don't filter the grouped category.
         values.pop(dim["name"], None)
+        exclusions.pop(dim["name"], None)
     top_n = _top_n(q)
     agg = _aggregation(q, measure, time_intent, has_dim=dim is not None)
     if top_n and agg in {"max", "min"}:
@@ -181,6 +189,8 @@ def parse_question(question: str, profile: dict, table: str) -> dict | None:
     where.extend(_time_filters(q, time_col, t))
     for col, vals in values.items():
         where.append(_value_clause(col, vals))
+    for col, vals in exclusions.items():
+        where.append(_exclusion_clause(col, vals))
 
     where_sql = (" WHERE " + " AND ".join(where)) if where else ""
 
@@ -229,6 +239,40 @@ def parse_question(question: str, profile: dict, table: str) -> dict | None:
             f"Computed the overall {pretty(outcome['name']).lower()} rate.",
             0.85, "rate", question,
             value_format="percent_points", x_label=f"{pretty(outcome['name'])} rate",
+        )
+
+    # ---- year/quarter over previous -------------------------------------
+    comparison = _comparison_intent(q)
+    if comparison and time_col and measure:
+        comp_grain, lag, is_yoy = comparison
+        label_expr = f"date_trunc('{comp_grain}', {quote_ident(time_col)})"
+        value_expr = _agg_expr(agg, measure)
+        sql = (
+            f"WITH base AS ("
+            f"SELECT {label_expr} AS label, {value_expr} AS value FROM {t}{where_sql} "
+            f"GROUP BY label),"
+            f" compared AS (SELECT label, value, LAG(value, {lag}) OVER (ORDER BY label) AS prior FROM base)"
+            f" SELECT label, value, prior, "
+            f"ROUND(100.0 * (value - prior) / NULLIF(prior, 0), 2) AS change_pct "
+            f"FROM compared ORDER BY label ASC"
+        )
+        if is_yoy:
+            title = f"{pretty(measure['name'])} year over year"
+            if comp_grain == "month":
+                title += " by month"
+            rationale = "Compared each month with the same month a year earlier."
+        else:
+            unit = {"quarter": "quarter over quarter", "month": "month over month", "week": "week over week"}.get(
+                comp_grain, "period over period"
+            )
+            title = f"{pretty(measure['name'])} {unit}"
+            rationale = f"Compared each {comp_grain} with the immediately preceding {comp_grain}."
+        return _answer(
+            sql, "line", label_expr, title, rationale,
+            0.87, "yoy" if is_yoy else "period_compare", question,
+            value_format=measure["semantic"],
+            x_label=pretty(time_col), y_label=pretty(measure["name"]),
+            grain=comp_grain,
         )
 
     # ---- time series -----------------------------------------------------
@@ -398,6 +442,62 @@ def _value_clause(column: str, values: list[str]) -> str:
     return "(" + " OR ".join(parts) + ")"
 
 
+def _exclusion_clause(column: str, values: list[str]) -> str:
+    parts = [
+        f"LOWER(TRIM(CAST({quote_ident(column)} AS VARCHAR))) <> {quote_literal(v.strip().lower())}"
+        for v in values
+    ]
+    return "(" + " AND ".join(parts) + ")"
+
+
+_EXCLUSION_CUE = re.compile(
+    r"\b(?:excluding|except(?:\s+for)?|not|without|other\s+than|ignore|drop|minus|omit)\b"
+)
+
+
+def _exclusion_filters(q: str, dims: list[dict]) -> dict[str, list[str]]:
+    """Values the question explicitly excludes.
+
+    Only values from low-cardinality dimensions are considered, and the cue
+    must sit immediately before the value ("not EMEA", "excluding Enterprise").
+    That keeps "why is revenue not growing" from turning into a filter.
+    """
+    out: dict[str, list[str]] = {}
+    for dim in dims:
+        if dim.get("distinct", 0) > 20:
+            continue
+        hits: list[str] = []
+        for entry in (dim.get("top_values") or [])[:20]:
+            raw = str(entry.get("value", "")).strip()
+            low = raw.lower()
+            if len(low) < 3 or low in {"true", "false", "yes", "no", "none", "null"}:
+                continue
+            if any(low == h.lower() for h in hits):
+                continue
+            for match in re.finditer(rf"\b{re.escape(low)}\b", q):
+                before = q[max(0, match.start() - 28):match.start()]
+                after = q[match.end():match.end() + 24]
+                if _EXCLUSION_CUE.search(before) or re.search(r"\b(?:excluded|omitted)\b", after):
+                    hits.append(raw)
+                    break
+        if hits:
+            out[dim["name"]] = hits
+    return out
+
+
+def _comparison_intent(q: str) -> tuple[str, int, bool] | None:
+    if re.search(r"\b(?:year[\s-]*over[\s-]*year|yoy)\b", q):
+        grain = "month" if re.search(r"\b(?:month|monthly|by month)\b", q) else "year"
+        return grain, 12 if grain == "month" else 1, True
+    if re.search(r"\b(?:quarter[\s-]*over[\s-]*quarter|qoq)\b", q):
+        return "quarter", 1, False
+    if re.search(r"\b(?:month[\s-]*over[\s-]*month|mom)\b", q):
+        return "month", 1, False
+    if re.search(r"\b(?:week[\s-]*over[\s-]*week|wow)\b", q):
+        return "week", 1, False
+    return None
+
+
 def _numeric_filters(q: str, measures: list[dict]) -> list[str]:
     out: list[str] = []
     pattern = re.compile(
@@ -425,17 +525,39 @@ def _time_filters(q: str, time_col: str | None, table: str) -> list[str]:
     if not time_col:
         return []
     col = quote_ident(time_col)
+    anchor = f"date_trunc('{{unit}}', (SELECT MAX({col}) FROM {table}))"
     filters: list[str] = []
-    last = re.search(r"\blast\s+(?:(\d+)\s+)?(day|week|month|quarter|year)s?\b", q)
-    if last:
-        count = max(1, int(last.group(1) or 1))
-        unit = last.group(2)
-        # Align to the start of the period so "last 6 months" means six
-        # complete months rather than five months plus one partial day.
-        filters.append(
-            f"{col} >= date_trunc('{unit}', (SELECT MAX({col}) FROM {table}))"
-            f" - INTERVAL '{count - 1} {unit}'"
-        )
+    used_rolling = False
+
+    # "year to date", "month to date", "quarter to date".
+    to_date = re.search(r"\b(year|month|quarter)\s*(?:-|\s)?to\s*date\b|\b(ytd|mtd|qtd)\b", q)
+    if to_date:
+        unit = to_date.group(1) or {"ytd": "year", "mtd": "month", "qtd": "quarter"}[to_date.group(2)]
+        filters.append(f"{col} >= " + anchor.format(unit=unit))
+        used_rolling = True
+
+    # "last 6 months", "past 3 quarters", "rolling 4 weeks".
+    rolling = re.search(
+        r"\b(?:last|past|previous|trailing|rolling)\s+(?:(\d+)\s+)?(day|week|month|quarter|year)s?\b",
+        q,
+    )
+    if rolling:
+        count = max(1, int(rolling.group(1) or 1))
+        unit = rolling.group(2)
+        if count == 1:
+            # "last month" means the previous complete calendar month, not the
+            # current partial one, which would make a misleading total.
+            start = anchor.format(unit=unit)
+            filters.append(f"{col} >= {start} - INTERVAL '1 {unit}'")
+            filters.append(f"{col} < {start}")
+        else:
+            filters.append(f"{col} >= " + anchor.format(unit=unit) + f" - INTERVAL '{count - 1} {unit}'")
+        used_rolling = True
+
+    this_period = re.search(r"\bthis\s+(day|week|month|quarter|year)\b", q)
+    if this_period and not used_rolling:
+        filters.append(f"{col} >= " + anchor.format(unit=this_period.group(1)))
+
     between = re.search(r"\bbetween\s+(20\d{2})\s+and\s+(20\d{2})\b", q)
     if between:
         filters.append(f"EXTRACT(YEAR FROM {col}) BETWEEN {int(between.group(1))} AND {int(between.group(2))}")

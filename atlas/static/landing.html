@@ -9,13 +9,23 @@
   <meta property="og:title" content="Atlas — your data has a shape">
   <meta property="og:description" content="A local-first data analyst that shows its working. No API key. No invented numbers. No data leaving your machine.">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Atlas">
+  <meta property="og:image" content="/static/og-atlas.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Atlas — your data has a shape. A local-first data analyst.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Atlas — your data has a shape">
+  <meta name="twitter:description" content="Ask a messy spreadsheet a question. Get a profiled dataset, read-only SQL, a grounded answer and an offline report.">
+  <meta name="twitter:image" content="/static/og-atlas.png">
+  <meta name="twitter:image:alt" content="Atlas — your data has a shape. A local-first data analyst.">
   <title>Atlas — your data has a shape</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="/static/fonts/instrument-serif-regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/static/landing.css">
-  <script>document.documentElement.classList.add("js");</script>
+  <script src="/static/boot.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -24,7 +34,7 @@
   <div class="scroll-progress" aria-hidden="true"><span id="scrollBar"></span></div>
 
   <header class="nav" id="nav">
-    <a class="brand" href="/" aria-label="Atlas home">
+    <a class="brand" href="/">
       <span class="brand-mark" aria-hidden="true">
         <svg viewBox="0 0 36 36" fill="none">
           <circle cx="18" cy="18" r="14.5" stroke="currentColor" stroke-opacity=".35"/>
@@ -46,6 +56,21 @@
     <a class="nav-cta" href="/app">Open Atlas
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
     </a>
+    <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
+      <span></span><span></span>
+    </button>
+    <div class="mobile-menu" id="mobileMenu" hidden>
+      <nav class="mobile-links" aria-label="Mobile sections">
+        <a href="#premise"><span>01</span>Premise</a>
+        <a href="#method"><span>02</span>Method</a>
+        <a href="#instruments"><span>03</span>Instruments</a>
+        <a href="#demo"><span>04</span>Live demo</a>
+        <a href="#manifesto"><span>05</span>Promise</a>
+      </nav>
+      <a class="mobile-cta" href="/app">Open Atlas
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
   </header>
 
   <main id="main">

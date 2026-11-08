@@ -1,0 +1,77 @@
+name: Bug report
+description: Something is broken, wrong, or unsafe.
+title: "[bug] "
+labels: ["bug", "type: bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please remove API keys, customer data, and
+        personal information before pasting logs or screenshots.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you see instead?
+      placeholder: I expected the forecast to show six months, but the chart stopped after three.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Start Atlas with `atlas --port 8050`
+        2. Upload this CSV shape...
+        3. Open Forecast and choose...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Landing page
+        - Workspace UI
+        - Ingestion
+        - Ask / NL to SQL
+        - Analytics
+        - Forecasting
+        - Reports
+        - Security
+        - Packaging / CI / release
+        - Documentation
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Atlas version
+      description: Shown in the footer and at `GET /api/health`.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Windows 11, Python 3.13, Chromium 151
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Paste text, not screenshots of text. Set `ATLAS_LOG_JSON=1` for structured logs.
+      render: shell
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues first.
+          required: true
+        - label: I removed secrets and personal data from this report.
+          required: true

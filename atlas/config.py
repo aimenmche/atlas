@@ -29,6 +29,11 @@ class Settings:
     temperature: float = 0.2
     query_timeout: float = 8.0
     row_limit: int = 1000
+    max_tokens_per_request: int = 8000
+    cost_budget_usd: float = 0.0
+    input_cost_per_1k: float = 0.0
+    output_cost_per_1k: float = 0.0
+    redact_pii: bool = True
 
     @property
     def llm_enabled(self) -> bool:
@@ -54,6 +59,11 @@ def load_settings() -> Settings:
         temperature=float(_env("ATLAS_LLM_TEMPERATURE", "0.2") or 0.2),
         query_timeout=float(_env("ATLAS_QUERY_TIMEOUT", "8") or 8),
         row_limit=int(_env("ATLAS_ROW_LIMIT", "1000") or 1000),
+        max_tokens_per_request=int(_env("ATLAS_MAX_TOKENS", "8000") or 8000),
+        cost_budget_usd=float(_env("ATLAS_COST_BUDGET_USD", "0") or 0),
+        input_cost_per_1k=float(_env("ATLAS_INPUT_COST_PER_1K", "0") or 0),
+        output_cost_per_1k=float(_env("ATLAS_OUTPUT_COST_PER_1K", "0") or 0),
+        redact_pii=_env("ATLAS_REDACT_PII", "true").lower() not in {"0", "false", "no"},
     )
     if SETTINGS_PATH.exists():
         try:

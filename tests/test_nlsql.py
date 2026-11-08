@@ -107,6 +107,60 @@ def test_forecast_question_without_time_words_is_refused(saas_profile):
     assert parse_question("Project revenue for the next quarter", saas_profile, TABLE) is None
 
 
+def test_exclusion_filters_remove_named_values(saas_profile):
+    parsed = parse_question("Show revenue by region excluding EMEA", saas_profile, TABLE)
+    assert parsed is not None
+    assert "LOWER(TRIM(CAST(\"region\" AS VARCHAR))) <> 'emea'" in parsed["sql"]
+    assert "= 'emea'" not in parsed["sql"]
+    assert parsed["intent"] == "group_by"
+
+
+def test_negated_value_is_not_also_included(saas_profile):
+    parsed = parse_question("Show revenue by region not APAC", saas_profile, TABLE)
+    assert parsed is not None
+    assert "<> 'apac'" in parsed["sql"]
+    assert "= 'apac'" not in parsed["sql"]
+
+
+def test_year_over_year_uses_annual_totals_by_default(saas_profile):
+    parsed = parse_question("Show revenue year over year", saas_profile, TABLE)
+    assert parsed is not None
+    assert parsed["intent"] == "yoy"
+    assert "date_trunc('year'" in parsed["sql"]
+    assert "LAG(value, 1)" in parsed["sql"]
+    assert "change_pct" in parsed["sql"]
+
+
+def test_year_over_year_by_month_compares_twelve_months_back(saas_profile):
+    parsed = parse_question("Revenue year over year by month", saas_profile, TABLE)
+    assert parsed is not None
+    assert "date_trunc('month'" in parsed["sql"]
+    assert "LAG(value, 12)" in parsed["sql"]
+
+
+def test_quarter_over_quarter_uses_lag_one_quarter(saas_profile):
+    parsed = parse_question("Revenue quarter over quarter", saas_profile, TABLE)
+    assert parsed is not None
+    assert parsed["intent"] == "period_compare"
+    assert "date_trunc('quarter'" in parsed["sql"]
+    assert "LAG(value, 1)" in parsed["sql"]
+
+
+def test_rolling_and_calendar_time_filters(saas_profile):
+    last_three = parse_question("Revenue by month over the last 3 months", saas_profile, TABLE)
+    assert last_three is not None
+    assert "INTERVAL '2 month'" in last_three["sql"]
+
+    previous = parse_question("What was revenue last month?", saas_profile, TABLE)
+    assert previous is not None
+    assert "INTERVAL '1 month'" in previous["sql"]
+    assert "MAX(" in previous["sql"]
+
+    ytd = parse_question("What is revenue year to date?", saas_profile, TABLE)
+    assert ytd is not None
+    assert "date_trunc('year'" in ytd["sql"]
+
+
 def test_semantics_taxonomy(saas_frame):
     expectations = {
         "date": ("date", "time", False),

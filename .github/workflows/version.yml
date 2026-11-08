@@ -1,0 +1,71 @@
+name: Version bump
+
+on:
+  workflow_dispatch:
+    inputs:
+      part:
+        description: Which semantic version component to bump.
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+        required: true
+      dry_run:
+        description: Print the resulting version without opening a pull request.
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Bump version
+        id: bump
+        run: |
+          python scripts/bump_version.py "${{ inputs.part }}"
+          version=$(python - <<'PY'
+          import re
+          from pathlib import Path
+          text = Path("pyproject.toml").read_text()
+          print(re.search(r'^version = "([^"]+)"', text, re.M).group(1))
+          PY
+          )
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Bumped to $version"
+
+      - name: Show diff
+        run: git diff --stat && git diff
+
+      - name: Open pull request
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          branch="chore/version-${VERSION}"
+          if git ls-remote --exit-code --heads origin "$branch"; then
+            echo "Branch $branch already exists" >&2
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add pyproject.toml atlas/__init__.py
+          git commit -m "chore: bump version to ${VERSION}"
+          git push origin "$branch"
+          gh pr create \
+            --base main \
+            --head "$branch" \
+            --title "Release v${VERSION}" \
+            --body "Automated version bump to v${VERSION}. Review the changelog, run the full CI matrix, then tag the merge commit with \`v${VERSION}\` to trigger the release workflow."

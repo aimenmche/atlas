@@ -20,6 +20,9 @@ def test_landing_and_app_shell_routes(client):
     assert "Atlas — your data has a shape" in landing.text
     assert 'href="/app"' in landing.text
     assert "/static/landing.js" in landing.text
+    assert 'property="og:image"' in landing.text
+    assert "/static/og-atlas.png" in landing.text
+    assert 'name="twitter:card"' in landing.text
 
     shell = client.get("/app")
     assert shell.status_code == 200
@@ -35,6 +38,8 @@ def test_landing_and_app_shell_routes(client):
         "/static/landing.css",
         "/static/landing.js",
         "/static/landing-preview.png",
+        "/static/og-atlas.png",
+        "/static/boot.js",
         "/static/fonts/instrument-serif-regular.woff2",
         "/static/fonts/space-grotesk.woff2",
         "/static/fonts/LICENSE.txt",
@@ -165,15 +170,183 @@ def test_upload_rename_and_delete(client):
     assert client.get("/api/datasets/tiny-set").status_code == 404
 
 
+def test_trash_restore_and_permanent_delete_lifecycle(client):
+    csv = b"date,region,revenue\n2025-01-01,EMEA,100\n2025-01-02,APAC,200\n"
+    created = client.post(
+        "/api/datasets",
+        files={"file": ("recoverable.csv", csv, "text/csv")},
+        data={"name": "Recoverable Set"},
+    )
+    assert created.status_code == 201
+    dataset_id = created.json()["id"]
+
+    soft = client.delete(f"/api/datasets/{dataset_id}")
+    assert soft.status_code == 200
+    assert soft.json()["trashed"] is True
+    assert soft.json()["restore_days"] == 30
+    assert client.get(f"/api/datasets/{dataset_id}").status_code == 404
+
+    trash = client.get("/api/trash").json()
+    item = next(row for row in trash["datasets"] if row["id"] == dataset_id)
+    assert item["deleted_at"]
+
+    restored = client.post(f"/api/datasets/{dataset_id}/restore")
+    assert restored.status_code == 200
+    assert restored.json()["dataset"]["id"] == dataset_id
+    assert client.get(f"/api/datasets/{dataset_id}").status_code == 200
+    assert all(row["id"] != dataset_id for row in client.get("/api/trash").json()["datasets"])
+
+    # A second soft delete can be purged explicitly from the trash view.
+    client.delete(f"/api/datasets/{dataset_id}")
+    purged = client.delete(f"/api/trash/{dataset_id}")
+    assert purged.status_code == 200
+    assert purged.json()["permanent"] is True
+    assert client.get(f"/api/datasets/{dataset_id}").status_code == 404
+    assert all(row["id"] != dataset_id for row in client.get("/api/trash").json()["datasets"])
+
+    created = client.post(
+        "/api/datasets",
+        files={"file": ("hard-delete.csv", csv, "text/csv")},
+        data={"name": "Hard Delete Set"},
+    )
+    hard_id = created.json()["id"]
+    hard = client.delete(f"/api/datasets/{hard_id}", params={"permanent": True})
+    assert hard.status_code == 200
+    assert hard.json()["permanent"] is True
+    assert client.get(f"/api/datasets/{hard_id}").status_code == 404
+
+
+def test_query_applies_segment_filters_safely(client):
+    total = client.get("/api/datasets/saas-revenue").json()["rows"]
+    filtered = client.post(
+        "/api/datasets/saas-revenue/query",
+        json={
+            "sql": "SELECT COUNT(*) AS n FROM {table}",
+            "filters": [{"column": "region", "value": "EMEA"}],
+        },
+    )
+    assert filtered.status_code == 200
+    emea = filtered.json()["rows"][0][0]
+    assert 0 < emea < total
+
+    injected = client.post(
+        "/api/datasets/saas-revenue/query",
+        json={
+            "sql": "SELECT COUNT(*) AS n FROM {table}",
+            "filters": [{"column": "region", "value": "EMEA' OR '1'='1"}],
+        },
+    )
+    assert injected.status_code == 200
+    assert injected.json()["rows"][0][0] == 0
+
+    blank = client.post(
+        "/api/datasets/saas-revenue/query",
+        json={"sql": "SELECT 1 AS n", "filters": [{"column": "region", "value": ""}]},
+    )
+    assert blank.status_code == 200
+    assert blank.json()["rows"][0][0] == 1
+
+
+def test_dataset_description_and_tags(client):
+    csv = b"date,region,revenue\n2025-01-01,EMEA,100\n2025-01-02,APAC,200\n"
+    created = client.post(
+        "/api/datasets",
+        files={"file": ("tagged.csv", csv, "text/csv")},
+        data={"name": "Tagged Set"},
+    )
+    assert created.status_code == 201
+    dataset_id = created.json()["id"]
+
+    updated = client.patch(
+        f"/api/datasets/{dataset_id}",
+        json={
+            "name": "Tagged Set",
+            "description": "Monthly revenue by region.",
+            "tags": ["Finance", "finance", " monthly "],
+        },
+    )
+    assert updated.status_code == 200
+    body = updated.json()
+    assert body["description"] == "Monthly revenue by region."
+    assert body["tags"] == ["Finance", "monthly"]
+
+    detail = client.get(f"/api/datasets/{dataset_id}").json()
+    assert detail["description"] == "Monthly revenue by region."
+    assert detail["tags"] == ["Finance", "monthly"]
+    listing = client.get("/api/datasets").json()["datasets"]
+    item = next(item for item in listing if item["id"] == dataset_id)
+    assert item["tags"] == ["Finance", "monthly"]
+
+    assert client.patch(f"/api/datasets/{dataset_id}", json={}).status_code == 400
+    too_many = client.patch(
+        f"/api/datasets/{dataset_id}",
+        json={"tags": [f"tag-{i}" for i in range(13)]},
+    )
+    assert too_many.status_code == 400
+
+    glossary = client.patch(
+        f"/api/datasets/{dataset_id}",
+        json={
+            "glossary": {
+                "revenue": "  Net recognised revenue  ",
+                "region": "Sales territory",
+            }
+        },
+    )
+    assert glossary.status_code == 200
+    assert glossary.json()["glossary"] == {
+        "revenue": "Net recognised revenue",
+        "region": "Sales territory",
+    }
+    detail = client.get(f"/api/datasets/{dataset_id}").json()
+    assert detail["glossary"]["revenue"] == "Net recognised revenue"
+
+    unknown = client.patch(
+        f"/api/datasets/{dataset_id}",
+        json={"glossary": {"not_a_column": "Nope"}},
+    )
+    assert unknown.status_code == 400
+    assert "Unknown column" in unknown.json()["detail"]
+
+    too_long = client.patch(
+        f"/api/datasets/{dataset_id}",
+        json={"glossary": {"revenue": "x" * 281}},
+    )
+    assert too_long.status_code == 400
+
+    cleared = client.patch(
+        f"/api/datasets/{dataset_id}",
+        json={"glossary": {"revenue": ""}},
+    )
+    assert cleared.status_code == 200
+    assert cleared.json()["glossary"] == {}
+
+    client.delete(f"/api/datasets/{dataset_id}")
+
+
 def test_forecast_anomalies_and_insights(client):
     forecast = client.post(
         "/api/datasets/saas-revenue/forecast",
-        json={"date_col": "date", "value_col": "revenue", "horizon": 6},
+        json={
+            "date_col": "date",
+            "value_col": "revenue",
+            "horizon": 6,
+            "calendar": True,
+            "exclude": "2025-12-25",
+            "include_anomalies": True,
+        },
     )
     assert forecast.status_code == 200
     forecast_body = forecast.json()
     assert len(forecast_body["forecast"]) == 6
     assert forecast_body["model"]
+    assert forecast_body["candidates"]
+    assert forecast_body["backtest"]
+    assert forecast_body["interval"]["points"]
+    assert forecast_body["interval"]["method"]
+    assert forecast_body["calendar"]["note"]
+    assert forecast_body["excluded_dates"] == ["2025-12-25"]
+    assert isinstance(forecast_body["anomalies"], list)
 
     anomalies = client.get(
         "/api/datasets/saas-revenue/anomalies",
@@ -182,11 +355,86 @@ def test_forecast_anomalies_and_insights(client):
     assert anomalies.status_code == 200
     assert "series" in anomalies.json()
 
+    sensitive = client.get(
+        "/api/datasets/saas-revenue/anomalies",
+        params={
+            "date_col": "date",
+            "value_col": "revenue",
+            "sensitivity": "high",
+            "exclude": "2025-12-25",
+        },
+    )
+    assert sensitive.status_code == 200
+    sensitive_body = sensitive.json()
+    assert sensitive_body["sensitivity"] == "high"
+    assert sensitive_body["threshold"] == 2.5
+    assert sensitive_body["excluded_dates"] == ["2025-12-25"]
+    assert sensitive_body["count"] == len(sensitive_body["anomalies"])
+
     refreshed = client.post("/api/datasets/saas-revenue/insights/refresh")
     assert refreshed.status_code == 200
     insights = refreshed.json()["insights"]
     assert insights
     assert all(item["title"] for item in insights)
+
+
+def test_compare_cohort_and_relationships(client):
+    compare = client.post(
+        "/api/datasets/saas-revenue/compare",
+        json={
+            "date_col": "date",
+            "value_col": "revenue",
+            "grain": "month",
+            "dimension": "region",
+        },
+    )
+    assert compare.status_code == 200
+    body = compare.json()
+    assert body["current_period"] and body["previous_period"]
+    assert body["waterfall"][0]["kind"] == "start"
+    assert body["waterfall"][-1]["kind"] == "end"
+    assert abs(sum(row["delta"] for row in body["contributions"]) - body["delta"]) < 0.01
+    assert body["significance"]["n_current"] >= 1
+
+    cohort = client.post(
+        "/api/datasets/saas-revenue/cohorts",
+        json={
+            "entity_col": "account_id",
+            "date_col": "date",
+            "value_col": "revenue",
+            "grain": "month",
+            "periods": 6,
+        },
+    )
+    assert cohort.status_code == 200
+    cohort_body = cohort.json()
+    assert cohort_body["cohorts"]
+    assert len(cohort_body["average"]) == 6
+
+    matrix = client.post(
+        "/api/datasets/saas-revenue/relationships",
+        json={"mode": "matrix", "columns": ["revenue", "seats", "customers"]},
+    )
+    assert matrix.status_code == 200
+    matrix_body = matrix.json()
+    assert len(matrix_body["matrix"]) == 3
+    assert matrix_body["matrix"][0][0] == 1.0
+
+    lag = client.post(
+        "/api/datasets/saas-revenue/relationships",
+        json={
+            "mode": "lag",
+            "date_col": "date",
+            "x_col": "revenue",
+            "y_col": "seats",
+            "grain": "month",
+            "max_lag": 3,
+        },
+    )
+    assert lag.status_code == 200
+    lag_body = lag.json()
+    assert len(lag_body["rows"]) == 7
+    assert lag_body["same_period_r"] is not None
 
 
 def test_report_is_self_contained_html(client):

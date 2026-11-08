@@ -1,0 +1,11 @@
+{
+  "name": "atlas-ui-tests",
+  "private": true,
+  "description": "Browser and accessibility test tooling for Atlas (not shipped at runtime).",
+  "devDependencies": {
+    "axe-core": "^4.10.2"
+  },
+  "scripts": {
+    "test": "node --test tests/frontend/charts.test.mjs"
+  }
+}

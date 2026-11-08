@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from atlas.core.ingest import IngestError, read_upload
+from atlas.core.ingest import IngestError, inspect_upload, read_upload
 from atlas.core.semantics import parse_number
 from atlas.core.sqlguard import SqlRejected, limit_sql, validate_sql
 
@@ -94,3 +94,86 @@ def test_read_upload_rejects_empty_and_single_column_garbage():
         read_upload("empty.csv", b"")
     with pytest.raises(IngestError):
         read_upload("empty.csv", b"\n\n\n")
+
+
+def test_header_row_is_detected_below_a_title_row():
+    payload = (
+        b"Quarterly revenue export\n"
+        b"region,revenue,orders\n"
+        b"EMEA,1200,14\n"
+        b"APAC,900,11\n"
+    )
+    frame, meta = read_upload("titled.csv", payload)
+    assert list(frame.columns) == ["region", "revenue", "orders"]
+    assert len(frame) == 2
+    assert meta["header_row"] == 1
+    assert any("header on row 2" in note for note in meta["notes"])
+
+
+def test_header_row_can_be_disabled():
+    frame, meta = read_upload(
+        "no-header.csv",
+        b"EMEA,1200\nAPAC,900\n",
+        header_row=-1,
+    )
+    assert list(frame.columns) == ["column_1", "column_2"]
+    assert len(frame) == 2
+    assert meta["header_row"] == -1
+
+
+def test_nested_json_is_flattened_and_paths_are_listed():
+    payload = (
+        b'{"data": [{"id": 1, "customer": {"name": "Ada", "tier": "pro"}, '
+        b'"tags": ["a", "b"]}]}'
+    )
+    frame, meta = read_upload("nested.json", payload)
+    assert "customer.name" in frame.columns
+    assert "customer.tier" in frame.columns
+    assert frame["customer.name"].iloc[0] == "Ada"
+    assert frame["tags"].iloc[0].startswith("[")
+    assert meta["nested"] is True
+    assert any("flattened" in note for note in meta["notes"])
+
+
+def test_json_path_can_select_a_nested_records_array():
+    payload = b'{"result": {"rows": [{"a": 1}, {"a": 2}]}}'
+    frame, meta = read_upload("wrapped.json", payload, json_path="result.rows")
+    assert list(frame.columns) == ["a"]
+    assert len(frame) == 2
+    assert meta["json_path"] == "result.rows"
+
+
+def test_inspect_upload_reports_header_and_preview():
+    result = inspect_upload(
+        "report.csv",
+        b"Monthly report\nregion,revenue\nEMEA,1200\nAPAC,900\n",
+    )
+    assert result["format"] == "csv"
+    assert result["header_row"] == 1
+    assert result["headers"] == ["region", "revenue"]
+    assert result["preview"][0] == ["EMEA", "1200"]
+
+
+def test_excel_sheets_can_be_listed_and_selected(tmp_path):
+    openpyxl = pytest.importorskip("openpyxl")
+    path = tmp_path / "book.xlsx"
+    workbook = openpyxl.Workbook()
+    first = workbook.active
+    first.title = "Summary"
+    first.append(["region", "revenue"])
+    first.append(["EMEA", 1200])
+    second = workbook.create_sheet("Detail")
+    second.append(["customer", "amount"])
+    second.append(["Ada", 99])
+    second.append(["Grace", 88])
+    workbook.save(path)
+
+    result = inspect_upload("book.xlsx", path.read_bytes())
+    assert [sheet["name"] for sheet in result["sheets"]] == ["Summary", "Detail"]
+    assert result["sheets"][0]["rows"] == 2
+
+    frame, meta = read_upload("book.xlsx", path.read_bytes(), sheet="Detail")
+    assert list(frame.columns) == ["customer", "amount"]
+    assert len(frame) == 2
+    assert meta["sheet"] == "Detail"
+    assert any("2 sheets" in note for note in meta["notes"])

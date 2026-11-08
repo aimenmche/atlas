@@ -9,6 +9,48 @@
   const esc = charts.escape;
 
   /* ------------------------------------------------------------------ */
+  /* Local preferences                                                   */
+  /* ------------------------------------------------------------------ */
+  const THEME_KEY = "atlas.theme";
+  const SAVED_KEY = "atlas.saved.v1";
+  const PINS_KEY = "atlas.pins.v1";
+
+  function storageGet(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function storageSet(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage may be disabled */ }
+  }
+
+  function applyTheme(theme) {
+    const resolved = theme === "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = resolved;
+    const scheme = document.querySelector('meta[name="color-scheme"]');
+    if (scheme) scheme.setAttribute("content", resolved);
+    const color = document.querySelector('meta[name="theme-color"]');
+    if (color) color.setAttribute("content", resolved === "light" ? "#f6f7f3" : "#070b10");
+  }
+
+  function currentTheme() {
+    return document.documentElement.dataset.theme === "light" ? "light" : "dark";
+  }
+
+  function toggleTheme() {
+    const next = currentTheme() === "light" ? "dark" : "light";
+    try { localStorage.setItem(THEME_KEY, next); } catch { /* ignore */ }
+    applyTheme(next);
+    toast(`${next === "light" ? "Light" : "Dark"} theme on`, "ok", 1800);
+  }
+
+  applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+
+  /* ------------------------------------------------------------------ */
   /* Icons                                                               */
   /* ------------------------------------------------------------------ */
   const PATHS = {
@@ -38,6 +80,7 @@
     message: '<path d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h2a8 8 0 018 8z"/>',
     activity: '<path d="M3 12h4l2.5-7 4 14 2.5-7h5"/>',
     columns: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M10 4v16M16 4v16"/>',
+    book: '<path d="M4 5.5A2.5 2.5 0 016.5 3H20v15H6.5A2.5 2.5 0 004 20.5V5.5z"/><path d="M4 18.5A2.5 2.5 0 016.5 16H20"/>',
     clock: '<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/>',
     search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
     moon: '<path d="M20 14.5A8 8 0 1110.5 4a7 7 0 009.5 10.5z"/>',
@@ -45,6 +88,12 @@
     arrowDown: '<path d="M12 5v14"/><path d="M18 13l-6 6-6-6"/>',
     target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
     layers: '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 16l9 5 9-5"/>',
+    edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+    pin: '<path d="M9 4h6l-1 6 4 4H6l4-4-1-6z"/><path d="M12 14v7"/>',
+    bookmark: '<path d="M6 4h12v17l-6-4-6 4V4z"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+    undo: '<path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/>',
+    filter: '<path d="M3 5h18l-7 8v6l-4 2v-8L3 5z"/>',
   };
 
   function icon(name, size = 14) {
@@ -143,7 +192,7 @@
       const vals = slice.map((r) => r[i]).filter((v) => v !== null && v !== undefined && v !== "");
       if (vals.length && vals.every((v) => typeof v === "number" || (!Number.isNaN(Number(v)) && typeof v !== "boolean"))) numeric.add(i);
     });
-    let html = '<div class="table-scroll"><table class="data"><thead><tr>';
+    let html = '<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable data table"><table class="data"><thead><tr>';
     columns.forEach((c) => { html += `<th class="${numeric.has(columns.indexOf(c)) ? "num" : ""}">${esc(prettyName(c))}</th>`; });
     html += "</tr></thead><tbody>";
     if (!slice.length) {
@@ -165,15 +214,48 @@
     return html;
   }
 
+  function csvCell(value) {
+    if (value === null || value === undefined) return "";
+    let s = String(value);
+    // Spreadsheet formula injection: neutralize text that Excel would execute,
+    // while leaving ordinary negative numbers as numbers.
+    if (/^[=+@\t\r]/.test(s) || (/^-/.test(s) && !/^-?\d+(\.\d+)?([eE][+-]?\d+)?$/.test(s))) {
+      s = `'${s}`;
+    }
+    return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  }
+
   function downloadCSV(filename, columns, rows) {
-    const escape = (v) => {
-      if (v === null || v === undefined) return "";
-      const s = String(v);
-      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-    };
-    const lines = [columns.map(escape).join(",")];
-    rows.forEach((row) => lines.push(row.map(escape).join(",")));
+    const lines = [columns.map(csvCell).join(",")];
+    rows.forEach((row) => lines.push(row.map(csvCell).join(",")));
     const blob = new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  function inferColumnType(rows, index) {
+    const value = rows.map((row) => row[index]).find((v) => v !== null && v !== undefined && v !== "");
+    if (typeof value === "number") return "number";
+    if (typeof value === "boolean") return "boolean";
+    if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}([T ].*)?$/.test(value)) return "date";
+    return "string";
+  }
+
+  function downloadJSON(filename, columns, rows, meta = {}) {
+    const payload = {
+      ...meta,
+      exported_at: new Date().toISOString(),
+      row_count: rows.length,
+      columns: columns.map((name, index) => ({ name, type: inferColumnType(rows, index) })),
+      rows: rows.map((row) => Object.fromEntries(columns.map((name, index) => [name, row[index]]))),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -199,12 +281,18 @@
     }
   }
 
-  function toast(message, kind = "ok", ms = 3400) {
+  function toast(message, kind = "ok", ms = 3400, action = null) {
     const root = $("#toasts");
     if (!root) return;
     const el = document.createElement("div");
     el.className = `toast ${kind}`;
-    el.innerHTML = `<span class="toast-icon">${icon(kind === "error" ? "alert" : "check", 14)}</span><span>${esc(message)}</span>`;
+    el.innerHTML = `<span class="toast-icon">${icon(kind === "error" ? "alert" : "check", 14)}</span><span style="flex:1">${esc(message)}</span>${action ? `<button class="toast-action">${esc(action.label)}</button>` : ""}`;
+    if (action) {
+      el.querySelector(".toast-action")?.addEventListener("click", async () => {
+        el.remove();
+        await action.onClick();
+      });
+    }
     root.appendChild(el);
     setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translateY(6px)"; setTimeout(() => el.remove(), 220); }, ms);
   }
@@ -277,6 +365,13 @@
     modalOpen: false,
     sidebarOpen: false,
     runSeq: 0,
+    filters: {},
+    saved: storageGet(SAVED_KEY, {}),
+    pins: storageGet(PINS_KEY, {}),
+    paletteOpen: false,
+    paletteIndex: 0,
+    paletteItems: [],
+    trash: null,
   };
 
   function chatFor(id) {
@@ -304,16 +399,138 @@
   }
 
   /* ------------------------------------------------------------------ */
+  /* Filters, saved questions, pinned findings                           */
+  /* ------------------------------------------------------------------ */
+  function filtersFor(id) {
+    if (!state.filters[id]) state.filters[id] = [];
+    return state.filters[id];
+  }
+
+  function activeFilters() {
+    return state.dataset ? filtersFor(state.dataset.id) : [];
+  }
+
+  function addFilter(column, value) {
+    if (!state.dataset) return;
+    const cleanColumn = String(column || "").trim();
+    const cleanValue = String(value || "").trim();
+    if (!cleanColumn || !cleanValue) {
+      toast("Pick a column and enter a value.", "error");
+      return;
+    }
+    const filters = filtersFor(state.dataset.id);
+    if (filters.length >= 8) {
+      toast("Atlas allows up to 8 segment filters.", "error");
+      return;
+    }
+    if (filters.some((f) => f.column === cleanColumn && f.value.toLowerCase() === cleanValue.toLowerCase())) {
+      toast("That filter is already on.", "ok", 1800);
+      return;
+    }
+    filters.push({ column: cleanColumn, value: cleanValue });
+    renderFilters();
+    setHash(state.dataset.id, state.view);
+    toast(`Filter on · ${cleanColumn} = ${cleanValue}`, "ok", 2200);
+  }
+
+  function removeFilter(index) {
+    if (!state.dataset) return;
+    const filters = filtersFor(state.dataset.id);
+    filters.splice(index, 1);
+    renderFilters();
+    setHash(state.dataset.id, state.view);
+  }
+
+  function clearFilters() {
+    if (!state.dataset) return;
+    state.filters[state.dataset.id] = [];
+    renderFilters();
+    setHash(state.dataset.id, state.view);
+  }
+
+  function savedFor(id) {
+    if (!state.saved[id]) state.saved[id] = [];
+    return state.saved[id];
+  }
+
+  function saveQuestion(question) {
+    if (!state.dataset) return;
+    const text = String(question || "").trim();
+    if (!text) return;
+    const list = savedFor(state.dataset.id);
+    if (list.some((item) => item.question.toLowerCase() === text.toLowerCase())) {
+      toast("That question is already saved.", "ok", 1800);
+      return;
+    }
+    list.unshift({ id: `s-${Date.now()}`, question: text, created: new Date().toISOString() });
+    state.saved[state.dataset.id] = list.slice(0, 30);
+    storageSet(SAVED_KEY, state.saved);
+    toast("Question saved", "ok", 1800);
+    if (state.view === "ask") renderView();
+  }
+
+  function removeSaved(datasetId, entryId) {
+    state.saved[datasetId] = savedFor(datasetId).filter((item) => item.id !== entryId);
+    storageSet(SAVED_KEY, state.saved);
+    if (state.view === "ask") renderView();
+  }
+
+  function pinnedInsight() {
+    if (!state.dataset) return null;
+    const id = (state.pins[state.dataset.id] || [])[0];
+    return (state.dataset.insights || []).find((item) => item.id === id) || null;
+  }
+
+  function togglePin(insightId) {
+    if (!state.dataset) return;
+    const list = state.pins[state.dataset.id] || [];
+    const exists = list.includes(insightId);
+    state.pins[state.dataset.id] = exists
+      ? list.filter((id) => id !== insightId)
+      : [insightId, ...list].slice(0, 3);
+    storageSet(PINS_KEY, state.pins);
+    toast(exists ? "Finding unpinned" : "Finding pinned to Overview", "ok", 1800);
+    if (["overview", "quality"].includes(state.view)) renderView();
+    else if (state.modalOpen) openInsight(insightId);
+  }
+
+  function trashDaysLeft(deletedAt) {
+    if (!deletedAt) return 30;
+    const deleted = Date.parse(deletedAt);
+    if (!Number.isFinite(deleted)) return 30;
+    return Math.max(0, Math.ceil(30 - (Date.now() - deleted) / 86400000));
+  }
+
+  /* ------------------------------------------------------------------ */
   /* Routing                                                             */
   /* ------------------------------------------------------------------ */
   function parseHash() {
-    const match = location.hash.match(/^#\/d\/([^/]+)\/([a-z]+)/);
+    const raw = location.hash.replace(/^#/, "");
+    const [path, query] = raw.split("?");
+    const match = path.match(/^\/d\/([^/]+)\/([a-z]+)/);
     if (!match) return {};
-    return { id: decodeURIComponent(match[1]), view: match[2] };
+    const params = new URLSearchParams(query || "");
+    const filters = params.getAll("f").map((item) => {
+      const index = item.indexOf(":");
+      if (index < 1) return null;
+      return { column: item.slice(0, index), value: item.slice(index + 1) };
+    }).filter(Boolean);
+    return {
+      id: decodeURIComponent(match[1]),
+      view: match[2],
+      question: params.get("q") || "",
+      filters,
+    };
   }
 
-  function setHash(id, view) {
-    const target = `#/d/${encodeURIComponent(id)}/${view}`;
+  function setHash(id, view, opts = {}) {
+    const params = new URLSearchParams();
+    const question = opts.question || "";
+    if (question) params.set("q", question);
+    const filters = opts.filters || (state.dataset && state.dataset.id === id ? filtersFor(id) : []);
+    filters.forEach((item) => params.append("f", `${item.column}:${item.value}`));
+    const suffix = params.toString() ? `?${params.toString()}` : "";
+    const target = `#/d/${encodeURIComponent(id)}/${view}${suffix}`;
     if (location.hash !== target) history.replaceState(null, "", target);
   }
 
@@ -325,15 +542,16 @@
       return;
     }
     state.view = view;
-    setHash(state.dataset.id, view);
+    setHash(state.dataset.id, view, opts);
     localStorage.setItem("atlas.view", view);
     renderTabs();
+    renderFilters();
     await renderView();
     if (view === "ask" && opts.focus) setTimeout(focusComposer, 30);
   }
 
   async function selectDataset(id, opts = {}) {
-    if (!id || (state.dataset && state.dataset.id === id && !opts.force)) return;
+    if (!id || (state.dataset && state.dataset.id === id && !opts.force && !opts.question)) return;
     state.loadingDataset = true;
     renderSidebar();
     renderView();
@@ -341,12 +559,15 @@
       const dataset = await getJSON(`/api/datasets/${encodeURIComponent(id)}`);
       state.dataset = dataset;
       state.view = VIEWS.includes(opts.view) ? opts.view : "overview";
+      if (Array.isArray(opts.filters)) state.filters[id] = opts.filters.slice(0, 8);
       localStorage.setItem("atlas.dataset", id);
-      setHash(id, state.view);
+      setHash(id, state.view, { filters: Array.isArray(opts.filters) ? opts.filters : undefined });
       renderSidebar();
       renderTopbar();
       renderTabs();
+      renderFilters();
       await renderView();
+      if (opts.question && !state.streaming) await askQuestion(opts.question);
     } catch (error) {
       toast(error.message, "error");
       const first = state.datasets.find((d) => d.id !== id);
@@ -379,7 +600,7 @@
         || state.datasets[0];
       if (chosen) {
         const view = VIEWS.includes(hash.view) ? hash.view : (VIEWS.includes(localStorage.getItem("atlas.view")) ? localStorage.getItem("atlas.view") : "overview");
-        await selectDataset(chosen.id, { view });
+        await selectDataset(chosen.id, { view, filters: hash.filters, question: hash.question });
       } else {
         state.dataset = null;
         state.view = "overview";
@@ -399,6 +620,7 @@
     renderSidebar();
     renderTopbar();
     renderTabs();
+    renderFilters();
     renderView();
   }
 
@@ -414,6 +636,7 @@
     if (!el) return;
     const meta = llmMeta();
     const datasets = state.datasets || [];
+    const saved = state.dataset ? savedFor(state.dataset.id).slice(0, 4) : [];
     el.innerHTML = `
       <a class="brand" href="/" title="Back to the Atlas landing page">
         <div class="brand-mark">A</div>
@@ -430,6 +653,10 @@
             </button>`).join("") : '<div class="faint" style="font-size:10.5px;padding:8px">No datasets yet.</div>'}
         </div>
       </div>
+      ${saved.length ? `<div class="side-section" style="margin-top:12px">
+        <div class="side-label"><span>Saved questions</span><span class="faint" style="font-size:8.5px">${savedFor(state.dataset.id).length}</span></div>
+        <div class="saved-list">${saved.map((item) => `<div class="saved-item"><button class="saved-open" data-question="${esc(item.question)}" title="${esc(item.question)}">${esc(item.question)}</button><button class="saved-x" data-unsave="${esc(item.id)}" aria-label="Remove saved question">${icon("x", 10)}</button></div>`).join("")}</div>
+      </div>` : ""}
       <div class="side-drop" data-action="upload-open">
         <strong>Drop a file to analyse</strong>
         CSV, Excel, JSON or Parquet
@@ -441,6 +668,16 @@
           <span class="status-dot ${meta.on ? "on" : ""}"></span>
           <span><span class="llm-label">${esc(meta.label)}</span><span class="llm-sub">${esc(meta.sub)}</span></span>
           <span style="margin-left:auto;color:var(--faint)">${icon("settings", 13)}</span>
+        </button>
+        <button class="llm-row" data-action="trash-open">
+          <span style="color:var(--faint)">${icon("trash", 12)}</span>
+          <span><span class="llm-label">Trash & restore</span><span class="llm-sub">30-day recovery</span></span>
+          <span style="margin-left:auto;color:var(--faint)">${icon("chevron", 11)}</span>
+        </button>
+        <button class="llm-row" data-action="theme-toggle">
+          <span style="color:var(--faint)">${icon(currentTheme() === "light" ? "moon" : "sun", 12)}</span>
+          <span><span class="llm-label">${currentTheme() === "light" ? "Dark theme" : "Light theme"}</span><span class="llm-sub">Switch appearance</span></span>
+          <span style="margin-left:auto;color:var(--faint)">${icon("chevron", 11)}</span>
         </button>
         <div class="side-version">ATLAS v${esc(state.health?.version || "1.0")} · ${Number(state.health?.datasets || 0)} datasets</div>
       </div>
@@ -462,10 +699,11 @@
       <div class="crumbs">
         <span class="crumb-dot"></span>
         <span class="crumb-name">${esc(d.name)}</span>
+        <button class="icon-btn" data-action="dataset-edit" title="Edit dataset details" aria-label="Edit dataset details" style="width:24px;height:24px">${icon("edit", 12)}</button>
         <span class="crumb-meta">${Number(d.rows || 0).toLocaleString()} rows · ${d.cols || 0} columns · ${esc(quality.grade || "—")} quality</span>
       </div>
       <div class="top-actions">
-        <span class="kbd-hint" title="Keyboard shortcut">${icon("search", 11)}<kbd>⌘K</kbd></span>
+        <button class="kbd-hint" data-action="palette-open" title="Open the command palette">${icon("search", 11)}<kbd>⌘K</kbd></button>
         <button class="btn ${state.view === "ask" ? "" : "primary"}" data-action="go-ask">${icon("sparkles", 13)} Ask Atlas</button>
         <button class="icon-btn" data-action="settings-open" title="Settings">${icon("settings", 15)}</button>
       </div>
@@ -479,7 +717,38 @@
     el.innerHTML = VIEWS.map((view) => {
       const meta = VIEW_META[view];
       return `<button class="tab ${state.view === view ? "active" : ""}" data-view="${view}">${icon(meta.icon, 13)}${meta.label}</button>`;
-    }).join("");
+    }).join("") + `<select class="select tab-select" id="tab-select" aria-label="Dataset view">${VIEWS.map((view) => `<option value="${view}" ${state.view === view ? "selected" : ""}>${VIEW_META[view].label}</option>`).join("")}</select>`;
+  }
+
+  function renderFilters() {
+    const el = $("#filters");
+    if (!el) return;
+    if (!state.dataset) {
+      el.hidden = true;
+      el.innerHTML = "";
+      return;
+    }
+    el.hidden = false;
+    const filters = activeFilters();
+    const columns = state.dataset.profile?.columns || [];
+    const usable = columns.filter((c) => c.role !== "id");
+    const selected = usable.find((c) => c.name === state._filterColumn) || usable.find((c) => c.semantic === "category") || usable[0];
+    if (selected) state._filterColumn = selected.name;
+    const values = (selected?.top_values || []).slice(0, 40).map((item) => item.value).filter((value) => value !== null && value !== undefined);
+    el.innerHTML = `
+      <span class="filter-label">${icon("filter", 10)} Segment</span>
+      ${filters.map((item, index) => `<span class="filter-chip">${esc(item.column)} = ${esc(item.value)}<button data-remove-filter="${index}" aria-label="Remove filter">${icon("x", 9)}</button></span>`).join("")}
+      <span class="filter-add">
+        <select class="select" id="filter-column" aria-label="Filter column">
+          ${usable.map((c) => `<option value="${esc(c.name)}" ${selected?.name === c.name ? "selected" : ""}>${esc(labelOf(c))}</option>`).join("")}
+        </select>
+        <input class="input" id="filter-value" list="filter-values" placeholder="value" maxlength="200" aria-label="Filter value">
+        <datalist id="filter-values">${values.map((value) => `<option value="${esc(String(value))}"></option>`).join("")}</datalist>
+        <button class="btn sm" data-action="filter-add">${icon("plus", 11)} Add</button>
+      </span>
+      ${filters.length ? `<button class="btn sm ghost" data-action="filter-clear">Clear</button>` : ""}
+      <span class="filter-note">${filters.length ? `${filters.length} active · applies to Ask and Explore` : "Slice every question by a column value"}</span>
+    `;
   }
 
   async function renderView() {
@@ -579,6 +848,8 @@
     const previewState = state.preview || {};
     const topIssues = (quality.issues || []).slice(0, 3);
     const notes = d.notes || [];
+    const pinned = pinnedInsight();
+    const glossary = d.glossary || {};
 
     return `
       <div class="view-inner">
@@ -587,13 +858,23 @@
             <div class="page-kicker"><span class="dot"></span> Dataset overview</div>
             <h1 class="page-title">${esc(d.name)}</h1>
             <p class="page-sub">${Number(d.rows || 0).toLocaleString()} rows profiled across ${d.cols || 0} columns${time ? ` · ${period(time.min)} → ${period(time.max)}` : ""} · ${measures.length} measures, ${dims.length} dimensions.</p>
+            ${d.description ? `<p class="page-sub" style="margin-top:7px;max-width:760px">${esc(d.description)}</p>` : ""}
+            ${(d.tags || []).length ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">${(d.tags || []).map((t) => `<span class="tag neutral">${esc(t)}</span>`).join("")}</div>` : ""}
           </div>
           <div class="page-actions">
             <button class="btn" data-action="refresh-insights">${icon("refresh", 13)} Re-scan</button>
+            <button class="btn" data-action="glossary-open">${icon("book", 13)} Glossary</button>
             <button class="btn" data-action="open-report">${icon("file", 13)} Report</button>
             <button class="icon-btn danger" data-action="delete-dataset" title="Delete dataset">${icon("trash", 14)}</button>
           </div>
         </div>
+
+        ${pinned ? `<div class="pin-note" style="margin-bottom:14px;align-items:flex-start">
+          <span style="color:var(--amber);margin-top:1px">${icon("pin", 13)}</span>
+          <div style="flex:1;min-width:0"><strong style="color:var(--text);display:block">${esc(pinned.title)}</strong><span style="color:var(--muted)">${esc(pinned.detail)}</span></div>
+          <button class="btn sm ghost" data-insight="${esc(pinned.id)}">Open</button>
+          <button class="pin-x" data-pin-insight="${esc(pinned.id)}" aria-label="Unpin finding">${icon("x", 11)}</button>
+        </div>` : ""}
 
         <div class="kpi-grid">
           <div class="kpi"><div class="kpi-label">Rows analysed</div><div class="kpi-value">${Number(d.rows || 0).toLocaleString()}</div><div class="kpi-foot">${Number(profile.duplicate_rows || 0).toLocaleString()} duplicate rows</div></div>
@@ -634,7 +915,7 @@
           ${(profile.columns || []).map((c) => {
             const sample = (c.top_values || [])[0]?.value ?? (c.examples || [])[0] ?? "";
             return `<tr style="cursor:pointer" data-column="${esc(c.name)}">
-              <td><strong style="color:var(--text-soft)">${esc(labelOf(c))}</strong>${c.pii ? ' <span class="tag rose" style="height:16px;font-size:8px">PII</span>' : ""}<div class="faint mono" style="font-size:9px;margin-top:2px">${esc(c.name)}</div></td>
+              <td><strong style="color:var(--text-soft)">${esc(labelOf(c))}</strong>${c.pii ? ' <span class="tag rose" style="height:16px;font-size:8px">PII</span>' : ""}<div class="faint mono" style="font-size:9px;margin-top:2px">${esc(c.name)}</div>${glossary[c.name] ? `<div class="faint" style="font-size:10px;margin-top:3px;max-width:260px">${esc(glossary[c.name])}</div>` : ""}</td>
               <td><span class="tag neutral" style="height:18px;font-size:8.5px">${esc(c.dtype)}</span></td>
               <td class="muted">${esc(c.role)}<div class="faint" style="font-size:9px">${esc(c.semantic)}</div></td>
               <td class="num">${Number(c.null_pct || 0).toFixed(1)}%</td>
@@ -656,9 +937,10 @@
     const meta = KIND_META[insight.kind] || { label: titleCase(insight.kind || "Signal"), cls: "neutral" };
     const chart = insight.chart || {};
     const svg = chart.type ? charts.render(chart, { mini: true }) : "";
+    const pinned = (state.pins[state.dataset?.id] || []).includes(insight.id);
     return `
       <article class="insight-card" data-insight="${esc(insight.id)}">
-        <div class="insight-top"><span class="tag ${meta.cls}">${esc(meta.label)}</span><span class="conf">${esc(insight.confidence || "medium")} confidence</span></div>
+        <div class="insight-top"><span class="tag ${meta.cls}">${esc(meta.label)}</span><span style="display:flex;align-items:center;gap:7px"><span class="conf">${esc(insight.confidence || "medium")} confidence</span><button class="pin-x ${pinned ? "on" : ""}" data-pin-insight="${esc(insight.id)}" aria-label="${pinned ? "Unpin" : "Pin"} finding" title="${pinned ? "Unpin finding" : "Pin to Overview"}">${icon("pin", 11)}</button></span></div>
         <h3 class="insight-title">${esc(insight.title)}</h3>
         <div class="insight-detail">${esc(insight.detail)}</div>
         ${svg ? `<div class="insight-chart">${svg}</div>` : ""}
@@ -715,7 +997,15 @@
               </div>
             </form>
           </div>
-          <aside class="trace-panel ${run?.streaming ? "running" : ""}" id="trace-panel">${tracePanel(run)}</aside>
+          <aside class="ask-aside">
+            <div class="trace-panel ${run?.streaming ? "running" : ""}" id="trace-panel">${tracePanel(run)}</div>
+            <div class="saved-panel">
+              <div class="trace-head"><h3>Saved questions</h3><span class="live" style="display:inline">${savedFor(d.id).length}</span></div>
+              <div class="saved-list" style="padding:10px 12px">
+                ${savedFor(d.id).length ? savedFor(d.id).map((item) => `<div class="saved-item"><button class="saved-open" data-question="${esc(item.question)}">${esc(item.question)}</button><button class="saved-x" data-unsave="${esc(item.id)}" aria-label="Remove saved question">${icon("x", 10)}</button></div>`).join("") : '<div class="saved-empty">Save any answer with the bookmark button and it lands here for one-click re-runs.</div>'}
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     `;
@@ -741,7 +1031,7 @@
       return `<div class="msg-atlas"><div class="answer-card" style="padding:16px 19px"><div class="stream-status"><span class="spinner"></span><span id="ask-status">${esc(last?.label || "Reading the dataset")}</span></div><div class="skeleton" style="height:8px;width:72%;margin:12px 0 8px"></div><div class="skeleton" style="height:8px;width:52%"></div></div></div>`;
     }
     if (run.error) {
-      return `<div class="msg-atlas"><div class="answer-card" style="padding:17px 19px"><div class="answer-kicker" style="color:var(--rose)">${icon("alert", 12)} Analysis stopped</div><h3 class="answer-title" style="font-size:15px">${esc(run.error)}</h3>${run.hint ? `<p class="narrative" style="margin-top:7px;color:var(--muted)">${esc(run.hint)}</p>` : ""}${run.detail ? `<details style="margin-top:10px"><summary class="faint" style="font-size:10.5px;cursor:pointer">Technical detail</summary><pre class="sql-code" style="margin-top:8px">${esc(run.detail)}</pre></details>` : ""}</div></div>`;
+      return `<div class="msg-atlas"><div class="answer-card" style="padding:17px 19px"><div class="answer-kicker" style="color:var(--rose)">${icon("alert", 12)} Analysis stopped</div><h3 class="answer-title" style="font-size:15px">${esc(run.error)}</h3>${run.hint ? `<p class="narrative" style="margin-top:7px;color:var(--muted)">${esc(run.hint)}</p>` : ""}${run.choices?.length ? `<div class="clarify"><div class="clarify-label">Pick a direction that works:</div><div class="clarify-choices">${run.choices.map((q) => `<button class="followup" data-question="${esc(q)}">${esc(q)}</button>`).join("")}</div></div>` : ""}${run.detail ? `<details style="margin-top:10px"><summary class="faint" style="font-size:10.5px;cursor:pointer">Technical detail</summary><pre class="sql-code" style="margin-top:8px">${esc(run.detail)}</pre></details>` : ""}</div></div>`;
     }
     if (!run.answer) return "";
     const a = run.answer;
@@ -774,6 +1064,9 @@
           <div class="answer-foot">
             <button class="btn sm ghost" data-toggle-sql="${run.id}">${icon("terminal", 12)} SQL</button>
             <button class="btn sm ghost" data-answer-csv="${run.id}">${icon("download", 12)} CSV</button>
+            <button class="btn sm ghost" data-answer-json="${run.id}">${icon("download", 12)} JSON</button>
+            <button class="btn sm ghost" data-save-question="${esc(a.question || run.question)}">${icon("bookmark", 12)} Save</button>
+            <button class="btn sm ghost" data-answer-link="${run.id}">${icon("external", 12)} Link</button>
             <span class="conf-chip"><span class="bar"><span class="fill" style="width:${Math.round((confidence.score || 0) * 100)}%"></span></span>${Math.round((confidence.score || 0) * 100)}%</span>
             <span class="foot-spacer"></span>
             <span class="faint" style="font-size:9.5px">${Number(a.result?.row_count || 0).toLocaleString()} rows · ${relTime(a.elapsed_ms)}</span>
@@ -826,17 +1119,24 @@
     if (!q || state.streaming || !state.dataset) return;
     if (state.view !== "ask") await navigate("ask");
     const id = state.dataset.id;
+    setHash(id, "ask", { question: q });
     const chat = chatFor(id);
+    const history = chat
+      .filter((item) => item.role === "run" && item.answer)
+      .slice(-3)
+      .map((item) => ({ question: item.question }));
     chat.push({ role: "user", text: q });
     const run = {
       id: `run-${++state.runSeq}`,
       role: "run",
       question: q,
+      history,
       steps: [],
       answer: null,
       error: null,
       hint: null,
       detail: null,
+      choices: [],
       streaming: true,
       started: performance.now(),
     };
@@ -853,7 +1153,7 @@
       const response = await fetch(`/api/datasets/${encodeURIComponent(datasetId)}/ask/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, history: run.history || [], filters: activeFilters() }),
       });
       if (!response.ok || !response.body) {
         let payload = null;
@@ -894,6 +1194,7 @@
         run.hint = detail.hint || null;
         run.detail = detail.detail || null;
         run.answerSql = detail.sql || null;
+        run.choices = detail.choices || [];
       }
     } finally {
       run.streaming = false;
@@ -934,6 +1235,7 @@
       run.error = frame.data.error || "The question could not be answered.";
       run.hint = frame.data.hint || null;
       run.detail = frame.data.detail || null;
+      run.choices = frame.data.choices || [];
     }
   }
 
@@ -1036,6 +1338,7 @@
           <span class="faint" style="font-size:10px">${Number(r.elapsed_ms || 0).toFixed(1)} ms${r.truncated ? " · truncated" : ""}</span>
           ${modeToggle}
           <button class="btn sm ghost" data-export-explore>${icon("download", 11)} CSV</button>
+          <button class="btn sm ghost" data-export-explore-json>${icon("download", 11)} JSON</button>
         </div>
         ${chart ? `<div style="padding:12px 14px 0">${chart}</div>` : ""}
         ${ex.mode === "chart" && chart ? "" : tableHTML(r.columns, r.rows, { limit: 500, meta: false })}
@@ -1055,7 +1358,7 @@
     const target = $("#explore-result");
     if (target) target.innerHTML = renderExploreResult();
     try {
-      const result = await postJSON(`/api/datasets/${encodeURIComponent(d.id)}/query`, { sql: ex.sql, limit: 1000 });
+      const result = await postJSON(`/api/datasets/${encodeURIComponent(d.id)}/query`, { sql: ex.sql, limit: 1000, filters: activeFilters() });
       ex.result = result;
       ex.mode = "table";
     } catch (error) {
@@ -1095,6 +1398,10 @@
       horizon: 6,
       freq: "auto",
       agg: "sum",
+      calendar: true,
+      exclude: "",
+      sensitivity: "medium",
+      anomaly_exclude: "",
     };
   }
 
@@ -1128,9 +1435,20 @@
             <div class="field"><label>Aggregate</label><select class="select" id="fc-agg"><option value="sum" ${params.agg === "sum" ? "selected" : ""}>Sum</option><option value="mean" ${params.agg === "mean" ? "selected" : ""}>Average</option></select></div>
             <button class="btn primary" data-action="forecast-run" ${state.forecastLoading ? "disabled" : ""}>${state.forecastLoading ? '<span class="spinner" style="border-top-color:#04201c"></span>' : icon("play", 13)} Run</button>
           </div>
+          <div class="forecast-controls" style="grid-template-columns:1.8fr auto;margin-top:10px">
+            <div class="field"><label>Exclude dates <span class="faint">(comma separated, optional)</span></label><input class="input" id="fc-exclude" value="${esc(params.exclude || "")}" placeholder="2025-01-15, 2025-02-01"></div>
+            <label class="check-row" style="padding-bottom:9px"><input type="checkbox" id="fc-calendar" ${params.calendar !== false ? "checked" : ""}> Show calendar effects</label>
+          </div>
         </div>
         <div id="forecast-result">${renderForecastResult()}</div>
         <div class="section-head"><h2>Anomaly scan</h2><span class="aside">Seasonally adjusted robust z-scores</span></div>
+        <div class="card card-pad">
+          <div class="forecast-controls anomaly-controls" style="grid-template-columns:1fr 1fr auto">
+            <div class="field"><label>Sensitivity</label><select class="select" id="an-sensitivity">${[["low", "Low · 4.5σ"], ["medium", "Medium · 3.5σ"], ["high", "High · 2.5σ"], ["extreme", "Extreme · 2.0σ"]].map(([v, l]) => `<option value="${v}" ${(params.sensitivity || "medium") === v ? "selected" : ""}>${l}</option>`).join("")}</select></div>
+            <div class="field"><label>Exclude dates</label><input class="input" id="an-exclude" value="${esc(params.anomaly_exclude || "")}" placeholder="2025-01-15"></div>
+            <button class="btn" data-action="anomaly-run">${icon("activity", 12)} Re-scan</button>
+          </div>
+        </div>
         <div id="anomaly-result">${renderAnomalyResult()}</div>
       </div>
     `;
@@ -1151,6 +1469,13 @@
     const unitMap = { daily: ["day", "days"], weekly: ["week", "weeks"], monthly: ["month", "months"], quarterly: ["quarter", "quarters"] };
     const unit = unitMap[result.frequency] || ["period", "periods"];
     const periods = Number(result.horizon) || (result.forecast || []).length || 1;
+    const candidates = result.candidates || [];
+    const backtest = result.backtest || [];
+    const interval = result.interval || null;
+    const calendar = result.calendar || {};
+    const weekday = Object.entries(calendar.weekday_effect_pct || {}).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 3);
+    const months = Object.entries(calendar.month_effect_pct || {}).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 3);
+    const holidays = calendar.holidays || [];
     return `
       <div class="card card-pad" style="margin-top:14px">
         <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:flex-start">
@@ -1163,12 +1488,44 @@
             <div class="metric"><div class="k">Backtest MAPE</div><div class="v">${Number.isFinite(Number(m.mape)) ? `${Number(m.mape).toFixed(1)}%` : "—"}</div></div>
             <div class="metric"><div class="k">MAE</div><div class="v">${fmt(m.mae, fmtKind)}</div></div>
             <div class="metric"><div class="k">R²</div><div class="v">${Number.isFinite(Number(m.r2)) ? Number(m.r2).toFixed(2) : "—"}</div></div>
+            <div class="metric"><div class="k">Interval coverage</div><div class="v">${interval ? `${Math.round(Number(interval.empirical_coverage || 0) * 100)}%` : "—"}</div></div>
             <div class="metric"><div class="k">Model</div><div class="v" style="font-size:13px;margin-top:6px">${esc(result.model)}</div></div>
           </div>
         </div>
-        <div class="answer-chart" style="margin-top:18px">${charts.forecastChart(result.history || [], result.forecast || [], { format: fmtKind, width: 920, height: 330 })}</div>
-        <div class="legend" style="margin-top:8px"><span><i style="background:var(--accent)"></i>Actual</span><span><i style="background:var(--accent-2)"></i>Forecast</span><span><i style="background:rgba(94,234,212,.18)"></i>95% interval</span><span style="margin-left:auto">${esc(result.history?.length || 0)} periods of history · horizon ${esc(result.horizon)}</span></div>
+        <div class="answer-chart" style="margin-top:18px">${charts.forecastChart(result.history || [], result.forecast || [], { format: fmtKind, width: 920, height: 330, anomalies: result.anomalies || [] })}</div>
+        <div class="legend" style="margin-top:8px"><span><i style="background:var(--accent)"></i>Actual</span><span><i style="background:var(--accent-2)"></i>Forecast</span><span><i style="background:rgba(94,234,212,.18)"></i>95% interval</span>${(result.anomalies || []).length ? `<span><i style="background:var(--rose)"></i>Historical anomaly</span>` : ""}<span style="margin-left:auto">${esc(result.history?.length || 0)} periods of history · horizon ${esc(result.horizon)}</span></div>
         ${(result.warnings || []).length ? `<div class="forecast-note" style="margin-top:14px">${(result.warnings || []).map(esc).join("<br>")}</div>` : ""}
+
+        <div class="grid-2" style="margin-top:16px">
+          <div>
+            <div class="section-head" style="margin:0 0 8px"><h2>Model comparison</h2><span class="aside">Lowest holdout error wins</span></div>
+            <div class="table-wrap"><table class="data"><thead><tr><th>Model</th><th class="num">MAE</th><th class="num">MAPE</th><th>Verdict</th></tr></thead><tbody>
+              ${candidates.map((candidate) => `<tr><td><strong style="color:var(--text-soft)">${esc(candidate.model)}</strong>${candidate.selected ? ' <span class="tag">selected</span>' : ""}</td><td class="num">${fmt(candidate.mae, fmtKind)}</td><td class="num">${Number.isFinite(Number(candidate.mape)) ? `${Number(candidate.mape).toFixed(1)}%` : "—"}</td><td class="faint" style="font-size:10px">${esc(candidate.rationale || "")}</td></tr>`).join("")}
+            </tbody></table></div>
+          </div>
+          <div>
+            <div class="section-head" style="margin:0 0 8px"><h2>Rolling backtest</h2><span class="aside">${interval ? `Intervals widened ${Number(interval.scale).toFixed(2)}×` : "Holdout folds"}</span></div>
+            <div class="table-wrap"><table class="data"><thead><tr><th>Fold</th><th class="num">Train</th><th class="num">Test</th><th class="num">MAE</th><th class="num">Coverage</th></tr></thead><tbody>
+              ${backtest.length ? backtest.map((fold) => `<tr><td>${Number(fold.fold)}</td><td class="num">${Number(fold.train_points).toLocaleString()}</td><td class="num">${Number(fold.test_points).toLocaleString()}</td><td class="num">${fmt(fold.mae, fmtKind)}</td><td class="num">${Math.round(Number(fold.coverage || 0) * 100)}%</td></tr>`).join("") : '<tr><td colspan="5" class="faint">Not enough history for rolling folds.</td></tr>'}
+            </tbody></table></div>
+            ${interval ? `<div class="form-note" style="margin-top:7px">Nominal ${Number(interval.nominal)}% · empirical ${Math.round(Number(interval.empirical_coverage || 0) * 100)}% across ${Number(interval.points || 0).toLocaleString()} points.</div>` : ""}
+          </div>
+        </div>
+
+        ${(weekday.length || months.length || holidays.length) ? `<div style="margin-top:16px;border-top:1px solid var(--line-soft);padding-top:13px">
+          <div class="section-head" style="margin:0 0 9px"><h2>Calendar effects</h2><span class="aside">${esc(calendar.note || "Descriptive only")}</span></div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            ${weekday.map(([name, value]) => `<span class="tag ${Math.abs(value) > 10 ? "amber" : "neutral"}">${esc(name)} ${value > 0 ? "+" : ""}${Number(value).toFixed(1)}%</span>`).join("")}
+            ${months.map(([name, value]) => `<span class="tag neutral">Month ${esc(name)} ${value > 0 ? "+" : ""}${Number(value).toFixed(1)}%</span>`).join("")}
+            ${holidays.map((holiday) => `<span class="tag ${Math.abs(holiday.lift) > 15 ? "amber" : "neutral"}">${esc(holiday.name)} · ${esc(holiday.date)} ${holiday.lift > 0 ? "+" : ""}${Number(holiday.lift).toFixed(1)}%</span>`).join("")}
+          </div>
+        </div>` : ""}
+
+        <div class="table-meta" style="margin-top:12px">
+          <span>Forecast rows include the 95% interval.</span>
+          <button class="btn sm ghost" data-forecast-csv>${icon("download", 11)} CSV</button>
+          <button class="btn sm ghost" data-forecast-json>${icon("download", 11)} JSON</button>
+        </div>
       </div>`;
   }
 
@@ -1181,8 +1538,10 @@
       horizon: Number($("#fc-horizon")?.value || 6),
       freq: $("#fc-freq")?.value || "auto",
       agg: $("#fc-agg")?.value || "sum",
+      exclude: $("#fc-exclude")?.value?.trim() || "",
+      calendar: $("#fc-calendar") ? $("#fc-calendar").checked : true,
     };
-    state.forecastParams[d.id] = params;
+    state.forecastParams[d.id] = { ...(state.forecastParams[d.id] || {}), ...params };
     state.forecastLoading = true;
     const target = $("#forecast-result");
     if (target) target.innerHTML = renderForecastResult();
@@ -1209,8 +1568,8 @@
     return `
       <div class="card card-pad">
         <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap">
-          <div><div class="muted" style="font-size:12.5px">${esc(result.summary)}</div><div class="faint" style="font-size:10.5px;margin-top:4px">Threshold ${result.threshold} · baseline ${fmt(result.baseline, result.value_format)} · ${Number(result.count || 0)} flagged</div></div>
-          <button class="btn sm" data-action="anomaly-run">${icon("refresh", 11)} Re-scan</button>
+          <div><div class="muted" style="font-size:12.5px">${esc(result.summary)}</div><div class="faint" style="font-size:10.5px;margin-top:4px">Threshold ${result.threshold} · baseline ${fmt(result.baseline, result.value_format)} · ${Number(result.count || 0)} flagged${result.sensitivity ? ` · ${esc(result.sensitivity)} sensitivity` : ""}${(result.excluded_dates || []).length ? ` · ${result.excluded_dates.length} date(s) excluded` : ""}</div></div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button class="btn sm" data-action="anomaly-run">${icon("refresh", 11)} Re-scan</button><button class="btn sm ghost" data-anomaly-csv>${icon("download", 11)} CSV</button><button class="btn sm ghost" data-anomaly-json>${icon("download", 11)} JSON</button></div>
         </div>
         <div class="answer-chart">${charts.line(labels, values, { anomalies: flags, format: result.value_format, width: 920, height: 250 })}</div>
         ${(result.anomalies || []).length ? `<div class="table-wrap" style="margin-top:12px"><table class="data"><thead><tr><th>Date</th><th class="num">Value</th><th class="num">Robust z</th><th>Direction</th></tr></thead><tbody>${result.anomalies.slice(0, 6).map((a) => `<tr><td>${esc(a.date)}</td><td class="num">${fmt(a.value, result.value_format)}</td><td class="num">${Number(a.z).toFixed(1)}</td><td>${esc(a.direction)}</td></tr>`).join("")}</tbody></table></div>` : ""}
@@ -1222,11 +1581,16 @@
     if (!d || state.anomaliesLoading) return;
     const params = state.forecastParams[d.id];
     if (!params) return;
+    const sensitivity = $("#an-sensitivity")?.value || params.sensitivity || "medium";
+    const exclude = $("#an-exclude")?.value?.trim() || params.anomaly_exclude || "";
+    params.sensitivity = sensitivity;
+    params.anomaly_exclude = exclude;
+    state.forecastParams[d.id] = params;
     state.anomaliesLoading = true;
     const target = $("#anomaly-result");
     if (target) target.innerHTML = renderAnomalyResult();
     try {
-      const query = new URLSearchParams({ date_col: params.date_col, value_col: params.value_col, agg: params.agg || "sum", threshold: "3.5" });
+      const query = new URLSearchParams({ date_col: params.date_col, value_col: params.value_col, agg: params.agg || "sum", sensitivity, exclude });
       const result = await getJSON(`/api/datasets/${encodeURIComponent(d.id)}/anomalies?${query}`);
       state.anomalies[d.id] = result;
     } catch (error) {
@@ -1298,12 +1662,12 @@
         <div class="section-head"><h2>Correlation map</h2><span class="aside">Pearson r on complete pairs · ${corr.columns.length} measures</span></div>
         <div class="card card-pad"><div class="heatmap-wrap">${correlationHeatmap(corr)}</div></div>` : ""}
 
-        <div class="section-head"><h2>Column dictionary</h2><span class="aside"><strong>${(profile.columns || []).length}</strong> columns</span></div>
+        <div class="section-head"><h2>Column dictionary</h2><span class="aside"><strong>${(profile.columns || []).length}</strong> columns · <button class="btn sm ghost" data-action="glossary-open">${icon("book", 11)} Edit glossary</button></span></div>
         <div class="table-wrap"><table class="data"><thead><tr><th>Column</th><th>Type</th><th>Role</th><th class="num">Missing</th><th class="num">Distinct</th><th>Flags</th><th>Sample</th></tr></thead><tbody>
           ${(profile.columns || []).map((c) => {
             const sample = (c.top_values || [])[0]?.value ?? (c.examples || [])[0] ?? "";
             return `<tr>
-              <td><strong style="color:var(--text-soft)">${esc(labelOf(c))}</strong>${c.pii ? ' <span class="tag rose" style="height:15px;font-size:7.5px">PII</span>' : ""}<div class="faint mono" style="font-size:9px">${esc(c.name)}</div></td>
+              <td><strong style="color:var(--text-soft)">${esc(labelOf(c))}</strong>${c.pii ? ' <span class="tag rose" style="height:15px;font-size:7.5px">PII</span>' : ""}<div class="faint mono" style="font-size:9px">${esc(c.name)}</div>${(d.glossary || {})[c.name] ? `<div class="faint" style="font-size:10px;margin-top:3px;max-width:260px">${esc((d.glossary || {})[c.name])}</div>` : ""}</td>
               <td><span class="tag neutral" style="height:18px;font-size:8.5px">${esc(c.dtype)}</span></td>
               <td class="muted">${esc(c.role)}<div class="faint" style="font-size:9px">${esc(c.semantic)}</div></td>
               <td class="num">${Number(c.null_pct || 0).toFixed(1)}%</td>
@@ -1343,9 +1707,44 @@
   /* ------------------------------------------------------------------ */
   /* Report                                                              */
   /* ------------------------------------------------------------------ */
+  function reportOptions(d) {
+    if (!state.report || state.report.id !== d.id) {
+      state.report = {
+        id: d.id,
+        template: "full",
+        title: "",
+        brand: "",
+        redact: state.settings?.redact_pii !== false,
+        sections: { read: true, evidence: true, quality: true, columns: true, method: true, appendix: true, forecast: false },
+      };
+    }
+    return state.report;
+  }
+
+  function reportUrl(d, opts, download = false) {
+    const params = new URLSearchParams();
+    if (download) params.set("download", "1");
+    params.set("template", opts.template);
+    if (opts.title.trim()) params.set("title", opts.title.trim());
+    if (opts.brand.trim()) params.set("brand", opts.brand.trim());
+    params.set("redact", opts.redact ? "1" : "0");
+    const sections = Object.entries(opts.sections).filter(([, on]) => on).map(([key]) => key);
+    params.set("sections", sections.join(","));
+    return `/api/datasets/${encodeURIComponent(d.id)}/report?${params.toString()}`;
+  }
+
   function renderReport() {
     const d = state.dataset;
-    const url = `/api/datasets/${encodeURIComponent(d.id)}/report`;
+    const opts = reportOptions(d);
+    const sectionLabels = {
+      read: "Executive read",
+      evidence: "Evidence charts",
+      quality: "Data quality",
+      columns: "Column dictionary",
+      method: "Method & cleaning log",
+      appendix: "Evidence appendix",
+      forecast: "Forecast & backtest",
+    };
     return `
       <div class="view-inner">
         <div class="page-head">
@@ -1355,30 +1754,198 @@
             <p class="page-sub">Self-contained HTML: inline SVG charts, no scripts, no external fonts, no CDN. Opens offline and prints cleanly to PDF.</p>
           </div>
           <div class="page-actions">
-            <a class="btn" href="${url}" target="_blank" rel="noopener">${icon("external", 13)} Open</a>
-            <a class="btn primary" href="${url}?download=1">${icon("download", 13)} Download HTML</a>
+            <a class="btn" id="report-open" href="${reportUrl(d, opts)}" target="_blank" rel="noopener">${icon("external", 13)} Open</a>
+            <a class="btn primary" id="report-download" href="${reportUrl(d, opts, true)}">${icon("download", 13)} Download HTML</a>
           </div>
         </div>
         <div class="grid-2">
           <div class="card card-pad">
-            <div class="section-head" style="margin:0 0 12px"><h2>What's inside</h2><span class="aside">generated live</span></div>
-            ${["Executive read of the top three signals", "Six evidence panels with inline charts", "Data quality score, dimensions and issues", "Column dictionary with types and coverage", "Cleaning log and method provenance"].map((t) => `<div style="display:flex;gap:9px;padding:7px 0;border-bottom:1px solid var(--line-soft);font-size:12px;color:var(--text-soft)"><span style="color:var(--accent)">${icon("check", 12)}</span>${esc(t)}</div>`).join("")}
-            <div class="faint" style="font-size:10.5px;margin-top:12px;line-height:1.55">The export is deterministic: the same dataset produces the same report. Numbers are copied from the analysis, not regenerated by a model.</div>
+            <div class="section-head" style="margin:0 0 12px"><h2>Compose the report</h2><span class="aside">live preview</span></div>
+            <div class="field" style="margin-bottom:12px"><label>Report title</label><input class="input" id="report-title" maxlength="120" value="${esc(opts.title)}" placeholder="${esc(d.name)}"></div>
+            <div class="field" style="margin-bottom:12px"><label>Brand label</label><input class="input" id="report-brand" maxlength="40" value="${esc(opts.brand)}" placeholder="ATLAS"></div>
+            <label class="check-row" style="margin-bottom:12px"><input type="checkbox" id="report-redact" ${opts.redact ? "checked" : ""}><span>Redact PII samples in this export</span></label>
+            <div class="field"><label>Template</label>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                ${[["full", "Full"], ["executive", "Executive"], ["quality", "Quality"], ["forecast", "Forecast"]].map(([key, label]) => `<button class="btn sm ${opts.template === key ? "primary" : ""}" data-report-template="${key}">${label}</button>`).join("")}
+              </div>
+            </div>
+            <div class="section-head" style="margin:16px 0 8px"><h2>Sections</h2><span class="aside">toggle</span></div>
+            <div class="report-sections">
+              ${Object.entries(sectionLabels).map(([key, label]) => `<label class="check-row"><input type="checkbox" data-report-section="${key}" ${opts.sections[key] ? "checked" : ""}><span>${label}</span></label>`).join("")}
+            </div>
           </div>
           <div class="card card-pad">
             <div class="section-head" style="margin:0 0 12px"><h2>Share safely</h2><span class="aside">watch PII</span></div>
-            <p class="narrative" style="font-size:12px">${(d.profile?.columns || []).filter((c) => c.pii).length ? "This dataset contains columns flagged as personal data. Mask them before sending the report outside your organisation." : "No PII columns were detected. The report still includes column samples — review them before sharing."}</p>
+            <p class="narrative" style="font-size:12px">${(d.profile?.columns || []).filter((c) => c.pii).length ? "This dataset contains columns flagged as personal data. The exporter masks sampled values and any PII value it can match when redaction is on." : "No PII columns were detected. Column samples are still included — review them before sharing."}</p>
             <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
               <span class="tag neutral">${Number(d.rows || 0).toLocaleString()} rows</span>
               <span class="tag neutral">${d.cols || 0} columns</span>
               <span class="tag neutral">${esc(d.profile?.quality?.grade || "—")} quality</span>
             </div>
+            <div class="faint" style="font-size:10.5px;margin-top:14px;line-height:1.55">Every figure comes from a SQL aggregate or a statistic over the cleaned rows. The export is deterministic: the same dataset and options produce the same report.</div>
           </div>
         </div>
         <div class="section-head"><h2>Preview</h2><span class="aside">rendered in an isolated frame</span></div>
-        <iframe class="report-frame" src="${url}" title="Atlas report preview" loading="lazy"></iframe>
+        <iframe class="report-frame" id="report-frame" src="${reportUrl(d, opts)}" title="Atlas report preview" loading="lazy"></iframe>
       </div>
     `;
+  }
+
+  function refreshReport() {
+    const d = state.dataset;
+    if (!d) return;
+    const opts = reportOptions(d);
+    const open = $("#report-open");
+    const download = $("#report-download");
+    const frame = $("#report-frame");
+    if (open) open.href = reportUrl(d, opts);
+    if (download) download.href = reportUrl(d, opts, true);
+    if (frame) frame.src = reportUrl(d, opts);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Command palette                                                     */
+  /* ------------------------------------------------------------------ */
+  function paletteSource(query) {
+    const q = query.trim().toLowerCase();
+    const items = [];
+    const dataset = state.dataset;
+    if (q) {
+      items.push({
+        icon: "sparkles",
+        label: `Ask “${query.trim()}”`,
+        sub: dataset ? `Run against ${dataset.name}` : "Choose a dataset first",
+        kind: "Action",
+        disabled: !dataset,
+        action: () => askQuestion(query.trim()),
+      });
+    }
+    (state.datasets || []).forEach((d) => {
+      items.push({
+        icon: "database",
+        label: d.name,
+        sub: `${Number(d.rows || 0).toLocaleString()} rows · ${d.cols || 0} columns`,
+        kind: "Dataset",
+        action: () => selectDataset(d.id, { view: state.view || "overview" }),
+      });
+    });
+    if (dataset) {
+      VIEWS.forEach((view) => {
+        items.push({
+          icon: VIEW_META[view].icon,
+          label: VIEW_META[view].label,
+          sub: `Open ${VIEW_META[view].label.toLowerCase()} for ${dataset.name}`,
+          kind: "View",
+          action: () => navigate(view),
+        });
+      });
+      savedFor(dataset.id).forEach((item) => {
+        items.push({
+          icon: "bookmark",
+          label: item.question,
+          sub: "Saved question",
+          kind: "Saved",
+          action: () => askQuestion(item.question),
+        });
+      });
+    }
+    Object.entries(state.saved || {}).forEach(([datasetId, list]) => {
+      if (dataset && datasetId === dataset.id) return;
+      const owner = (state.datasets || []).find((d) => d.id === datasetId);
+      if (!owner) return;
+      list.slice(0, 3).forEach((item) => {
+        items.push({
+          icon: "bookmark",
+          label: item.question,
+          sub: owner.name,
+          kind: "Saved",
+          action: async () => { await selectDataset(owner.id, { view: "ask" }); await askQuestion(item.question); },
+        });
+      });
+    });
+    [
+      ["upload-open", "Add a dataset", "Upload CSV, Excel, JSON or Parquet", "upload"],
+      ["trash-open", "Trash & restore", "Recover datasets deleted in the last 30 days", "trash"],
+      ["theme-toggle", "Switch theme", "Toggle light and dark appearance", "sun"],
+      ["settings-open", "Settings", "Model provider, limits and connection test", "settings"],
+    ].forEach(([action, label, sub, iconName]) => {
+      items.push({ icon: iconName, label, sub, kind: "Action", action: () => runPaletteAction(action) });
+    });
+    const filtered = q
+      ? items.filter((item) => `${item.label} ${item.sub} ${item.kind}`.toLowerCase().includes(q))
+      : items;
+    return filtered.slice(0, 14);
+  }
+
+  function runPaletteAction(action) {
+    if (action === "upload-open") openUpload();
+    else if (action === "trash-open") openTrash();
+    else if (action === "theme-toggle") toggleTheme();
+    else if (action === "settings-open") openSettings();
+  }
+
+  function paletteShell() {
+    return `
+      <div class="cmd-backdrop" data-palette-backdrop>
+        <div class="cmd-palette" role="dialog" aria-modal="true" aria-label="Command palette">
+          <div class="cmd-search">${icon("search", 15)}<input id="cmd-input" placeholder="Search datasets, views, saved questions or type a question…" autocomplete="off" spellcheck="false"><kbd>esc</kbd></div>
+          <div class="cmd-list" id="cmd-list"></div>
+          <div class="cmd-foot"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>↵</kbd> open</span><span><kbd>⌘K</kbd> toggle</span><span style="margin-left:auto">Atlas command palette</span></div>
+        </div>
+      </div>`;
+  }
+
+  function paintPalette(query = "") {
+    const list = $("#cmd-list");
+    if (!list) return;
+    state.paletteItems = paletteSource(query);
+    if (!state.paletteItems.length) {
+      list.innerHTML = '<div class="cmd-empty">Nothing matches. Try a dataset name or ask a full question.</div>';
+      return;
+    }
+    state.paletteIndex = Math.max(0, Math.min(state.paletteIndex, state.paletteItems.length - 1));
+    list.innerHTML = state.paletteItems.map((item, index) => `
+      <button class="cmd-item ${index === state.paletteIndex ? "active" : ""}" data-palette-index="${index}" ${item.disabled ? "disabled" : ""}>
+        <span class="cmd-icon">${icon(item.icon, 12)}</span>
+        <span style="min-width:0"><span>${esc(item.label)}</span><small>${esc(item.sub)}</small></span>
+        <span class="cmd-kind">${esc(item.kind)}</span>
+      </button>`).join("");
+  }
+
+  function openPalette() {
+    if (state.paletteOpen) return;
+    state.paletteOpen = true;
+    state.paletteIndex = 0;
+    const root = $("#palette-root");
+    if (!root) return;
+    root.innerHTML = paletteShell();
+    paintPalette("");
+    const input = $("#cmd-input");
+    if (input) {
+      input.focus();
+      input.addEventListener("input", () => { state.paletteIndex = 0; paintPalette(input.value); });
+    }
+  }
+
+  function closePalette() {
+    state.paletteOpen = false;
+    const root = $("#palette-root");
+    if (root) root.innerHTML = "";
+  }
+
+  async function runPaletteItem(index) {
+    const item = state.paletteItems[index];
+    if (!item || item.disabled) return;
+    closePalette();
+    await item.action();
+  }
+
+  function movePalette(delta) {
+    if (!state.paletteItems.length) return;
+    state.paletteIndex = (state.paletteIndex + delta + state.paletteItems.length) % state.paletteItems.length;
+    $$("#cmd-list .cmd-item").forEach((el, index) => el.classList.toggle("active", index === state.paletteIndex));
+    const active = $(`#cmd-list .cmd-item[data-palette-index="${state.paletteIndex}"]`);
+    active?.scrollIntoView({ block: "nearest" });
   }
 
   /* ------------------------------------------------------------------ */
@@ -1397,6 +1964,115 @@
   function closeModal() {
     $("#modal-root").innerHTML = "";
     state.modalOpen = false;
+  }
+
+  function openDatasetEditor() {
+    const d = state.dataset;
+    if (!d) return;
+    openModal(`
+      <div class="modal-head">
+        <div><div class="modal-title">Dataset details</div><div class="modal-sub">Give this dataset a human name, context and tags. Everything is stored locally with the dataset.</div></div>
+        <button class="icon-btn" data-action="modal-close">${icon("x", 16)}</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field full"><label>Name</label><input class="input" id="ds-name" maxlength="120" value="${esc(d.name || "")}"></div>
+          <div class="field full"><label>Description</label><textarea class="textarea" id="ds-description" rows="3" maxlength="500" placeholder="What this data covers, where it came from, and anything a reviewer should know.">${esc(d.description || "")}</textarea></div>
+          <div class="field full"><label>Tags</label><input class="input" id="ds-tags" maxlength="400" value="${esc((d.tags || []).join(", "))}" placeholder="finance, monthly, board"><div class="form-note">Comma separated, up to 12 tags. Tags also appear in the report.</div></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <span style="flex:1"></span>
+        <button class="btn ghost" data-action="modal-close">Cancel</button>
+        <button class="btn primary" data-action="dataset-save">Save details</button>
+      </div>
+    `, { onMount: (root) => setTimeout(() => $("#ds-name", root)?.focus(), 40) });
+  }
+
+  async function saveDatasetDetails() {
+    const id = state.dataset?.id;
+    if (!id) return;
+    const tags = String($("#ds-tags")?.value || "")
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean)
+      .slice(0, 12);
+    try {
+      await api(`/api/datasets/${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          name: String($("#ds-name")?.value || "").trim(),
+          description: String($("#ds-description")?.value || "").trim(),
+          tags,
+        }),
+      });
+      state.dataset = await getJSON(`/api/datasets/${encodeURIComponent(id)}`);
+      const index = state.datasets.findIndex((item) => item.id === id);
+      if (index >= 0) {
+        state.datasets[index] = {
+          ...state.datasets[index],
+          name: state.dataset.name,
+          description: state.dataset.description,
+          tags: state.dataset.tags,
+        };
+      }
+      closeModal();
+      toast("Dataset details saved", "ok");
+      renderSidebar();
+      renderTopbar();
+      await renderView();
+    } catch (error) {
+      toast(error.message, "error");
+    }
+  }
+
+  function openGlossaryEditor() {
+    const d = state.dataset;
+    if (!d) return;
+    const columns = d.profile?.columns || [];
+    const glossary = d.glossary || {};
+    openModal(`
+      <div class="modal-head">
+        <div><div class="modal-title">Business glossary</div><div class="modal-sub">Define what each column means in your organisation. Definitions stay on this machine and appear in the report's column dictionary.</div></div>
+        <button class="icon-btn" data-action="modal-close">${icon("x", 16)}</button>
+      </div>
+      <div class="modal-body">
+        <div style="max-height:52vh;overflow:auto;display:flex;flex-direction:column;gap:10px;padding-right:4px">
+          ${columns.map((c) => `
+            <div class="field">
+              <label style="display:flex;justify-content:space-between;gap:8px"><span>${esc(labelOf(c))} <span class="faint mono" style="font-weight:400;font-size:9px">${esc(c.name)}</span></span><span class="tag neutral" style="height:17px;font-size:8px">${esc(c.role)}</span></label>
+              <input class="input" data-glossary-column="${esc(c.name)}" maxlength="280" value="${esc(glossary[c.name] || "")}" placeholder="e.g. Recognised monthly subscription revenue, net of credits">
+            </div>`).join("")}
+        </div>
+      </div>
+      <div class="modal-foot">
+        <span class="form-note" style="flex:1">Empty definitions are removed. Up to 280 characters each.</span>
+        <button class="btn ghost" data-action="modal-close">Cancel</button>
+        <button class="btn primary" data-action="glossary-save">${icon("check", 12)} Save glossary</button>
+      </div>
+    `);
+  }
+
+  async function saveGlossary() {
+    const id = state.dataset?.id;
+    if (!id) return;
+    const glossary = {};
+    $$("[data-glossary-column]").forEach((input) => {
+      const value = input.value.trim();
+      if (value) glossary[input.dataset.glossaryColumn] = value;
+    });
+    try {
+      await api(`/api/datasets/${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ glossary }),
+      });
+      state.dataset = await getJSON(`/api/datasets/${encodeURIComponent(id)}`);
+      closeModal();
+      toast("Glossary saved", "ok");
+      await renderView();
+    } catch (error) {
+      toast(error.message, "error");
+    }
   }
 
   function openSettings() {
@@ -1471,74 +2147,163 @@
   function openUpload() {
     openModal(`
       <div class="modal-head">
-        <div><div class="modal-title">Add a dataset</div><div class="modal-sub">CSV, TSV, Excel, JSON or Parquet. Atlas detects encoding, delimiters, types and messy business formatting.</div></div>
+        <div><div class="modal-title">Add datasets</div><div class="modal-sub">CSV, TSV, Excel, JSON or Parquet. Drop several files at once; each is profiled locally.</div></div>
         <button class="icon-btn" data-action="modal-close">${icon("x", 16)}</button>
       </div>
       <div class="modal-body">
-        <div class="field" style="margin-bottom:13px"><label>Dataset name <span class="faint">(optional)</span></label><input class="input" id="upload-name" placeholder="e.g. Q4 revenue"></div>
+        <div class="field" id="upload-name-field" style="margin-bottom:13px"><label>Dataset name <span class="faint">(optional)</span></label><input class="input" id="upload-name" placeholder="e.g. Q4 revenue"></div>
         <div class="dropzone" id="dropzone" tabindex="0">
           <div style="color:var(--accent)">${icon("upload", 22)}</div>
-          <div class="big" id="drop-title">Drop a file here, or click to browse</div>
-          <div class="small" id="drop-sub">Up to 128 MB · files are analysed locally</div>
-          <input type="file" id="file-input" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.parquet,.pq" hidden>
+          <div class="big" id="drop-title">Drop files here, or click to browse</div>
+          <div class="small" id="drop-sub">Up to 128 MB each · files are analysed locally</div>
+          <input type="file" id="file-input" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.parquet,.pq" multiple hidden>
         </div>
+        <div class="upload-list" id="upload-list"></div>
+        <details class="upload-advanced" style="margin-top:11px">
+          <summary class="faint" style="font-size:10.5px;cursor:pointer">Import options for tricky files</summary>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px">
+            <div class="field"><label>Header row</label><input class="input" id="upload-header" type="number" min="1" placeholder="auto"></div>
+            <div class="field"><label>Excel sheet</label><input class="input" id="upload-sheet" list="sheet-options" placeholder="auto"><datalist id="sheet-options"></datalist></div>
+            <div class="field"><label>JSON path</label><input class="input" id="upload-json" list="json-options" placeholder="auto"><datalist id="json-options"></datalist></div>
+          </div>
+          <div class="form-note" style="margin-top:6px">Inspect a single file to see detected headers, sheets, JSON paths and a preview.</div>
+        </details>
+        <div id="upload-inspect" style="margin-top:11px"></div>
         <div id="upload-status" class="form-note" style="margin-top:12px"></div>
       </div>
-      <div class="modal-foot"><button class="btn ghost" data-action="modal-close">Cancel</button><button class="btn primary" data-action="upload-submit" id="upload-btn" disabled>${icon("upload", 13)} Analyse file</button></div>
+      <div class="modal-foot">
+        <button class="btn ghost" data-action="upload-inspect" id="upload-inspect-btn" disabled>${icon("search", 12)} Inspect</button>
+        <span style="flex:1"></span>
+        <button class="btn ghost" data-action="modal-close">Cancel</button>
+        <button class="btn primary" data-action="upload-submit" id="upload-btn" disabled>${icon("upload", 13)} Analyse files</button>
+      </div>
     `, {
+      wide: true,
       onMount: () => {
         const input = $("#file-input");
         const zone = $("#dropzone");
-        let selected = null;
+        let selected = [];
+        const paint = () => {
+          state._uploadFiles = () => selected;
+          const list = $("#upload-list");
+          if (list) list.innerHTML = selected.map((file, index) => `<div class="upload-row" data-upload-row="${index}"><span class="up-name">${esc(file.name)}</span><span class="up-state">${humanBytes(file.size)}</span></div>`).join("");
+          const title = $("#drop-title");
+          const sub = $("#drop-sub");
+          if (title) title.textContent = selected.length === 1 ? selected[0].name : selected.length ? `${selected.length} files ready` : "Drop files here, or click to browse";
+          if (sub) sub.textContent = selected.length ? `${selected.reduce((sum, file) => sum + file.size, 0).toLocaleString()} bytes total · analysed locally` : "Up to 128 MB each · files are analysed locally";
+          const button = $("#upload-btn");
+          if (button) button.disabled = !selected.length;
+          const inspect = $("#upload-inspect-btn");
+          if (inspect) inspect.disabled = !selected.length;
+          const nameField = $("#upload-name-field");
+          if (nameField) nameField.style.display = selected.length === 1 ? "" : "none";
+          const nameInput = $("#upload-name");
+          if (selected.length === 1 && nameInput && !nameInput.value) nameInput.value = prettyName(selected[0].name);
+        };
         const choose = () => input.click();
         zone.addEventListener("click", choose);
         zone.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choose(); } });
-        input.addEventListener("change", () => {
-          selected = input.files?.[0] || null;
-          if (selected) {
-            $("#drop-title").textContent = selected.name;
-            $("#drop-sub").textContent = `${humanBytes(selected.size)} · ready to profile`;
-            $("#upload-btn").disabled = false;
-            if (!$("#upload-name").value) $("#upload-name").value = prettyName(selected.name);
-          }
-        });
+        input.addEventListener("change", () => { selected = [...(input.files || [])]; paint(); });
         ["dragenter", "dragover"].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.add("drag"); }));
         ["dragleave", "drop"].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.remove("drag"); }));
-        zone.addEventListener("drop", (e) => {
-          const file = e.dataTransfer?.files?.[0];
-          if (file) {
-            selected = file;
-            $("#drop-title").textContent = file.name;
-            $("#drop-sub").textContent = `${humanBytes(file.size)} · ready to profile`;
-            $("#upload-btn").disabled = false;
-            if (!$("#upload-name").value) $("#upload-name").value = prettyName(file.name);
-          }
-        });
-        state._uploadFile = () => selected;
+        zone.addEventListener("drop", (e) => { selected = [...(e.dataTransfer?.files || [])]; paint(); });
+        paint();
       }
     });
   }
 
+  async function inspectSelectedUpload() {
+    const files = state._uploadFiles?.() || [];
+    if (!files.length) { toast("Select a file to inspect.", "error"); return; }
+    const target = $("#upload-inspect");
+    const button = $("#upload-inspect-btn");
+    if (button) button.disabled = true;
+    if (target) target.innerHTML = `<div class="card" style="padding:12px">${spinnerLabel("Reading headers and preview")}</div>`;
+    const form = new FormData();
+    form.append("file", files[0]);
+    try {
+      const info = await api("/api/datasets/inspect", { method: "POST", body: form });
+      const sheets = info.sheets || [];
+      const paths = info.json_paths || [];
+      const sheetOptions = $("#sheet-options");
+      if (sheetOptions) sheetOptions.innerHTML = sheets.map((sheet) => `<option value="${esc(sheet.name)}"></option>`).join("");
+      const jsonOptions = $("#json-options");
+      if (jsonOptions) jsonOptions.innerHTML = paths.map((path) => `<option value="${esc(path.path || path)}"></option>`).join("");
+      if (sheets.length === 1 && $("#upload-sheet") && !$("#upload-sheet").value) $("#upload-sheet").value = sheets[0].name;
+      if (info.detected_header_row !== undefined && info.detected_header_row !== null && $("#upload-header") && !$("#upload-header").value) {
+        $("#upload-header").value = Number(info.detected_header_row) + 1;
+      }
+      const preview = info.preview || [];
+      const headers = info.headers || [];
+      target.innerHTML = `
+        <div class="card" style="padding:12px 13px">
+          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px">
+            <span class="tag neutral">${esc(info.format || info.extension || "file")}</span>
+            ${info.encoding ? `<span class="tag neutral">${esc(info.encoding)}</span>` : ""}
+            ${info.delimiter ? `<span class="tag neutral">delimiter “${esc(info.delimiter === "\t" ? "tab" : info.delimiter)}”</span>` : ""}
+            <span class="tag neutral">header row ${Number(info.detected_header_row || 0) + 1}</span>
+            ${sheets.length ? `<span class="tag amber">${sheets.length} sheet${sheets.length === 1 ? "" : "s"}</span>` : ""}
+            ${paths.length ? `<span class="tag amber">${paths.length} JSON path${paths.length === 1 ? "" : "s"}</span>` : ""}
+          </div>
+          ${headers.length ? tableHTML(headers, preview, { limit: 6, meta: false }) : '<div class="faint" style="font-size:11px">No tabular preview available.</div>'}
+        </div>`;
+    } catch (error) {
+      if (target) target.innerHTML = `<div class="form-note" style="color:var(--rose)">${esc(error.message)}</div>`;
+    } finally {
+      if (button) button.disabled = false;
+    }
+  }
+
   async function uploadSelected() {
-    const file = state._uploadFile?.();
-    if (!file) { toast("Choose a file first.", "error"); return; }
-    const name = $("#upload-name")?.value?.trim();
+    const files = state._uploadFiles?.() || [];
+    if (!files.length) { toast("Choose at least one file first.", "error"); return; }
+    const singleName = files.length === 1 ? $("#upload-name")?.value?.trim() : "";
     const status = $("#upload-status");
     const button = $("#upload-btn");
+    const inspectButton = $("#upload-inspect-btn");
     if (button) button.disabled = true;
-    if (status) status.innerHTML = `<div>${spinnerLabel("Reading, cleaning and profiling the file")}</div><div class="upload-progress"><i></i></div>`;
-    const form = new FormData();
-    form.append("file", file);
-    if (name) form.append("name", name);
-    try {
-      const created = await api("/api/datasets", { method: "POST", body: form });
+    if (inspectButton) inspectButton.disabled = true;
+    const options = {
+      sheet: $("#upload-sheet")?.value?.trim() || "",
+      header: $("#upload-header")?.value?.trim() || "",
+      json: $("#upload-json")?.value?.trim() || "",
+    };
+    const created = [];
+    let failed = 0;
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+      const row = document.querySelector(`[data-upload-row="${index}"]`);
+      const stateLabel = row?.querySelector(".up-state");
+      if (stateLabel) stateLabel.textContent = "profiling…";
+      row?.classList.remove("error", "done");
+      const form = new FormData();
+      form.append("file", file);
+      if (singleName) form.append("name", singleName);
+      if (options.sheet) form.append("sheet", options.sheet);
+      if (options.header) form.append("header_row", String(Math.max(1, Number(options.header) - 1)));
+      if (options.json) form.append("json_path", options.json);
+      try {
+        const result = await api("/api/datasets", { method: "POST", body: form });
+        created.push(result);
+        row?.classList.add("done");
+        if (stateLabel) stateLabel.textContent = `${Number(result.rows || 0).toLocaleString()} rows`;
+        if (status) status.innerHTML = `<span>${created.length} of ${files.length} imported${failed ? ` · ${failed} failed` : ""}</span>`;
+      } catch (error) {
+        failed += 1;
+        row?.classList.add("error");
+        if (stateLabel) stateLabel.textContent = error.message;
+        if (status) status.innerHTML = `<span style="color:var(--rose)">${esc(error.message)}</span>`;
+      }
+    }
+    if (created.length) {
       closeModal();
-      toast(`${created.name} added · ${Number(created.rows || 0).toLocaleString()} rows`, "ok");
+      toast(`${created.length === 1 ? created[0].name : `${created.length} datasets`} added`, "ok");
       await refreshDatasets();
-      await selectDataset(created.id, { view: "overview" });
-    } catch (error) {
-      if (status) status.innerHTML = `<span style="color:var(--rose)">${esc(error.message)}</span>`;
+      await selectDataset(created[0].id, { view: "overview" });
+      if (created.length > 1) toast(`${created.length - 1} more waiting in the sidebar`, "ok", 2600);
+    } else {
       if (button) button.disabled = false;
+      if (inspectButton) inspectButton.disabled = false;
     }
   }
 
@@ -1578,13 +2343,66 @@
     `, { wide: true });
   }
 
+  async function openTrash() {
+    openModal(`
+      <div class="modal-head">
+        <div><div class="modal-title">Trash & restore</div><div class="modal-sub">Deleted datasets stay recoverable for 30 days. Nothing leaves this machine.</div></div>
+        <button class="icon-btn" data-action="modal-close">${icon("x", 16)}</button>
+      </div>
+      <div class="modal-body" id="trash-body"><div class="faint">${spinnerLabel("Reading the trash")}</div></div>
+      <div class="modal-foot"><span class="faint" style="font-size:10px;margin-right:auto">Permanent delete removes the table and archived upload.</span><button class="btn" data-action="modal-close">Close</button></div>
+    `, { wide: true });
+    await loadTrash();
+  }
+
+  async function loadTrash() {
+    const body = $("#trash-body");
+    if (!body) return;
+    try {
+      const data = await getJSON("/api/trash");
+      state.trash = data.datasets || [];
+      body.innerHTML = state.trash.length ? `
+        <div class="saved-list">
+          ${state.trash.map((item) => `<div class="saved-item" style="align-items:center;padding:10px 11px">
+            <span class="ds-icon">${icon("database", 12)}</span>
+            <div style="flex:1;min-width:0"><div style="color:var(--text-soft);font-weight:600">${esc(item.name)}</div><div class="faint" style="font-size:10px;margin-top:2px">${Number(item.rows || 0).toLocaleString()} rows · deleted ${period(item.deleted_at)} · ${trashDaysLeft(item.deleted_at)} days left</div></div>
+            <button class="btn sm" data-restore-dataset="${esc(item.id)}">${icon("undo", 11)} Restore</button>
+            <button class="btn sm ghost" data-purge-dataset="${esc(item.id)}" style="color:var(--rose)">${icon("trash", 11)} Delete forever</button>
+          </div>`).join("")}
+        </div>` : `<div class="empty" style="padding:26px"><div class="empty-icon">${icon("trash", 18)}</div><h3>Trash is empty</h3><p>Datasets you delete appear here for 30 days before Atlas removes them.</p></div>`;
+    } catch (error) {
+      body.innerHTML = `<div style="color:var(--rose)">${esc(error.message)}</div>`;
+    }
+  }
+
+  async function restoreTrashItem(id) {
+    try {
+      const result = await postJSON(`/api/datasets/${encodeURIComponent(id)}/restore`, {});
+      toast(`${result.dataset?.name || "Dataset"} restored`, "ok");
+      await refreshDatasets();
+      await loadTrash();
+    } catch (error) { toast(error.message, "error"); }
+  }
+
+  async function purgeTrashItem(id) {
+    const item = (state.trash || []).find((entry) => entry.id === id);
+    if (!item) return;
+    if (!window.confirm(`Permanently delete “${item.name}”? The table and archived upload cannot be recovered.`)) return;
+    try {
+      await del(`/api/trash/${encodeURIComponent(id)}`);
+      toast(`${item.name} permanently deleted`, "ok");
+      await refreshDatasets();
+      await loadTrash();
+    } catch (error) { toast(error.message, "error"); }
+  }
+
   function openDelete() {
     const d = state.dataset;
     if (!d) return;
     openModal(`
-      <div class="modal-head"><div><div class="modal-title">Delete ${esc(d.name)}?</div><div class="modal-sub">The table, profile, insights and archived upload are removed from this machine. This cannot be undone.</div></div><button class="icon-btn" data-action="modal-close">${icon("x", 16)}</button></div>
-      <div class="modal-body"><div class="forecast-note" style="border-color:var(--rose)">${Number(d.rows || 0).toLocaleString()} rows · ${d.cols || 0} columns · ${d.insights?.length || 0} insights will be deleted.</div></div>
-      <div class="modal-foot"><button class="btn ghost" data-action="modal-close">Cancel</button><button class="btn danger" data-action="confirm-delete">${icon("trash", 13)} Delete dataset</button></div>
+      <div class="modal-head"><div><div class="modal-title">Move ${esc(d.name)} to trash?</div><div class="modal-sub">Atlas keeps the table for 30 days so you can restore it from the sidebar. Nothing is uploaded anywhere.</div></div><button class="icon-btn" data-action="modal-close">${icon("x", 16)}</button></div>
+      <div class="modal-body"><div class="forecast-note">${Number(d.rows || 0).toLocaleString()} rows · ${d.cols || 0} columns · ${d.insights?.length || 0} insights will be recoverable for 30 days.</div></div>
+      <div class="modal-foot"><button class="btn ghost" data-action="modal-close">Cancel</button><button class="btn danger" data-action="confirm-delete">${icon("trash", 13)} Move to trash</button></div>
     `);
   }
 
@@ -1594,16 +2412,29 @@
     try {
       await del(`/api/datasets/${encodeURIComponent(d.id)}`);
       closeModal();
-      toast(`${d.name} deleted`, "ok");
       state.dataset = null;
       delete state.chats[d.id];
       delete state.forecast[d.id];
       delete state.anomalies[d.id];
       delete state.explore[d.id];
+      state.filters[d.id] = [];
       await refreshDatasets();
       const next = state.datasets[0];
       if (next) await selectDataset(next.id, { view: "overview" });
       else { state.dataset = null; renderShell(); }
+      // Offer the undo only once the list has settled. Showing it earlier lets
+      // a fast click race the scheduled re-render and leave a stale sidebar.
+      toast(`${d.name} moved to trash`, "ok", 8000, {
+        label: "Undo",
+        onClick: async () => {
+          try {
+            await postJSON(`/api/datasets/${encodeURIComponent(d.id)}/restore`, {});
+            await refreshDatasets();
+            await selectDataset(d.id, { view: "overview", force: true });
+            toast(`${d.name} restored`, "ok");
+          } catch (error) { toast(error.message, "error"); }
+        },
+      });
     } catch (error) { toast(error.message, "error"); }
   }
 
@@ -1642,11 +2473,52 @@
   /* Event delegation                                                    */
   /* ------------------------------------------------------------------ */
   document.addEventListener("click", async (event) => {
-    const target = event.target.closest("[data-action], [data-view], [data-dataset], [data-question], [data-insight], [data-toggle-sql], [data-answer-csv], [data-copy-sql], [data-insert-col], [data-query], [data-explore-mode], [data-export-explore], [data-copy-query], [data-copy-insight], [data-ask-insight]");
+    if (event.target.matches("[data-palette-backdrop]")) { closePalette(); return; }
+    const target = event.target.closest("[data-action], [data-view], [data-dataset], [data-question], [data-insight], [data-toggle-sql], [data-answer-csv], [data-answer-json], [data-copy-sql], [data-insert-col], [data-query], [data-explore-mode], [data-export-explore], [data-export-explore-json], [data-forecast-csv], [data-forecast-json], [data-anomaly-csv], [data-anomaly-json], [data-copy-query], [data-copy-insight], [data-ask-insight], [data-pin-insight], [data-unsave], [data-save-question], [data-answer-link], [data-remove-filter], [data-restore-dataset], [data-purge-dataset], [data-palette-index]");
     if (!target) return;
     if (target.matches("[data-modal-backdrop]")) return;
     const action = target.dataset.action;
 
+    if (target.dataset.paletteIndex !== undefined) {
+      await runPaletteItem(Number(target.dataset.paletteIndex));
+      return;
+    }
+    if (target.dataset.pinInsight) {
+      togglePin(target.dataset.pinInsight);
+      return;
+    }
+    if (target.dataset.unsave) {
+      removeSaved(state.dataset.id, target.dataset.unsave);
+      renderSidebar();
+      return;
+    }
+    if (target.dataset.saveQuestion) {
+      saveQuestion(target.dataset.saveQuestion);
+      renderSidebar();
+      return;
+    }
+    if (target.dataset.answerLink) {
+      if (!state.dataset) return;
+      const run = chatFor(state.dataset.id).find((item) => item.id === target.dataset.answerLink);
+      const question = run?.answer?.question || run?.question || "";
+      const params = new URLSearchParams();
+      if (question) params.set("q", question);
+      activeFilters().forEach((item) => params.append("f", `${item.column}:${item.value}`));
+      copyText(`${location.origin}/app#/d/${encodeURIComponent(state.dataset.id)}/ask${params.toString() ? `?${params}` : ""}`);
+      return;
+    }
+    if (target.dataset.removeFilter !== undefined) {
+      removeFilter(Number(target.dataset.removeFilter));
+      return;
+    }
+    if (target.dataset.restoreDataset) {
+      await restoreTrashItem(target.dataset.restoreDataset);
+      return;
+    }
+    if (target.dataset.purgeDataset) {
+      await purgeTrashItem(target.dataset.purgeDataset);
+      return;
+    }
     if (target.dataset.dataset) {
       closeMobileSidebar();
       await selectDataset(target.dataset.dataset);
@@ -1697,6 +2569,18 @@
       }
       return;
     }
+    if (target.dataset.answerJson) {
+      const run = currentRun();
+      if (run?.answer?.result) {
+        const r = run.answer.result;
+        downloadJSON(`atlas-answer-${run.id}.json`, r.columns, r.rows, {
+          dataset: state.dataset?.name || "",
+          question: run.answer.question || "",
+          sql: run.answer.sql || "",
+        });
+      }
+      return;
+    }
     if (target.dataset.insertCol) { insertColumn(target.dataset.insertCol); return; }
     if (target.dataset.query) {
       const editor = $("#sql-editor");
@@ -1716,9 +2600,65 @@
       if (ex.result) downloadCSV(`atlas-query-${state.dataset.id}.csv`, ex.result.columns, ex.result.rows);
       return;
     }
+    if (target.dataset.exportExploreJson !== undefined) {
+      const ex = exploreFor(state.dataset.id);
+      if (ex.result) {
+        downloadJSON(`atlas-query-${state.dataset.id}.json`, ex.result.columns, ex.result.rows, {
+          dataset: state.dataset?.name || "",
+          sql: ex.result.sql || ex.sql,
+        });
+      }
+      return;
+    }
+    if (target.dataset.forecastCsv !== undefined || target.dataset.forecastJson !== undefined) {
+      const result = state.forecast[state.dataset.id];
+      if (result) {
+        const columns = ["date", "value", "lower", "upper"];
+        const rows = (result.forecast || []).map((p) => [p.date, p.value, p.lower, p.upper]);
+        if (target.dataset.forecastCsv !== undefined) {
+          downloadCSV(`atlas-forecast-${state.dataset.id}.csv`, columns, rows);
+        } else {
+          downloadJSON(`atlas-forecast-${state.dataset.id}.json`, columns, rows, {
+            dataset: state.dataset?.name || "",
+            kind: "forecast",
+            model: result.model,
+            frequency: result.frequency,
+            horizon: result.horizon,
+            metrics: result.metrics,
+          });
+        }
+      }
+      return;
+    }
+    if (target.dataset.anomalyCsv !== undefined || target.dataset.anomalyJson !== undefined) {
+      const result = state.anomalies[state.dataset.id];
+      if (result) {
+        const columns = ["date", "value", "z", "direction"];
+        const rows = (result.anomalies || []).map((a) => [a.date, a.value, a.z, a.direction]);
+        if (target.dataset.anomalyCsv !== undefined) {
+          downloadCSV(`atlas-anomalies-${state.dataset.id}.csv`, columns, rows);
+        } else {
+          downloadJSON(`atlas-anomalies-${state.dataset.id}.json`, columns, rows, {
+            dataset: state.dataset?.name || "",
+            kind: "anomaly",
+            threshold: result.threshold,
+            baseline: result.baseline,
+          });
+        }
+      }
+      return;
+    }
     if (target.dataset.copyQuery !== undefined) {
       const ex = exploreFor(state.dataset.id);
       copyText(ex.sql || $("#sql-editor")?.value || "");
+      return;
+    }
+    if (target.dataset.reportTemplate) {
+      if (!state.dataset) return;
+      const opts = reportOptions(state.dataset);
+      opts.template = target.dataset.reportTemplate;
+      if (opts.template === "forecast") opts.sections.forecast = true;
+      await renderView();
       return;
     }
 
@@ -1736,6 +2676,21 @@
         break;
       }
       case "upload-open": openUpload(); break;
+      case "upload-inspect": await inspectSelectedUpload(); break;
+      case "palette-open": openPalette(); break;
+      case "theme-toggle": toggleTheme(); renderSidebar(); break;
+      case "trash-open": await openTrash(); break;
+      case "filter-add": {
+        const column = $("#filter-column")?.value;
+        const value = $("#filter-value")?.value;
+        addFilter(column, value);
+        break;
+      }
+      case "filter-clear": clearFilters(); break;
+      case "dataset-edit": openDatasetEditor(); break;
+      case "dataset-save": await saveDatasetDetails(); break;
+      case "glossary-open": openGlossaryEditor(); break;
+      case "glossary-save": await saveGlossary(); break;
       case "settings-open": openSettings(); break;
       case "modal-close": closeModal(); break;
       case "settings-save": await saveSettings(); break;
@@ -1769,6 +2724,13 @@
   });
 
   document.addEventListener("keydown", async (event) => {
+    if (state.paletteOpen) {
+      if (event.key === "Escape") { event.preventDefault(); closePalette(); }
+      else if (event.key === "ArrowDown") { event.preventDefault(); movePalette(1); }
+      else if (event.key === "ArrowUp") { event.preventDefault(); movePalette(-1); }
+      else if (event.key === "Enter") { event.preventDefault(); await runPaletteItem(state.paletteIndex); }
+      return;
+    }
     if (event.target.id === "ask-input" && event.key === "Enter" && !event.shiftKey && !event.isComposing) {
       event.preventDefault();
       if (!state.streaming) $("#ask-form")?.requestSubmit();
@@ -1780,8 +2742,7 @@
     const meta = event.metaKey || event.ctrlKey;
     if (meta && event.key.toLowerCase() === "k") {
       event.preventDefault();
-      if (!$("#ask-input")) await navigate("ask", { focus: true });
-      else focusComposer();
+      openPalette();
     }
     if (meta && event.key === "Enter" && $("#sql-editor") === document.activeElement) {
       event.preventDefault();
@@ -1812,6 +2773,28 @@
   });
 
   document.addEventListener("change", (event) => {
+    if (event.target.id === "tab-select") {
+      navigate(event.target.value);
+      return;
+    }
+    if (event.target.id === "filter-column" && state.dataset) {
+      state._filterColumn = event.target.value;
+      const column = (state.dataset.profile?.columns || []).find((c) => c.name === event.target.value);
+      const list = $("#filter-values");
+      if (list && column) {
+        list.innerHTML = (column.top_values || []).slice(0, 40).map((item) => `<option value="${esc(String(item.value))}"></option>`).join("");
+      }
+    }
+    if (state.view === "report" && state.dataset) {
+      const opts = reportOptions(state.dataset);
+      if (event.target.id === "report-title") opts.title = event.target.value;
+      else if (event.target.id === "report-brand") opts.brand = event.target.value;
+      else if (event.target.id === "report-redact") opts.redact = event.target.checked;
+      else if (event.target.dataset.reportSection) {
+        opts.sections[event.target.dataset.reportSection] = event.target.checked;
+      }
+      refreshReport();
+    }
     if (event.target.closest(".forecast-controls") && state.dataset) {
       const p = state.forecastParams[state.dataset.id] || {};
       if ($("#fc-date")) p.date_col = $("#fc-date").value;
@@ -1847,8 +2830,20 @@
   window.addEventListener("hashchange", () => {
     const hash = parseHash();
     if (!hash.id) return;
-    if (hash.id !== state.dataset?.id) selectDataset(hash.id, { view: hash.view });
-    else if (hash.view && hash.view !== state.view && VIEWS.includes(hash.view)) navigate(hash.view);
+    if (hash.id !== state.dataset?.id) {
+      selectDataset(hash.id, { view: hash.view, filters: hash.filters, question: hash.question });
+      return;
+    }
+    if (Array.isArray(hash.filters)) {
+      state.filters[hash.id] = hash.filters;
+      renderFilters();
+    }
+    if (hash.view && hash.view !== state.view && VIEWS.includes(hash.view)) navigate(hash.view, { filters: hash.filters });
+    if (hash.question) {
+      const history = chatFor(hash.id).filter((item) => item.role === "user");
+      const last = history[history.length - 1]?.text;
+      if (last !== hash.question) askQuestion(hash.question);
+    }
   });
 
   // Close sidebar after navigation on mobile.

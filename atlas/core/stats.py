@@ -289,6 +289,47 @@ def welch_anova(groups: Sequence[Sequence[float]]) -> dict:
     }
 
 
+def welch_t(a: Sequence[float], b: Sequence[float]) -> dict:
+    """Welch's two-sample t-test with an effect size and approximate interval.
+
+    No SciPy: the p-value comes from the regularized incomplete beta above.
+    The interval is the normal approximation, which is accurate for the sample
+    sizes Atlas usually sees and is labelled as such in the interface.
+    """
+    xa, xb = finite(a), finite(b)
+    n1, n2 = int(xa.size), int(xb.size)
+    if n1 < 2 or n2 < 2:
+        return {
+            "t": None, "p": None, "df": None, "diff": None,
+            "cohen_d": None, "ci_low": None, "ci_high": None, "n1": n1, "n2": n2,
+        }
+    m1, m2 = float(xa.mean()), float(xb.mean())
+    v1, v2 = float(xa.var(ddof=1)), float(xb.var(ddof=1))
+    se = math.sqrt(v1 / n1 + v2 / n2)
+    diff = m1 - m2
+    if se <= 0:
+        return {
+            "t": 0.0, "p": 1.0, "df": float(n1 + n2 - 2), "diff": diff,
+            "cohen_d": 0.0, "ci_low": diff, "ci_high": diff, "n1": n1, "n2": n2,
+        }
+    t = diff / se
+    numerator = (v1 / n1 + v2 / n2) ** 2
+    denominator = (v1 / n1) ** 2 / (n1 - 1) + (v2 / n2) ** 2 / (n2 - 1)
+    df = numerator / denominator if denominator > 0 else float(n1 + n2 - 2)
+    pooled = math.sqrt(((n1 - 1) * v1 + (n2 - 1) * v2) / max(1, n1 + n2 - 2))
+    return {
+        "t": float(t),
+        "p": float(t_pvalue(t, df)),
+        "df": float(df),
+        "diff": float(diff),
+        "cohen_d": float(diff / pooled) if pooled > 0 else 0.0,
+        "ci_low": float(diff - 1.96 * se),
+        "ci_high": float(diff + 1.96 * se),
+        "n1": n1,
+        "n2": n2,
+    }
+
+
 def eta_squared(groups: Sequence[Sequence[float]]) -> float:
     """Proportion of variance explained by group membership (0..1)."""
     cleaned = [finite(g) for g in groups]

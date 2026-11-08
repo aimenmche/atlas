@@ -652,8 +652,43 @@
     observer.observe(section);
   }
 
+  function initMenu() {
+    const toggle = $("#navToggle");
+    const menu = $("#mobileMenu");
+    if (!toggle || !menu) return;
+
+    const setOpen = (open) => {
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      menu.hidden = !open;
+      document.body.classList.toggle("menu-open", open);
+    };
+    const close = () => setOpen(false);
+
+    toggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setOpen(menu.hidden);
+    });
+    menu.addEventListener("click", (event) => {
+      if (event.target.closest("a")) close();
+    });
+    document.addEventListener("click", (event) => {
+      if (!menu.hidden && !menu.contains(event.target) && !toggle.contains(event.target)) close();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !menu.hidden) {
+        close();
+        toggle.focus();
+      }
+    });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 980 && !menu.hidden) close();
+    });
+  }
+
   function boot() {
     initChrome();
+    initMenu();
     initOrb();
     initDemo();
   }

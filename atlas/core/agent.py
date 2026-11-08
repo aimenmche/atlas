@@ -17,6 +17,7 @@ import time
 from typing import Any, Iterator
 
 from . import nlsql, stats
+from .filters import apply_filters, clean_filters
 from .llm import LLMClient
 from .narrator import narrate
 from .semantics import pretty
@@ -33,12 +34,14 @@ class AskError(RuntimeError):
         hint: str | None = None,
         detail: str | None = None,
         sql: str | None = None,
+        choices: list[str] | None = None,
     ):
         super().__init__(message)
         self.message = message
         self.hint = hint
         self.detail = detail
         self.sql = sql
+        self.choices = choices or []
 
     def as_dict(self) -> dict:
         return {
@@ -46,6 +49,7 @@ class AskError(RuntimeError):
             "hint": self.hint,
             "detail": self.detail,
             "sql": self.sql,
+            "choices": self.choices,
         }
 
 
@@ -57,11 +61,23 @@ class Analyst:
     # ------------------------------------------------------------------ #
     # Public API
     # ------------------------------------------------------------------ #
-    def ask(self, dataset_id: str, question: str) -> dict:
-        answer, _ = self._run(dataset_id, question, emit=None)
+    def ask(
+        self,
+        dataset_id: str,
+        question: str,
+        history: list[dict] | None = None,
+        filters: list[dict] | None = None,
+    ) -> dict:
+        answer, _ = self._run(dataset_id, question, emit=None, history=history, filters=filters)
         return answer
 
-    def ask_stream(self, dataset_id: str, question: str) -> Iterator[dict]:
+    def ask_stream(
+        self,
+        dataset_id: str,
+        question: str,
+        history: list[dict] | None = None,
+        filters: list[dict] | None = None,
+    ) -> Iterator[dict]:
         """Yield ``{"event": ..., "data": ...}`` frames.
 
         The final frames are ``answer`` (the complete payload) and ``done``.
@@ -74,7 +90,9 @@ class Analyst:
             frames.append({"event": event, "data": data})
 
         try:
-            answer, _ = self._run(dataset_id, question, emit=emit)
+            answer, _ = self._run(
+                dataset_id, question, emit=emit, history=history, filters=filters
+            )
         except AskError as exc:
             for frame in frames:
                 yield frame
@@ -100,7 +118,14 @@ class Analyst:
     # ------------------------------------------------------------------ #
     # Pipeline
     # ------------------------------------------------------------------ #
-    def _run(self, dataset_id: str, question: str, emit) -> tuple[dict, dict | None]:
+    def _run(
+        self,
+        dataset_id: str,
+        question: str,
+        emit,
+        history: list[dict] | None = None,
+        filters: list[dict] | None = None,
+    ) -> tuple[dict, dict | None]:
         started = time.perf_counter()
         question = " ".join(str(question or "").split()).strip()
         if not question:
@@ -116,7 +141,13 @@ class Analyst:
         if not profile.get("columns"):
             raise AskError("This dataset has no readable columns.", "Try re-uploading the file.")
         table = dataset["table_name"]
+        active_filters = clean_filters(
+            filters, {str(c.get("name")) for c in profile.get("columns") or []}
+        )
         trace: list[dict] = []
+
+        def with_filters(sql: str) -> str:
+            return apply_filters(sql, table, active_filters)
 
         def step(stage: str, label: str, detail: str | None = None, **extra) -> None:
             entry = {
@@ -131,6 +162,21 @@ class Analyst:
                 emit("step", entry)
 
         step("understand", "Read the question", question)
+        effective_question, context = _contextualize(question, history, profile, table)
+        if context:
+            step(
+                "understand",
+                "Resolved the follow-up",
+                f"Carried context from “{context['previous_question']}” into “{effective_question}”.",
+                context=True,
+            )
+        if active_filters:
+            step(
+                "understand",
+                "Applied segment filters",
+                ", ".join(f"{item['column']} = {item['value']}" for item in active_filters),
+                filters=active_filters,
+            )
         settings = self.settings
         client = LLMClient(settings)
         engine = "deterministic"
@@ -140,11 +186,12 @@ class Analyst:
 
         # ---- plan ------------------------------------------------------ #
         try:
-            parsed = nlsql.parse_question(question, profile, table)
+            parsed = nlsql.parse_question(effective_question, profile, table)
         except Exception as exc:  # a parser bug must not take the app down
             last_error = f"{type(exc).__name__}: {exc}"
             parsed = None
         if parsed:
+            parsed["sql"] = with_filters(parsed["sql"])
             step(
                 "plan",
                 "Built a query plan",
@@ -179,13 +226,20 @@ class Analyst:
                 attempts += 1
                 proposal = None
                 try:
-                    proposal = client.generate_sql(question, profile, table, error=error_for_model)
+                    proposal = client.generate_sql(
+                        effective_question,
+                        profile,
+                        table,
+                        error=error_for_model,
+                        history=history,
+                    )
                 except Exception as exc:  # pragma: no cover - adapter is defensive
                     last_error = _error_text(exc)
                     break
                 if not proposal:
                     last_error = last_error or "The language model did not return usable SQL."
                     break
+                proposal["sql"] = with_filters(proposal["sql"])
                 parsed = proposal
                 step(
                     "plan",
@@ -195,6 +249,15 @@ class Analyst:
                     engine="llm",
                     confidence=proposal.get("confidence"),
                 )
+                try:
+                    # Plan against the real schema before executing: catches a
+                    # hallucinated column without letting DuckDB touch data.
+                    self.store.explain(dataset_id, proposal["sql"])
+                except Exception as exc:
+                    last_error = _error_text(exc)
+                    error_for_model = last_error
+                    step("validate", "Schema check failed", last_error, sql=proposal["sql"], status="error")
+                    continue
                 try:
                     result = self._execute(dataset_id, proposal["sql"], settings)
                     step(
@@ -229,6 +292,7 @@ class Analyst:
                 hint,
                 detail=last_error,
                 sql=(parsed or {}).get("sql"),
+                choices=_clarification_choices(profile, table, effective_question),
             )
 
         # ---- shape the answer ----------------------------------------- #
@@ -248,11 +312,11 @@ class Analyst:
         }
         step("shape", "Built the visual", chart_labels.get(chart.get("type"), "Table"))
 
-        narration = narrate(question, parsed, result, profile)
+        narration = narrate(effective_question, parsed, result, profile)
         polished = False
         if client.enabled and narration.get("narrative") and rows:
             try:
-                better = client.polish(question, narration["narrative"], narration.get("facts") or {})
+                better = client.polish(effective_question, narration["narrative"], narration.get("facts") or {})
                 if better and better != narration["narrative"]:
                     narration["narrative"] = better
                     polished = True
@@ -265,7 +329,7 @@ class Analyst:
             polished=polished,
         )
 
-        followups = _followups(profile, table, parsed, question)
+        followups = _followups(profile, table, parsed, effective_question)
         confidence = _confidence(parsed, result, profile)
         step(
             "finish",
@@ -279,8 +343,12 @@ class Analyst:
             "dataset_id": dataset_id,
             "dataset": dataset.get("name"),
             "question": question,
+            "effective_question": effective_question,
+            "context": context,
+            "filters": active_filters,
             "engine": engine,
             "llm_used": engine == "llm",
+            "llm_usage": client.usage() if client.calls else None,
             "polished": polished,
             "plan": {
                 "title": parsed.get("title") or question,
@@ -586,6 +654,142 @@ def _mentioned(columns: list[dict], *texts: str) -> dict | None:
             if pretty(col["name"]).lower() in text or col["name"].lower() in text:
                 return col
     return None
+
+
+# --------------------------------------------------------------------------- #
+# Follow-up context & clarification
+# --------------------------------------------------------------------------- #
+_FOLLOWUP_CUE = re.compile(
+    r"^\s*(?:and|also|what about|how about|same|now|then|instead|what if|"
+    r"which one|those|there|that|them)\b",
+    re.I,
+)
+_CONTEXT_CLAUSE = re.compile(
+    r"\b(?:last|past|previous|this|since|between|year to date|ytd|month to date|"
+    r"quarter to date|qtd|mtd|top|bottom|first)\b",
+    re.I,
+)
+
+
+def _contextualize(
+    question: str,
+    history: list[dict] | None,
+    profile: dict,
+    table: str,
+) -> tuple[str, dict | None]:
+    """Carry the previous turn's measure/dimension into a terse follow-up.
+
+    "What about APAC?" has no measure of its own. On its own the parser would
+    answer for row counts. With context it becomes "Revenue by Region for APAC".
+    The rewrite is accepted only if the deterministic parser can plan it.
+    """
+    if not history:
+        return question, None
+    previous = next(
+        (turn for turn in reversed(history) if isinstance(turn, dict) and str(turn.get("question") or "").strip()),
+        None,
+    )
+    if not previous:
+        return question, None
+    previous_q = " ".join(str(previous["question"]).split())[:500]
+    columns = profile.get("columns") or []
+    measures = [c for c in columns if c.get("role") == "measure"]
+    dims = [c for c in columns if c.get("role") == "dimension" and c.get("semantic") not in {"date", "datetime"}]
+    cue = bool(_FOLLOWUP_CUE.search(question))
+    probe = question.lower()
+    new_measure = nlsql._best_column(probe, measures, threshold=0.7) if measures else None
+    new_dim = nlsql._dimension_for_question(probe, dims) if dims else None
+    group_phrase = bool(re.search(r"\b(?:by|per|across|for each|within|grouped by)\b", probe))
+    value_only = bool(new_dim and not group_phrase)
+    if not cue:
+        # A complete new question stands on its own.
+        if new_measure or (new_dim and group_phrase):
+            return question, None
+        if len(question.split()) > 8:
+            return question, None
+    if not cue and not new_measure and not new_dim and not _CONTEXT_CLAUSE.search(question):
+        return question, None
+    previous_measure = nlsql._best_column(previous_q, measures, threshold=0.6) if measures else None
+    previous_dim = nlsql._dimension_for_question(previous_q, dims) if dims else None
+    if not previous_measure and not previous_dim:
+        return question, None
+
+    parts: list[str] = []
+    if new_measure and not new_dim:
+        parts.append(pretty(new_measure["name"]))
+    elif previous_measure:
+        parts.append(pretty(previous_measure["name"]))
+    if new_dim and not value_only:
+        parts.append("by " + pretty(new_dim["name"]))
+    elif previous_dim and not value_only:
+        parts.append("by " + pretty(previous_dim["name"]))
+    rewritten = " ".join(parts) if parts else previous_q
+
+    stripped = re.sub(
+        r"^\s*(?:and|also|what about|how about|same for|same|now|then|instead)\b",
+        "",
+        question,
+        flags=re.I,
+    ).strip()
+    if value_only:
+        rewritten += " for " + stripped
+    elif _CONTEXT_CLAUSE.search(stripped) or re.search(r"\b(?:above|below|over|under|more than|less than|at least)\b", stripped):
+        rewritten += " " + stripped
+    if not rewritten.strip():
+        return question, None
+    try:
+        if nlsql.parse_question(rewritten, profile, table) is None:
+            return question, None
+    except Exception:
+        return question, None
+    return rewritten, {"previous_question": previous_q, "rewritten": rewritten}
+
+
+def _clarification_choices(profile: dict, table: str, question: str) -> list[str]:
+    columns = profile.get("columns") or []
+    measures = [c for c in columns if c.get("role") == "measure"]
+    dims = [c for c in columns if c.get("role") == "dimension" and c.get("semantic") not in {"date", "datetime"}]
+    time_col = (profile.get("time") or {}).get("column")
+    candidates: list[str] = []
+
+    # If the question tried to group by two columns, offer each one alone.
+    phrase = re.search(r"\b(?:by|per|across|for each|within|grouped by)\s+([a-z0-9_ ,]{2,60})", question)
+    if phrase and dims:
+        target = re.split(r"\b(?:for|in|during|over|last|this|between|with|where|from)\b", phrase.group(1))[0]
+        measure = (nlsql._best_column(question, measures, threshold=0.6) if measures else None) or (measures[0] if measures else None)
+        for part in [p.strip() for p in re.split(r"\s*(?:,|and)\s*", target) if p.strip()]:
+            dim = nlsql._best_column(part, dims, threshold=0.45)
+            if dim and measure:
+                candidates.append(f"{pretty(measure['name'])} by {pretty(dim['name'])}")
+
+    if measures and dims:
+        candidates.append(
+            f"Which {pretty(dims[0]['name']).lower()} has the highest {pretty(measures[0]['name']).lower()}?"
+        )
+    if measures and time_col:
+        candidates.append(f"How has {pretty(measures[0]['name']).lower()} changed over time?")
+    if measures:
+        candidates.append(f"Show {pretty(measures[0]['name']).lower()} distribution")
+    if dims:
+        candidates.append(f"How many rows by {pretty(dims[0]['name']).lower()}?")
+    candidates.append("How many rows are there?")
+
+    out: list[str] = []
+    seen: set[str] = set()
+    for candidate in candidates:
+        key = candidate.lower().strip(" ?.")
+        if key in seen:
+            continue
+        try:
+            if nlsql.parse_question(candidate, profile, table) is None:
+                continue
+        except Exception:
+            continue
+        seen.add(key)
+        out.append(candidate)
+        if len(out) == 4:
+            break
+    return out
 
 
 # --------------------------------------------------------------------------- #

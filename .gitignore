@@ -12,3 +12,8 @@ shots/
 dist/
 build/
 *.egg-info/
+node_modules/
+.coverage
+coverage.xml
+artifacts/
+*.pdf.tmp
